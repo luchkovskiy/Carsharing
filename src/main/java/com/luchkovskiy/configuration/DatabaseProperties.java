@@ -30,4 +30,5 @@ public class DatabaseProperties {
     private String jdbcUrl;
     @Value("${POOL_SIZE}")
     private Integer poolSize;
+
 }

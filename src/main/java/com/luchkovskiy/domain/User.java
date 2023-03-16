@@ -18,15 +18,15 @@ public class User {
     private Long id;
     private String name;
     private String surname;
-    private Date birthday_date;
+    private Date birthdayDate;
     private Timestamp created;
     private Timestamp changed;
     private Boolean active;
     private String address;
-    private String passport_id;
-    private String driver_id;
-    private Float driving_experience;
-    private Integer role_id;
+    private String passportId;
+    private String driverId;
+    private Float drivingExperience;
+    private Integer roleId;
     private Float rating;
 
     @Override

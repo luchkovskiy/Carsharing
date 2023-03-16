@@ -56,7 +56,7 @@ public class CarRepositoryImpl implements CarRepository {
         connectionManager.loadDriver();
         try (Connection connection = connectionManager.open()) {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO cars (brand, model, created," +
-                    " changed, is_available, max_speed, color, current_location, issue_year, drive_type, gas_consumption)" +
+                    " changed, is_available, max_speed, color, current_location, release_year, drive_type, gas_consumption)" +
                     " VALUES (?,?,?,?,?,?,?,?,?,?,?) RETURNING id");
             fillStatement(object, statement);
             ResultSet resultSet = statement.executeQuery();
@@ -121,12 +121,12 @@ public class CarRepositoryImpl implements CarRepository {
         car.setCreated(resultSet.getTimestamp("created"));
         car.setChanged(resultSet.getTimestamp("changed"));
         car.setAvailable(resultSet.getBoolean("is_available"));
-        car.setMax_speed(resultSet.getFloat("max_speed"));
+        car.setMaxSpeed(resultSet.getFloat("max_speed"));
         car.setColor(resultSet.getString("color"));
-        car.setCurrent_location(resultSet.getString("current_location"));
-        car.setIssue_year(resultSet.getInt("issue_year"));
-        car.setDrive_type(resultSet.getString("drive_type"));
-        car.setGas_consumption(resultSet.getFloat("gas_consumption"));
+        car.setCurrentLocation(resultSet.getString("current_location"));
+        car.setReleaseYear(resultSet.getInt("release_year"));
+        car.setDriveType(resultSet.getString("drive_type"));
+        car.setGasConsumption(resultSet.getFloat("gas_consumption"));
         return car;
     }
 
@@ -136,11 +136,11 @@ public class CarRepositoryImpl implements CarRepository {
         statement.setTimestamp(3, object.getCreated());
         statement.setTimestamp(4, object.getChanged());
         statement.setBoolean(5, object.getAvailable());
-        statement.setFloat(6, object.getMax_speed());
+        statement.setFloat(6, object.getMaxSpeed());
         statement.setString(7, object.getColor());
-        statement.setString(8, object.getCurrent_location());
-        statement.setInt(9, object.getIssue_year());
-        statement.setString(10, object.getDrive_type());
-        statement.setFloat(11, object.getGas_consumption());
+        statement.setString(8, object.getCurrentLocation());
+        statement.setInt(9, object.getReleaseYear());
+        statement.setString(10, object.getDriveType());
+        statement.setFloat(11, object.getGasConsumption());
     }
 }

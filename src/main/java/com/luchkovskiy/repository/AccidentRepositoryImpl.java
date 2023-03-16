@@ -138,8 +138,8 @@ public class AccidentRepositoryImpl implements AccidentRepository {
         accident.setName(resultSet.getString("name"));
         accident.setFine(resultSet.getFloat("fine"));
         accident.setTime(resultSet.getTimestamp("time"));
-        accident.setRating_subtraction(resultSet.getFloat("rating_subtraction"));
-        accident.setDamage_level(resultSet.getInt("damage_level"));
+        accident.setRatingSubtraction(resultSet.getFloat("rating_subtraction"));
+        accident.setDamageLevel(resultSet.getInt("damage_level"));
         accident.setCritical(resultSet.getBoolean("is_critical"));
         return accident;
     }
@@ -149,8 +149,8 @@ public class AccidentRepositoryImpl implements AccidentRepository {
         statement.setString(2, object.getName());
         statement.setFloat(3, object.getFine());
         statement.setTimestamp(4, object.getTime());
-        statement.setFloat(5, object.getRating_subtraction());
-        statement.setInt(6, object.getDamage_level());
+        statement.setFloat(5, object.getRatingSubtraction());
+        statement.setInt(6, object.getDamageLevel());
         statement.setBoolean(7, object.getCritical());
     }
 

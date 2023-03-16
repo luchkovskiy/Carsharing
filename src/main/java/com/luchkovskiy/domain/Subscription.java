@@ -16,13 +16,13 @@ public class Subscription {
 
     private Long id;
     private User user;
-    private Timestamp start_time;
-    private Timestamp end_time;
-    private Integer access_level;
-    private Float day_price;
+    private Timestamp startTime;
+    private Timestamp endTime;
+    private Integer accessLevel;
+    private Float dayPrice;
     private String status;
-    private Integer trips_amount;
-    private Integer days_total;
+    private Integer tripsAmount;
+    private Integer daysTotal;
     private Timestamp created;
     private Timestamp changed;
 

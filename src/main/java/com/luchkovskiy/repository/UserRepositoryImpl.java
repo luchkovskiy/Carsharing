@@ -129,15 +129,15 @@ public class UserRepositoryImpl implements UserRepository {
         user.setId(resultSet.getLong("id"));
         user.setName(resultSet.getString("name"));
         user.setSurname(resultSet.getString("surname"));
-        user.setBirthday_date(resultSet.getDate("birthday_date"));
+        user.setBirthdayDate(resultSet.getDate("birthday_date"));
         user.setCreated(resultSet.getTimestamp("created"));
         user.setChanged(resultSet.getTimestamp("changed"));
         user.setActive(resultSet.getBoolean("is_active"));
         user.setAddress(resultSet.getString("address"));
-        user.setPassport_id(resultSet.getString("passport_id"));
-        user.setDriver_id(resultSet.getString("driver_id"));
-        user.setDriving_experience(resultSet.getFloat("driving_experience"));
-        user.setRole_id(resultSet.getInt("role_id"));
+        user.setPassportId(resultSet.getString("passport_id"));
+        user.setDriverId(resultSet.getString("driver_id"));
+        user.setDrivingExperience(resultSet.getFloat("driving_experience"));
+        user.setRoleId(resultSet.getInt("role_id"));
         user.setRating(resultSet.getFloat("rating"));
         return user;
     }
@@ -145,15 +145,15 @@ public class UserRepositoryImpl implements UserRepository {
     private void fillStatement(User object, PreparedStatement statement) throws SQLException {
         statement.setString(1, object.getName());
         statement.setString(2, object.getSurname());
-        statement.setDate(3, object.getBirthday_date());
+        statement.setDate(3, object.getBirthdayDate());
         statement.setTimestamp(4, object.getCreated());
         statement.setTimestamp(5, object.getChanged());
         statement.setBoolean(6, object.getActive());
         statement.setString(7, object.getAddress());
-        statement.setString(8, object.getPassport_id());
-        statement.setString(9, object.getDriver_id());
-        statement.setFloat(10, object.getDriving_experience());
-        statement.setInt(11, object.getRole_id());
+        statement.setString(8, object.getPassportId());
+        statement.setString(9, object.getDriverId());
+        statement.setFloat(10, object.getDrivingExperience());
+        statement.setInt(11, object.getRoleId());
         statement.setFloat(12, object.getRating());
     }
 

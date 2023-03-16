@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfig {
 
     @Bean
-    public ConnectionManager connectionManager() {
-        return new ConnectionManager(new DatabaseProperties());
+    public ConnectionManager connectionManager(DatabaseProperties databaseProperties) {
+        return new ConnectionManager(databaseProperties);
     }
 }

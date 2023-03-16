@@ -19,12 +19,12 @@ public class Car {
     private Timestamp created;
     private Timestamp changed;
     private Boolean available;
-    private Float max_speed;
+    private Float maxSpeed;
     private String color;
-    private String current_location;
-    private Integer issue_year;
-    private String drive_type;
-    private Float gas_consumption;
+    private String currentLocation;
+    private Integer releaseYear;
+    private String driveType;
+    private Float gasConsumption;
 
     @Override
     public String toString() {

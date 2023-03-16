@@ -17,11 +17,11 @@ public class Session {
     private Long id;
     private User user;
     private Car car;
-    private Timestamp start_time;
-    private Timestamp end_time;
-    private Float total_price;
+    private Timestamp startTime;
+    private Timestamp endTime;
+    private Float totalPrice;
     private String status;
-    private Float distance_passed;
+    private Float distancePassed;
 
     @Override
     public String toString() {

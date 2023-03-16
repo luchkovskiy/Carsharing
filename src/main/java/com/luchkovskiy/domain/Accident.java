@@ -1,9 +1,6 @@
 package com.luchkovskiy.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -20,8 +17,8 @@ public class Accident {
     private String name;
     private Float fine;
     private Timestamp time;
-    private Float rating_subtraction;
-    private Integer damage_level;
+    private Float ratingSubtraction;
+    private Integer damageLevel;
     private Boolean critical;
 
     @Override

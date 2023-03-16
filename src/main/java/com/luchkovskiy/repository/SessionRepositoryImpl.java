@@ -122,21 +122,21 @@ public class SessionRepositoryImpl implements SessionRepository {
         session.setId(resultSet.getLong("id"));
         session.setUser(userRepository.read(resultSet.getLong("id")));
         session.setCar(carRepository.read(resultSet.getLong("id")));
-        session.setStart_time(resultSet.getTimestamp("start_time"));
-        session.setEnd_time(resultSet.getTimestamp("end_time"));
-        session.setTotal_price(resultSet.getFloat("total_price"));
+        session.setStartTime(resultSet.getTimestamp("start_time"));
+        session.setEndTime(resultSet.getTimestamp("end_time"));
+        session.setTotalPrice(resultSet.getFloat("total_price"));
         session.setStatus(resultSet.getString("status"));
-        session.setDistance_passed(resultSet.getFloat("distance_passed"));
+        session.setDistancePassed(resultSet.getFloat("distance_passed"));
         return session;
     }
 
     private void fillStatement(Session object, PreparedStatement statement) throws SQLException {
         statement.setLong(1, object.getUser().getId());
         statement.setLong(2, object.getCar().getId());
-        statement.setTimestamp(3, object.getStart_time());
-        statement.setTimestamp(4, object.getEnd_time());
-        statement.setFloat(5, object.getTotal_price());
+        statement.setTimestamp(3, object.getStartTime());
+        statement.setTimestamp(4, object.getEndTime());
+        statement.setFloat(5, object.getTotalPrice());
         statement.setString(6, object.getStatus());
-        statement.setFloat(7, object.getDistance_passed());
+        statement.setFloat(7, object.getDistancePassed());
     }
 }

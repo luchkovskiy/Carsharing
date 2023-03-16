@@ -119,13 +119,13 @@ public class SubscriptionRepositoryImpl implements SubscriptionRepository {
         Subscription subscription = new Subscription();
         subscription.setId(resultSet.getLong("id"));
         subscription.setUser(userRepository.read(resultSet.getLong("id")));
-        subscription.setStart_time(resultSet.getTimestamp("start_time"));
-        subscription.setEnd_time(resultSet.getTimestamp("end_time"));
-        subscription.setAccess_level(resultSet.getInt("access_level"));
-        subscription.setDay_price(resultSet.getFloat("price_per_day"));
+        subscription.setStartTime(resultSet.getTimestamp("start_time"));
+        subscription.setEndTime(resultSet.getTimestamp("end_time"));
+        subscription.setAccessLevel(resultSet.getInt("access_level"));
+        subscription.setDayPrice(resultSet.getFloat("price_per_day"));
         subscription.setStatus(resultSet.getString("status"));
-        subscription.setTrips_amount(resultSet.getInt("amount_of_trips"));
-        subscription.setDays_total(resultSet.getInt("days_total"));
+        subscription.setTripsAmount(resultSet.getInt("amount_of_trips"));
+        subscription.setDaysTotal(resultSet.getInt("days_total"));
         subscription.setCreated(resultSet.getTimestamp("created"));
         subscription.setChanged(resultSet.getTimestamp("changed"));
         return subscription;
@@ -133,13 +133,13 @@ public class SubscriptionRepositoryImpl implements SubscriptionRepository {
 
     private void fillStatement(Subscription object, PreparedStatement statement) throws SQLException {
         statement.setLong(1, object.getUser().getId());
-        statement.setTimestamp(2, object.getStart_time());
-        statement.setTimestamp(3, object.getEnd_time());
-        statement.setInt(4, object.getAccess_level());
-        statement.setFloat(5, object.getDay_price());
+        statement.setTimestamp(2, object.getStartTime());
+        statement.setTimestamp(3, object.getEndTime());
+        statement.setInt(4, object.getAccessLevel());
+        statement.setFloat(5, object.getDayPrice());
         statement.setString(6, object.getStatus());
-        statement.setInt(7, object.getTrips_amount());
-        statement.setInt(8, object.getDays_total());
+        statement.setInt(7, object.getTripsAmount());
+        statement.setInt(8, object.getDaysTotal());
         statement.setTimestamp(9, object.getCreated());
         statement.setTimestamp(10, object.getChanged());
     }
