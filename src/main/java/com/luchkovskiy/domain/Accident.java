@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Data
 public class Accident {
 
