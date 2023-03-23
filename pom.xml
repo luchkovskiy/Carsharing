@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.luchkovskiy</groupId>
-    <artifactId>JD2_CarRent</artifactId>
+    <artifactId>JD2_Carsharing</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
