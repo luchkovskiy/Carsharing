@@ -1,6 +1,6 @@
 package com.luchkovskiy.service;
 
-import com.luchkovskiy.domain.User;
+import com.luchkovskiy.models.User;
 
 public interface UserService extends CRUDService<Long, User> {
 

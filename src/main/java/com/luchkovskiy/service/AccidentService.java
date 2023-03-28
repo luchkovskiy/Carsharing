@@ -1,6 +1,6 @@
 package com.luchkovskiy.service;
 
-import com.luchkovskiy.domain.Accident;
+import com.luchkovskiy.models.Accident;
 
 import java.util.List;
 

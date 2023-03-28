@@ -1,6 +1,7 @@
-package com.luchkovskiy.domain;
+package com.luchkovskiy.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -12,19 +13,23 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Session {
+@Builder
+public class Subscription {
 
     private Long id;
     private User user;
-    private Car car;
     private Timestamp startTime;
     private Timestamp endTime;
-    private Float totalPrice;
     private String status;
-    private Float distancePassed;
+    private Integer tripsAmount;
+    private Integer daysTotal;
+    private Timestamp created;
+    private Timestamp changed;
+    private Integer levelId;
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
+
 }

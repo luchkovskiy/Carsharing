@@ -1,6 +1,6 @@
 package com.luchkovskiy.repository;
 
-import com.luchkovskiy.domain.Session;
+import com.luchkovskiy.models.Session;
 
 public interface SessionRepository extends CRUDRepository<Long, Session> {
 

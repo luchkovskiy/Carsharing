@@ -1,21 +1,18 @@
-package com.luchkovskiy.service;
+package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.domain.Session;
+import com.luchkovskiy.models.Session;
 import com.luchkovskiy.repository.SessionRepository;
+import com.luchkovskiy.service.SessionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@Primary
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
 
-    @Autowired
-    SessionRepository sessionRepository;
+    private final SessionRepository sessionRepository;
 
     @Override
     public Session read(Long id) {

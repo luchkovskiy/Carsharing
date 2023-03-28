@@ -1,4 +1,4 @@
-package com.luchkovskiy.domain;
+package com.luchkovskiy.models;
 
 import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class Accident {
 
     private Long id;
@@ -19,6 +20,8 @@ public class Accident {
     private Float ratingSubtraction;
     private Integer damageLevel;
     private Boolean critical;
+    private Timestamp created;
+    private Timestamp changed;
 
     @Override
     public String toString() {

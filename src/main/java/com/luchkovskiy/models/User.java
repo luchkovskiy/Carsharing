@@ -1,6 +1,7 @@
-package com.luchkovskiy.domain;
+package com.luchkovskiy.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,6 +14,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class User {
 
     private Long id;
@@ -28,6 +30,7 @@ public class User {
     private Float drivingExperience;
     private Integer roleId;
     private Float rating;
+    private Float accountBalance;
 
     @Override
     public String toString() {

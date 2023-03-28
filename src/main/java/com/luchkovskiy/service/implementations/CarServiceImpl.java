@@ -1,20 +1,18 @@
-package com.luchkovskiy.service;
+package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.domain.Car;
+import com.luchkovskiy.models.Car;
 import com.luchkovskiy.repository.CarRepository;
+import com.luchkovskiy.service.CarService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@Primary
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
-    @Autowired
-    CarRepository carRepository;
+
+    private final CarRepository carRepository;
 
     @Override
     public Car read(Long id) {

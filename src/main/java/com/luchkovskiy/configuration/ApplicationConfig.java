@@ -1,16 +1,31 @@
 package com.luchkovskiy.configuration;
 
-import com.luchkovskiy.util.ConnectionManager;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+
+import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan("com.luchkovskiy")
 public class ApplicationConfig {
 
     @Bean
-    public ConnectionManager connectionManager(DatabaseProperties databaseProperties) {
-        return new ConnectionManager(databaseProperties);
+    public NamedParameterJdbcTemplate namedParameterJdbcTemplate (DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
     }
+
+    @Bean
+    public DataSource hikariDatasource (DatabaseProperties databaseProperties) {
+        HikariDataSource hikariDataSource = new HikariDataSource();
+        hikariDataSource.setUsername(databaseProperties.getLogin());
+        hikariDataSource.setPassword(databaseProperties.getPassword());
+        hikariDataSource.setDriverClassName(databaseProperties.getDriverName());
+        hikariDataSource.setMaximumPoolSize(databaseProperties.getPoolSize());
+        hikariDataSource.setJdbcUrl(databaseProperties.getJdbcUrl());
+        return hikariDataSource;
+    }
+
 }

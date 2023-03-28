@@ -1,20 +1,17 @@
-package com.luchkovskiy.service;
+package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.domain.User;
+import com.luchkovskiy.models.User;
 import com.luchkovskiy.repository.UserRepository;
+import com.luchkovskiy.service.AggregationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 
 @Service
-@Primary
 @RequiredArgsConstructor
 public class AggregationServiceImpl implements AggregationService {
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public boolean deleteInactiveUser(Long userId) {

@@ -1,10 +1,10 @@
-package com.luchkovskiy.service;
+package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.domain.Accident;
+import com.luchkovskiy.models.Accident;
 import com.luchkovskiy.repository.AccidentRepository;
 import com.luchkovskiy.repository.SessionRepository;
+import com.luchkovskiy.service.AccidentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +15,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccidentServiceImpl implements AccidentService {
 
-    @Autowired
-    AccidentRepository accidentRepository;
-    @Autowired
-    SessionRepository sessionRepository;
+
+    private final AccidentRepository accidentRepository;
+
+    private final SessionRepository sessionRepository;
 
     @Override
     public Accident read(Long id) {

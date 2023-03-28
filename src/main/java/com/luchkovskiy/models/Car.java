@@ -1,6 +1,7 @@
-package com.luchkovskiy.domain;
+package com.luchkovskiy.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class Car {
 
     private Long id;
@@ -18,13 +20,15 @@ public class Car {
     private String model;
     private Timestamp created;
     private Timestamp changed;
-    private Boolean available;
+    private Boolean visible;
     private Float maxSpeed;
     private String color;
-    private String currentLocation;
     private Integer releaseYear;
-    private String driveType;
+    private String gearboxType;
+    private Integer sitsAmount;
+    private Integer classId;
     private Float gasConsumption;
+    private String licensePlateNumber;
 
     @Override
     public String toString() {

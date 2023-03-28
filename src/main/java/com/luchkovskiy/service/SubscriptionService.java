@@ -1,6 +1,6 @@
 package com.luchkovskiy.service;
 
-import com.luchkovskiy.domain.Subscription;
+import com.luchkovskiy.models.Subscription;
 
 public interface SubscriptionService extends CRUDService<Long, Subscription> {
 

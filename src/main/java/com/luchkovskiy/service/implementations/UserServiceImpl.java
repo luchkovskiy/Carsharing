@@ -1,21 +1,18 @@
-package com.luchkovskiy.service;
+package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.domain.User;
+import com.luchkovskiy.models.User;
 import com.luchkovskiy.repository.UserRepository;
+import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@Primary
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public User read(Long id) {
