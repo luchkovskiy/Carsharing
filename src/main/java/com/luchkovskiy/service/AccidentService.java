@@ -9,4 +9,6 @@ public interface AccidentService extends CRUDService<Long, Accident> {
     boolean checkIdExist(Long id);
 
     List<Accident> getAccidentsBySession(Long sessionId);
+
+    Integer countAccidents(Long sessionId);
 }

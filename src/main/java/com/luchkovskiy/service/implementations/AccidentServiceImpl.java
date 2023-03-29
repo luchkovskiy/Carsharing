@@ -62,4 +62,9 @@ public class AccidentServiceImpl implements AccidentService {
             throw new RuntimeException();
         return accidentRepository.getAccidentsBySession(sessionId);
     }
+
+    @Override
+    public Integer countAccidents(Long sessionId) {
+        return accidentRepository.countAccidents(sessionId);
+    }
 }

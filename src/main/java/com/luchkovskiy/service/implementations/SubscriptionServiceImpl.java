@@ -49,4 +49,5 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public boolean checkIdExist(Long id) {
         return subscriptionRepository.checkIdValid(id);
     }
+
 }
