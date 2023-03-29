@@ -1,4 +1,4 @@
-package com.luchkovskiy.controller;
+package com.luchkovskiy.controllers;
 
 
 import com.luchkovskiy.models.User;
@@ -35,7 +35,7 @@ public class UserController {
         return new ResponseEntity<>(createdUser, HttpStatus.OK);
     }
 
-    @PatchMapping("")
+    @PatchMapping
     public ResponseEntity<Object> update(@RequestBody User user) {
         User updatedUser = userService.update(user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
