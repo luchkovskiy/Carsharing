@@ -8,11 +8,13 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Primary
@@ -61,6 +63,14 @@ public class AccidentRepositoryImpl implements AccidentRepository {
     @Override
     public List<Accident> getAccidentsBySession(Long sessionId) {
         return template.query("SELECT id FROM accidents WHERE session_id = :session_id", new MapSqlParameterSource("session_id", sessionId), accidentRowMapper);
+    }
+
+    @Override
+    public Integer countAccidents(Long sessionId) {
+        SimpleJdbcCall jdbcCall = new
+                SimpleJdbcCall(template.getJdbcTemplate()).withProcedureName("countSessionAccidents");
+        Map<String, Object> session = jdbcCall.execute(new MapSqlParameterSource("session", sessionId));
+        return (Integer) session.get("sessionCount");
     }
 
     private SqlParameterSource getParameterSource(Accident accident) {

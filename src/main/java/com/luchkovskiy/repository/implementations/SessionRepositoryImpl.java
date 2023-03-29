@@ -1,6 +1,7 @@
 package com.luchkovskiy.repository.implementations;
 
 import com.luchkovskiy.models.Session;
+import com.luchkovskiy.models.User;
 import com.luchkovskiy.repository.SessionRepository;
 import com.luchkovskiy.repository.implementations.rowmappers.SessionRowMapper;
 import lombok.RequiredArgsConstructor;
@@ -8,11 +9,13 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Primary
@@ -54,9 +57,18 @@ public class SessionRepositoryImpl implements SessionRepository {
     }
 
     @Override
-    public boolean checkIdValid(Long id) {
+    public Boolean checkIdValid(Long id) {
         Integer count = template.queryForObject("SELECT COUNT(*) FROM sessions WHERE id = :id", new MapSqlParameterSource("id", id), Integer.class);
         return count > 1;
+    }
+
+    @Override
+    public LocalDateTime getLongestDuration(User id) {
+        SimpleJdbcCall jdbcCall = new
+                SimpleJdbcCall(template.getJdbcTemplate()).withProcedureName("selectLongestSessionDuration");
+        Map<String, Object> session = jdbcCall.execute(new MapSqlParameterSource("person_id", id));
+        Timestamp sessionDuration = (Timestamp) session.get("sessionDuration");
+        return sessionDuration.toLocalDateTime();
     }
 
     private SqlParameterSource getParameterSource(Session session) {

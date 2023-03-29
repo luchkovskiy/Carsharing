@@ -11,4 +11,6 @@ public interface AccidentRepository extends CRUDRepository<Long, Accident> {
 
     List<Accident> getAccidentsBySession(Long sessionId);
 
+    Integer countAccidents(Long sessionId);
+
 }

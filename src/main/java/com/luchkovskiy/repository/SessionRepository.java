@@ -1,9 +1,14 @@
 package com.luchkovskiy.repository;
 
 import com.luchkovskiy.models.Session;
+import com.luchkovskiy.models.User;
+
+import java.time.LocalDateTime;
 
 public interface SessionRepository extends CRUDRepository<Long, Session> {
 
-    boolean checkIdValid(Long id);
+    Boolean checkIdValid(Long id);
+
+    LocalDateTime getLongestDuration(User id);
 
 }
