@@ -17,6 +17,7 @@
         <maven.war.plugin.version>3.3.1</maven.war.plugin.version>
         <maven.compile.plugin.version>3.8.1</maven.compile.plugin.version>
         <spring.version>5.3.25</spring.version>
+        <log4j>1.2.17</log4j>
     </properties>
 
     <packaging>war</packaging>
@@ -99,6 +100,30 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>5.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.9.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.1</version>
         </dependency>
 
     </dependencies>
