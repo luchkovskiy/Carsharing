@@ -1,5 +1,6 @@
 package com.luchkovskiy.controllers;
 
+import com.luchkovskiy.controllers.requests.AccidentCreateRequest;
 import com.luchkovskiy.models.Accident;
 import com.luchkovskiy.service.AccidentService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class AccidentController {
     private final AccidentService accidentService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> read(@PathVariable("id") Long id) {
+    public ResponseEntity<Accident> read(@PathVariable("id") Long id) {
         Accident accident = accidentService.read(id);
         return new ResponseEntity<>(accident, HttpStatus.OK);
     }
@@ -29,7 +30,16 @@ public class AccidentController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody Accident accident) {
+    public ResponseEntity<Object> create(@RequestBody AccidentCreateRequest request) {
+        Accident accident = Accident.builder()
+                .session(request.getSession())
+                .name(request.getName())
+                .fine(request.getFine())
+                .time(request.getTime())
+                .ratingSubtraction(request.getRatingSubtraction())
+                .damageLevel(request.getDamageLevel())
+                .critical(request.getCritical())
+                .build();
         Accident createdAccident = accidentService.create(accident);
         return new ResponseEntity<>(createdAccident, HttpStatus.OK);
     }
