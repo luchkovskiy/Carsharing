@@ -25,7 +25,6 @@ public class CarRentInfoRowMapper implements RowMapper<CarRentInfo> {
                     .gasRemaining(resultSet.getFloat("gas_remaining"))
                     .repairing(resultSet.getBoolean("repairing"))
                     .currentLocation(resultSet.getString("current_location"))
-                    .available(resultSet.getBoolean("is_available"))
                     .condition(resultSet.getFloat("condition"))
                     .build();
         } catch (SQLException e) {

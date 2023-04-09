@@ -55,7 +55,6 @@ public class CarRentInfoRepositoryImpl implements CarRentInfoRepository {
                 .addValue("gas_remaining", carRentInfo.getGasRemaining())
                 .addValue("is_repairing", carRentInfo.getRepairing())
                 .addValue("current_location", carRentInfo.getCurrentLocation())
-                .addValue("is_available", carRentInfo.getAvailable())
                 .addValue("condition", carRentInfo.getCondition());
 
     }
