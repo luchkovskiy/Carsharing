@@ -18,7 +18,6 @@ public class CarRentInfo {
     private Float gasRemaining;
     private Boolean repairing;
     private String currentLocation;
-    private Boolean available;
     private Float condition;
 
     @Override

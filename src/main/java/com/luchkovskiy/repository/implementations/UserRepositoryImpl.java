@@ -77,7 +77,6 @@ public class UserRepositoryImpl implements UserRepository {
                 .addValue("passport_id", user.getPassportId())
                 .addValue("driver_id", user.getDriverId())
                 .addValue("driving_experience", user.getDrivingExperience())
-                .addValue("role_id", user.getRoleId())
                 .addValue("rating", user.getRating())
                 .addValue("account_balance", user.getAccountBalance());
 

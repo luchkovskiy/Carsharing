@@ -26,7 +26,6 @@ public class UserRowMapper implements RowMapper<User> {
                     .passportId(resultSet.getString("passport_id"))
                     .driverId(resultSet.getString("driver_id"))
                     .drivingExperience(resultSet.getFloat("driving_experience"))
-                    .roleId(resultSet.getInt("role_id"))
                     .rating(resultSet.getFloat("rating"))
                     .accountBalance(resultSet.getFloat("account_balance"))
                     .build();

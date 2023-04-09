@@ -29,9 +29,26 @@ public class AccidentController {
         return new ResponseEntity<>(accidents, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<Object> create(@RequestBody AccidentCreateRequest request) {
-        Accident accident = Accident.builder()
+    @PutMapping
+    public ResponseEntity<Accident> create(@RequestBody AccidentCreateRequest request) {
+        Accident createdAccident = accidentService.create(getAccident(request));
+        return new ResponseEntity<>(createdAccident, HttpStatus.CREATED);
+    }
+
+    @PatchMapping
+    public ResponseEntity<Accident> update(@RequestBody AccidentCreateRequest request) {
+        Accident updatedAccident = accidentService.update(getAccident(request));
+        return new ResponseEntity<>(updatedAccident, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable("id") Long id) {
+        accidentService.delete(id);
+    }
+
+    private static Accident getAccident(AccidentCreateRequest request) {
+        return Accident.builder()
+                .id(request.getId())
                 .session(request.getSession())
                 .name(request.getName())
                 .fine(request.getFine())
@@ -40,18 +57,5 @@ public class AccidentController {
                 .damageLevel(request.getDamageLevel())
                 .critical(request.getCritical())
                 .build();
-        Accident createdAccident = accidentService.create(accident);
-        return new ResponseEntity<>(createdAccident, HttpStatus.OK);
-    }
-
-    @PatchMapping
-    public ResponseEntity<Object> update(@RequestBody Accident accident) {
-        Accident updatedAccident = accidentService.update(accident);
-        return new ResponseEntity<>(updatedAccident, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Long id) {
-        accidentService.delete(id);
     }
 }

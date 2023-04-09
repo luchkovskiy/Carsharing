@@ -6,11 +6,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan("com.luchkovskiy")
+@EnableWebMvc
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ApplicationConfig {
 

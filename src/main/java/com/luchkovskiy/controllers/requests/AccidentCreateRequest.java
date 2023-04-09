@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 @Data
 public class AccidentCreateRequest {
 
+    private Long id;
     private Session session;
     private String name;
     private Float fine;

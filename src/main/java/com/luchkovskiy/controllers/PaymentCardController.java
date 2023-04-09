@@ -1,5 +1,6 @@
 package com.luchkovskiy.controllers;
 
+import com.luchkovskiy.controllers.requests.PaymentCardCreateRequest;
 import com.luchkovskiy.models.PaymentCard;
 import com.luchkovskiy.service.PaymentCardService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class PaymentCardController {
     private final PaymentCardService paymentCardService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> read(@PathVariable("id") Long id) {
+    public ResponseEntity<PaymentCard> read(@PathVariable("id") Long id) {
         PaymentCard paymentCard = paymentCardService.read(id);
         return new ResponseEntity<>(paymentCard, HttpStatus.OK);
     }
@@ -29,14 +30,14 @@ public class PaymentCardController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody PaymentCard paymentCard) {
-        PaymentCard createdPaymentCard = paymentCardService.create(paymentCard);
+    public ResponseEntity<PaymentCard> create(@RequestBody PaymentCardCreateRequest request) {
+        PaymentCard createdPaymentCard = paymentCardService.create(getPaymentCard(request));
         return new ResponseEntity<>(createdPaymentCard, HttpStatus.OK);
     }
 
     @PatchMapping
-    public ResponseEntity<Object> update(@RequestBody PaymentCard paymentCard) {
-        PaymentCard updatedPaymentCard = paymentCardService.update(paymentCard);
+    public ResponseEntity<PaymentCard> update(@RequestBody PaymentCardCreateRequest request) {
+        PaymentCard updatedPaymentCard = paymentCardService.update(getPaymentCard(request));
         return new ResponseEntity<>(updatedPaymentCard, HttpStatus.OK);
     }
 
@@ -45,4 +46,13 @@ public class PaymentCardController {
         paymentCardService.delete(id);
     }
 
+    private static PaymentCard getPaymentCard(PaymentCardCreateRequest request) {
+        return PaymentCard.builder()
+                .id(request.getId())
+                .cardNumber(request.getCardNumber())
+                .expirationDate(request.getExpirationDate())
+                .cvv(request.getCvv())
+                .cardholder(request.getCardholder())
+                .build();
+    }
 }

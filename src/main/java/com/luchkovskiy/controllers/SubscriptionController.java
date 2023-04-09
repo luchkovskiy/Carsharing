@@ -1,6 +1,7 @@
 package com.luchkovskiy.controllers;
 
 
+import com.luchkovskiy.controllers.requests.SubscriptionCreateRequest;
 import com.luchkovskiy.models.Subscription;
 import com.luchkovskiy.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> read(@PathVariable("id") Long id) {
+    public ResponseEntity<Subscription> read(@PathVariable("id") Long id) {
         Subscription subscription = subscriptionService.read(id);
         return new ResponseEntity<>(subscription, HttpStatus.OK);
     }
@@ -30,14 +31,14 @@ public class SubscriptionController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody Subscription subscription) {
-        Subscription createdSubscription = subscriptionService.create(subscription);
+    public ResponseEntity<Subscription> create(@RequestBody SubscriptionCreateRequest request) {
+        Subscription createdSubscription = subscriptionService.create(getSubscription(request));
         return new ResponseEntity<>(createdSubscription, HttpStatus.OK);
     }
 
     @PatchMapping
-    public ResponseEntity<Object> update(@RequestBody Subscription subscription) {
-        Subscription updatedSubscription = subscriptionService.update(subscription);
+    public ResponseEntity<Subscription> update(@RequestBody SubscriptionCreateRequest request) {
+        Subscription updatedSubscription = subscriptionService.update(getSubscription(request));
         return new ResponseEntity<>(updatedSubscription, HttpStatus.OK);
     }
 
@@ -46,4 +47,16 @@ public class SubscriptionController {
         subscriptionService.delete(id);
     }
 
+    private static Subscription getSubscription(SubscriptionCreateRequest request) {
+        return Subscription.builder()
+                .id(request.getId())
+                .user(request.getUser())
+                .startTime(request.getStartTime())
+                .endTime(request.getEndTime())
+                .status(request.getStatus())
+                .tripsAmount(request.getTripsAmount())
+                .daysTotal(request.getDaysTotal())
+                .levelId(request.getLevelId())
+                .build();
+    }
 }
