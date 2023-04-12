@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 public class SubscriptionCreateRequest {
 
     private Long id;
-    private User user;
+    private Long userId;
     private Timestamp startTime;
     private Timestamp endTime;
     private String status;

@@ -4,6 +4,7 @@ package com.luchkovskiy.controllers;
 import com.luchkovskiy.controllers.requests.SubscriptionCreateRequest;
 import com.luchkovskiy.models.Subscription;
 import com.luchkovskiy.service.SubscriptionService;
+import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.List;
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
+    private final UserService userService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Subscription> read(@PathVariable("id") Long id) {
@@ -47,10 +49,10 @@ public class SubscriptionController {
         subscriptionService.delete(id);
     }
 
-    private static Subscription getSubscription(SubscriptionCreateRequest request) {
+    private Subscription getSubscription(SubscriptionCreateRequest request) {
         return Subscription.builder()
                 .id(request.getId())
-                .user(request.getUser())
+                .user(userService.read(request.getUserId()))
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
                 .status(request.getStatus())

@@ -1,6 +1,5 @@
 package com.luchkovskiy.controllers.requests;
 
-import com.luchkovskiy.models.Session;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import java.sql.Timestamp;
 public class AccidentCreateRequest {
 
     private Long id;
-    private Session session;
+    private Long sessionId;
     private String name;
     private Float fine;
     private Timestamp time;

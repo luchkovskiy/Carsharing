@@ -1,6 +1,5 @@
 package com.luchkovskiy.controllers.requests;
 
-import com.luchkovskiy.models.Car;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class CarRentInfoCreateRequest {
     private Long id;
-    private Car car;
+    private Long carId;
     private Float gasRemaining;
     private Boolean repairing;
     private String currentLocation;

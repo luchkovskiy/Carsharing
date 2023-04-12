@@ -14,8 +14,8 @@ import java.sql.Timestamp;
 public class SessionCreateRequest {
 
     private Long id;
-    private User user;
-    private Car car;
+    private Long userId;
+    private Long carId;
     private Timestamp startTime;
     private Timestamp endTime;
     private Float distancePassed;

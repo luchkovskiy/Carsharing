@@ -3,6 +3,7 @@ package com.luchkovskiy.controllers;
 import com.luchkovskiy.controllers.requests.AccidentCreateRequest;
 import com.luchkovskiy.models.Accident;
 import com.luchkovskiy.service.AccidentService;
+import com.luchkovskiy.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 public class AccidentController {
 
     private final AccidentService accidentService;
+    private final SessionService sessionService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Accident> read(@PathVariable("id") Long id) {
@@ -46,10 +48,10 @@ public class AccidentController {
         accidentService.delete(id);
     }
 
-    private static Accident getAccident(AccidentCreateRequest request) {
+    private Accident getAccident(AccidentCreateRequest request) {
         return Accident.builder()
                 .id(request.getId())
-                .session(request.getSession())
+                .session(sessionService.read(request.getSessionId()))
                 .name(request.getName())
                 .fine(request.getFine())
                 .time(request.getTime())

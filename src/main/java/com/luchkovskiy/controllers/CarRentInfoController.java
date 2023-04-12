@@ -3,6 +3,7 @@ package com.luchkovskiy.controllers;
 import com.luchkovskiy.controllers.requests.CarRentInfoCreateRequest;
 import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.service.CarRentInfoService;
+import com.luchkovskiy.service.CarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 public class CarRentInfoController {
 
     private final CarRentInfoService carRentInfoService;
+    private final CarService carService;
 
     @GetMapping("/{id}")
     public ResponseEntity<CarRentInfo> read(@PathVariable("id") Long id) {
@@ -46,10 +48,10 @@ public class CarRentInfoController {
         carRentInfoService.delete(id);
     }
 
-    private static CarRentInfo getCarInfo(CarRentInfoCreateRequest request) {
+    private CarRentInfo getCarInfo(CarRentInfoCreateRequest request) {
         return CarRentInfo.builder()
                 .id(request.getId())
-                .car(request.getCar())
+                .car(carService.read(request.getCarId()))
                 .gasRemaining(request.getGasRemaining())
                 .repairing(request.getRepairing())
                 .currentLocation(request.getCurrentLocation())
