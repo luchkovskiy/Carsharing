@@ -10,3 +10,8 @@ spring:
     url: "jdbc:postgresql://localhost:5432/project_db?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
     driver-class-name: org.postgresql.Driver
 
+---
+
+jwtconfig:
+  secret: secret
+  expiration: 60000

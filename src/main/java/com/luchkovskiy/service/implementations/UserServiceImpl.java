@@ -1,5 +1,6 @@
 package com.luchkovskiy.service.implementations;
 
+import com.luchkovskiy.models.Role;
 import com.luchkovskiy.models.User;
 import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.UserService;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +50,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkIdExist(Long id) {
         return userRepository.checkIdValid(id);
+    }
+
+    @Override
+    public List<Role> getUserAuthorities(Long userId) {
+       return userRepository.getUserAuthorities(userId);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

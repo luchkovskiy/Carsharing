@@ -46,7 +46,7 @@ public class CarController {
         carService.delete(id);
     }
 
-    private static Car getCar(CarCreateRequest request) {
+    private Car getCar(CarCreateRequest request) {
         return Car.builder()
                 .id(request.getId())
                 .brand(request.getBrand())

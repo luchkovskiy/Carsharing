@@ -28,6 +28,8 @@ public class UserRowMapper implements RowMapper<User> {
                     .drivingExperience(resultSet.getFloat("driving_experience"))
                     .rating(resultSet.getFloat("rating"))
                     .accountBalance(resultSet.getFloat("account_balance"))
+                    .email(resultSet.getString("email"))
+                    .password(resultSet.getString("user_password"))
                     .build();
         } catch (SQLException e) {
             throw new RuntimeException(e);

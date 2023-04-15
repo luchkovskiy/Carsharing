@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class CarCreateRequest {
 
-
     private Long id;
     private String brand;
     private String model;

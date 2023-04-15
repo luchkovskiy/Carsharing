@@ -47,7 +47,7 @@ public class UserController {
         userService.delete(id);
     }
 
-    private static User getUser(UserCreateRequest request) {
+    private User getUser(UserCreateRequest request) {
         return User.builder()
                 .id(request.getId())
                 .name(request.getName())

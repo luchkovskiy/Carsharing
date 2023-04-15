@@ -1,7 +1,9 @@
 package com.luchkovskiy.repository.implementations;
 
+import com.luchkovskiy.models.Role;
 import com.luchkovskiy.models.User;
 import com.luchkovskiy.repository.UserRepository;
+import com.luchkovskiy.repository.implementations.rowmappers.RoleRowMapper;
 import com.luchkovskiy.repository.implementations.rowmappers.UserRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Primary
@@ -21,6 +24,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     private final NamedParameterJdbcTemplate template;
     private final UserRowMapper userRowMapper;
+    private final RoleRowMapper roleRowMapper;
 
     @Override
     public User read(Long id) {
@@ -65,6 +69,17 @@ public class UserRepositoryImpl implements UserRepository {
         return count > 1;
     }
 
+    @Override
+    public List<Role> getUserAuthorities(Long userId) {
+        return template.query("SELECT * FROM roles INNER JOIN users u ON u.id = roles.user_id WHERE user_id = " + userId + " ORDER BY roles.id DESC", roleRowMapper);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        User user = template.queryForObject("SELECT * FROM users where email = :email", new MapSqlParameterSource("email", email), userRowMapper);
+        return Optional.of(user);
+    }
+
     private SqlParameterSource getParameterSource(User user) {
         return new MapSqlParameterSource()
                 .addValue("id", user.getId())
@@ -78,7 +93,9 @@ public class UserRepositoryImpl implements UserRepository {
                 .addValue("driver_id", user.getDriverId())
                 .addValue("driving_experience", user.getDrivingExperience())
                 .addValue("rating", user.getRating())
-                .addValue("account_balance", user.getAccountBalance());
+                .addValue("account_balance", user.getAccountBalance())
+                .addValue("email", user.getEmail())
+                .addValue("user_password", user.getPassword());
 
     }
 

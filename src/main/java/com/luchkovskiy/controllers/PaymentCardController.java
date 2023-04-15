@@ -46,7 +46,7 @@ public class PaymentCardController {
         paymentCardService.delete(id);
     }
 
-    private static PaymentCard getPaymentCard(PaymentCardCreateRequest request) {
+    private PaymentCard getPaymentCard(PaymentCardCreateRequest request) {
         return PaymentCard.builder()
                 .id(request.getId())
                 .cardNumber(request.getCardNumber())

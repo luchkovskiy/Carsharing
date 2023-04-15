@@ -41,7 +41,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public void delete(Long id) {
         if (!carRepository.checkIdValid(id))
-            throw new RuntimeException();
+            throw new RuntimeException("This car is not exist!");
         carRepository.delete(id);
     }
 
