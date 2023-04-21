@@ -1,6 +1,6 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.Car;
+import com.luchkovskiy.models.*;
 import com.luchkovskiy.repository.CarRepository;
 import com.luchkovskiy.service.CarService;
 import lombok.RequiredArgsConstructor;
@@ -16,37 +16,30 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Car read(Long id) {
-        if (!carRepository.checkIdValid(id))
-            throw new RuntimeException();
-        return carRepository.read(id);
+        return carRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
     }
 
     @Override
     public List<Car> readAll() {
-        return carRepository.readAll();
+        return carRepository.findAll();
     }
 
     @Override
     public Car create(Car object) {
-        return carRepository.create(object);
+        return carRepository.save(object);
     }
 
     @Override
     public Car update(Car object) {
-        if (!carRepository.checkIdValid(object.getId()))
+        if (!carRepository.existsById(object.getId()))
             throw new RuntimeException();
-        return carRepository.update(object);
+        return carRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
-        if (!carRepository.checkIdValid(id))
-            throw new RuntimeException("This car is not exist!");
-        carRepository.delete(id);
-    }
-
-    @Override
-    public boolean checkIdExist(Long id) {
-        return carRepository.checkIdValid(id);
+        if (!carRepository.existsById(id))
+            throw new RuntimeException();
+        carRepository.deleteById(id);
     }
 }

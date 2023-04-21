@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public interface UserService extends CRUDService<Long, User> {
 
-    boolean checkIdExist(Long id);
-
     List<Role> getUserAuthorities(Long userId);
 
     Optional<User> findByEmail(String email);

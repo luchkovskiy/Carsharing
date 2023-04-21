@@ -1,27 +1,25 @@
 package com.luchkovskiy.configuration;
 
-import org.hibernate.SessionFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.annotation.*;
+import org.springframework.orm.jpa.*;
+import org.springframework.orm.jpa.vendor.*;
 
-import javax.sql.DataSource;
+import javax.sql.*;
 
 @Configuration
 public class HibernateConfig {
 
-    @Bean(name = "sessionFactory")
-    public SessionFactory getSessionFactory(DataSource dataSource) throws Exception {
+    @Autowired
+    @Bean(name = "entityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean em
+                = new LocalContainerEntityManagerFactoryBean();
+        em.setPackagesToScan("com.luchkovskiy");
+        em.setDataSource(dataSource);
 
-        LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
-
-        // Package contain entity classes
-        factoryBean.setPackagesToScan("com.luchkovskiy");
-        factoryBean.setDataSource(dataSource);
-        factoryBean.afterPropertiesSet();
-        //
-        SessionFactory sf = factoryBean.getObject();
-        System.out.println("## getSessionFactory: " + sf);
-        return sf;
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        em.setJpaVendorAdapter(vendorAdapter);
+        return em;
     }
 }

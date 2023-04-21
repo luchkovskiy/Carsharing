@@ -1,12 +1,12 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.CarRentInfo;
-import com.luchkovskiy.repository.CarRentInfoRepository;
-import com.luchkovskiy.service.CarRentInfoService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.luchkovskiy.models.*;
+import com.luchkovskiy.repository.*;
+import com.luchkovskiy.service.*;
+import lombok.*;
+import org.springframework.stereotype.*;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -16,26 +16,30 @@ public class CarRentInfoServiceImpl implements CarRentInfoService {
 
     @Override
     public CarRentInfo read(Long id) {
-        return carRentInfoRepository.read(id);
+        return carRentInfoRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
     }
 
     @Override
     public List<CarRentInfo> readAll() {
-        return carRentInfoRepository.readAll();
+        return carRentInfoRepository.findAll();
     }
 
     @Override
     public CarRentInfo create(CarRentInfo object) {
-        return carRentInfoRepository.create(object);
+        return carRentInfoRepository.save(object);
     }
 
     @Override
     public CarRentInfo update(CarRentInfo object) {
-        return carRentInfoRepository.update(object);
+        if (!carRentInfoRepository.existsById(object.getId()))
+            throw new RuntimeException();
+        return carRentInfoRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
-        carRentInfoRepository.delete(id);
+        if (!carRentInfoRepository.existsById(id))
+            throw new RuntimeException();
+        carRentInfoRepository.deleteById(id);
     }
 }

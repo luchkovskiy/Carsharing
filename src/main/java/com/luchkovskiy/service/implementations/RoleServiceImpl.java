@@ -1,45 +1,48 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.Role;
-import com.luchkovskiy.repository.RoleRepository;
-import com.luchkovskiy.repository.UserRepository;
-import com.luchkovskiy.service.RoleService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.luchkovskiy.models.*;
+import com.luchkovskiy.repository.*;
+import com.luchkovskiy.service.*;
+import lombok.*;
+import org.springframework.stereotype.*;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
 
-    private final RoleRepository repository;
+    private final RoleRepository roleRepository;
 
     private final UserRepository userRepository;
 
     @Override
     public Role read(Long id) {
-        return repository.read(id);
+        return roleRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
     }
 
     @Override
     public List<Role> readAll() {
-        return repository.readAll();
+        return roleRepository.findAll();
     }
 
     @Override
     public Role create(Role object) {
-        return repository.create(object);
+        return roleRepository.save(object);
     }
 
     @Override
     public Role update(Role object) {
-        return repository.update(object);
+        if (!roleRepository.existsById(object.getId()))
+            throw new RuntimeException();
+        return roleRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
-        repository.delete(id);
+        if (!roleRepository.existsById(id))
+            throw new RuntimeException();
+        roleRepository.deleteById(id);
     }
 
     @Override

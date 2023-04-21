@@ -16,38 +16,31 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public Session read(Long id) {
-        if (!sessionRepository.checkIdValid(id))
-            throw new RuntimeException();
-        return sessionRepository.read(id);
+        return sessionRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
     }
 
     @Override
     public List<Session> readAll() {
-        return sessionRepository.readAll();
+        return sessionRepository.findAll();
     }
 
     @Override
     public Session create(Session object) {
-        return sessionRepository.create(object);
+        return sessionRepository.save(object);
     }
 
     @Override
     public Session update(Session object) {
-        if (!sessionRepository.checkIdValid(object.getId()))
+        if (!sessionRepository.existsById(object.getId()))
             throw new RuntimeException();
-        return sessionRepository.update(object);
+        return sessionRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
-        if (!sessionRepository.checkIdValid(id))
+        if (!sessionRepository.existsById(id))
             throw new RuntimeException();
-        sessionRepository.delete(id);
-    }
-
-    @Override
-    public boolean checkIdExist(Long id) {
-        return sessionRepository.checkIdValid(id);
+        sessionRepository.deleteById(id);
     }
 
 }

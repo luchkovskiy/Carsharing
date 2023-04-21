@@ -1,12 +1,12 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.Subscription;
-import com.luchkovskiy.repository.SubscriptionRepository;
-import com.luchkovskiy.service.SubscriptionService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.luchkovskiy.models.*;
+import com.luchkovskiy.repository.*;
+import com.luchkovskiy.service.*;
+import lombok.*;
+import org.springframework.stereotype.*;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -16,38 +16,31 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public Subscription read(Long id) {
-        if (!subscriptionRepository.checkIdValid(id))
-            throw new RuntimeException();
-        return subscriptionRepository.read(id);
+        return subscriptionRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
     }
 
     @Override
     public List<Subscription> readAll() {
-        return subscriptionRepository.readAll();
+        return subscriptionRepository.findAll();
     }
 
     @Override
     public Subscription create(Subscription object) {
-        return subscriptionRepository.create(object);
+        return subscriptionRepository.save(object);
     }
 
     @Override
     public Subscription update(Subscription object) {
-        if (!subscriptionRepository.checkIdValid(object.getId()))
+        if (!subscriptionRepository.existsById(object.getId()))
             throw new RuntimeException();
-        return subscriptionRepository.update(object);
+        return subscriptionRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
-        if (!subscriptionRepository.checkIdValid(id))
+        if (!subscriptionRepository.existsById(id))
             throw new RuntimeException();
-        subscriptionRepository.delete(id);
-    }
-
-    @Override
-    public boolean checkIdExist(Long id) {
-        return subscriptionRepository.checkIdValid(id);
+        subscriptionRepository.deleteById(id);
     }
 
 }

@@ -1,12 +1,12 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.PaymentCard;
-import com.luchkovskiy.repository.PaymentCardRepository;
-import com.luchkovskiy.service.PaymentCardService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.luchkovskiy.models.*;
+import com.luchkovskiy.repository.*;
+import com.luchkovskiy.service.*;
+import lombok.*;
+import org.springframework.stereotype.*;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -16,26 +16,30 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     public PaymentCard read(Long id) {
-        return paymentCardRepository.read(id);
+        return paymentCardRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
     }
 
     @Override
     public List<PaymentCard> readAll() {
-        return paymentCardRepository.readAll();
+        return paymentCardRepository.findAll();
     }
 
     @Override
     public PaymentCard create(PaymentCard object) {
-        return paymentCardRepository.create(object);
+        return paymentCardRepository.save(object);
     }
 
     @Override
     public PaymentCard update(PaymentCard object) {
-        return paymentCardRepository.update(object);
+        if (!paymentCardRepository.existsById(object.getId()))
+            throw new RuntimeException();
+        return paymentCardRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
-        paymentCardRepository.delete(id);
+        if (!paymentCardRepository.existsById(id))
+            throw new RuntimeException();
+        paymentCardRepository.deleteById(id);
     }
 }

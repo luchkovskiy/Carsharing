@@ -1,9 +1,9 @@
 package com.luchkovskiy.repository;
 
-import com.luchkovskiy.models.PaymentCard;
+import com.luchkovskiy.models.*;
+import org.springframework.data.jpa.repository.*;
 
-public interface PaymentCardRepository extends CRUDRepository<Long, PaymentCard> {
+public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> {
 
-    boolean checkIdValid(Long id);
 
 }

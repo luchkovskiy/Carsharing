@@ -1,8 +1,9 @@
 package com.luchkovskiy.repository;
 
-import com.luchkovskiy.models.Car;
+import com.luchkovskiy.models.*;
+import org.springframework.data.jpa.repository.*;
 
-public interface CarRepository extends CRUDRepository<Long, Car> {
+public interface CarRepository extends JpaRepository<Car, Long> {
 
-    boolean checkIdValid(Long id);
+
 }

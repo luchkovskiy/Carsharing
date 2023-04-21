@@ -1,19 +1,16 @@
 package com.luchkovskiy.repository;
 
-import com.luchkovskiy.models.Role;
-import com.luchkovskiy.models.User;
+import com.luchkovskiy.models.*;
+import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends CRUDRepository<Long, User> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    boolean checkIdValid(Long id);
-
-    void hardDelete(Long id);
-
+    @Query (value = "SELECT r FROM Role r INNER JOIN r.user u WHERE u.id = :userId")
     List<Role> getUserAuthorities(Long userId);
 
-    Optional<User> findByEmail (String email);
+    Optional<User> findByAuthenticationInfoEmail (String email);
 
 }

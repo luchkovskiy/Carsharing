@@ -1,64 +1,55 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.Role;
-import com.luchkovskiy.models.User;
-import com.luchkovskiy.repository.UserRepository;
-import com.luchkovskiy.service.UserService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.luchkovskiy.models.*;
+import com.luchkovskiy.repository.*;
+import com.luchkovskiy.service.*;
+import lombok.*;
+import org.springframework.stereotype.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class    UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
     @Override
     public User read(Long id) {
-        if (!userRepository.checkIdValid(id))
-            throw new RuntimeException();
-        return userRepository.read(id);
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
     }
 
     @Override
     public List<User> readAll() {
-        return userRepository.readAll();
+        return userRepository.findAll();
     }
 
     @Override
     public User create(User object) {
-        return userRepository.create(object);
+        return userRepository.save(object);
     }
 
     @Override
     public User update(User object) {
-        if (!userRepository.checkIdValid(object.getId()))
+        if (!userRepository.existsById(object.getId()))
             throw new RuntimeException();
-        return userRepository.update(object);
+        return userRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
-        if (!userRepository.checkIdValid(id))
+        if (!userRepository.existsById(id))
             throw new RuntimeException();
-        userRepository.delete(id);
-    }
-
-    @Override
-    public boolean checkIdExist(Long id) {
-        return userRepository.checkIdValid(id);
+        userRepository.deleteById(id);
     }
 
     @Override
     public List<Role> getUserAuthorities(Long userId) {
-       return userRepository.getUserAuthorities(userId);
+        return userRepository.getUserAuthorities(userId);
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByAuthenticationInfoEmail(email);
     }
 }
