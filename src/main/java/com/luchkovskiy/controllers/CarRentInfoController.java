@@ -1,6 +1,7 @@
 package com.luchkovskiy.controllers;
 
-import com.luchkovskiy.controllers.requests.CarRentInfoCreateRequest;
+import com.luchkovskiy.controllers.requests.create.CarRentInfoCreateRequest;
+import com.luchkovskiy.controllers.requests.update.*;
 import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.service.CarRentInfoService;
 import com.luchkovskiy.service.CarService;
@@ -33,30 +34,32 @@ public class CarRentInfoController {
 
     @PostMapping
     public ResponseEntity<CarRentInfo> create(@RequestBody CarRentInfoCreateRequest request) {
-        CarRentInfo createdCarRentInfo = carRentInfoService.create(getCarInfo(request));
+        CarRentInfo carRentInfo = new CarRentInfo();
+        carRentInfo.setCar(carService.read(request.getCarId()));
+        carRentInfo.setGasRemaining(request.getGasRemaining());
+        carRentInfo.setRepairing(request.getRepairing());
+        carRentInfo.setCurrentLocation(request.getCurrentLocation());
+        carRentInfo.setCondition(request.getCondition());
+        CarRentInfo createdCarRentInfo = carRentInfoService.create(carRentInfo);
         return new ResponseEntity<>(createdCarRentInfo, HttpStatus.OK);
     }
 
-    @PatchMapping
-    public ResponseEntity<Object> update(@RequestBody CarRentInfo carRentInfo) {
-        CarRentInfo updatedCarRentInfo = carRentInfoService.update(carRentInfo);
+    @PutMapping
+    public ResponseEntity<Object> update(@RequestBody CarRentInfoUpdateRequest request) {
+        CarRentInfo readedCarRentInfo = carRentInfoService.read(request.getId());
+        readedCarRentInfo.setId(request.getId());
+        readedCarRentInfo.setCar(carService.read(request.getCarId()));
+        readedCarRentInfo.setGasRemaining(request.getGasRemaining());
+        readedCarRentInfo.setRepairing(request.getRepairing());
+        readedCarRentInfo.setCurrentLocation(request.getCurrentLocation());
+        readedCarRentInfo.setCondition(request.getCondition());
+        CarRentInfo updatedCarRentInfo = carRentInfoService.update(readedCarRentInfo);
         return new ResponseEntity<>(updatedCarRentInfo, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
         carRentInfoService.delete(id);
-    }
-
-    private CarRentInfo getCarInfo(CarRentInfoCreateRequest request) {
-        return CarRentInfo.builder()
-                .id(request.getId())
-                .car(carService.read(request.getCarId()))
-                .gasRemaining(request.getGasRemaining())
-                .repairing(request.getRepairing())
-                .currentLocation(request.getCurrentLocation())
-                .condition(request.getCondition())
-                .build();
     }
 
 }

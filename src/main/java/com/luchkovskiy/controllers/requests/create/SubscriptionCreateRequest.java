@@ -1,6 +1,5 @@
-package com.luchkovskiy.controllers.requests;
+package com.luchkovskiy.controllers.requests.create;
 
-import com.luchkovskiy.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,6 @@ import java.sql.Timestamp;
 @Data
 public class SubscriptionCreateRequest {
 
-    private Long id;
     private Long userId;
     private Timestamp startTime;
     private Timestamp endTime;

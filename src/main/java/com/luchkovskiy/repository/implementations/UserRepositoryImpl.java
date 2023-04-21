@@ -1,102 +1,94 @@
 package com.luchkovskiy.repository.implementations;
 
 import com.luchkovskiy.models.Role;
-import com.luchkovskiy.models.User;
-import com.luchkovskiy.repository.UserRepository;
-import com.luchkovskiy.repository.implementations.rowmappers.RoleRowMapper;
-import com.luchkovskiy.repository.implementations.rowmappers.UserRowMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.stereotype.Repository;
+import com.luchkovskiy.models.*;
+import com.luchkovskiy.repository.*;
+import lombok.*;
+import org.hibernate.Session;
+import org.hibernate.*;
+import org.hibernate.query.Query;
+import org.springframework.context.annotation.*;
+import org.springframework.stereotype.*;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @Primary
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
 
-    private final NamedParameterJdbcTemplate template;
-    private final UserRowMapper userRowMapper;
-    private final RoleRowMapper roleRowMapper;
+    private final SessionFactory sessionFactory;
+
+    @Override
+    public boolean checkIdValid(Long id) {
+        Session session = getCurrentSession();
+        Transaction transaction = session.getTransaction();
+        transaction.begin();
+        Object entity = session.get(User.class, id);
+        session.flush();
+        transaction.commit();
+        return entity != null;
+    }
 
     @Override
     public User read(Long id) {
-        return template.queryForObject("SELECT * FROM users WHERE id = :id", new MapSqlParameterSource("id", id), userRowMapper);
+        Session session = getCurrentSession();
+        Transaction transaction = session.getTransaction();
+        transaction.begin();
+        User user = session.get(User.class, id);
+        session.flush();
+        transaction.commit();
+        return user;
     }
 
     @Override
     public List<User> readAll() {
-        return template.query("SELECT * FROM users", userRowMapper);
+        String query = "SELECT u FROM User u";
+        return getCurrentSession().createQuery(query, User.class).getResultList();
     }
 
     @Override
-    public User create(User user) {
-        user.setId(template.queryForObject("INSERT INTO users (name, surname, birthday_date, changed, is_active, address, passport_id," +
-                        " driver_id, driving_experience, role_id, rating, account_balance) VALUES (:name, :surname, :birthday_date, :changed," +
-                        " :is_active, :address, :passport_id, :driver_id, :driving_experience, :role_id, :rating, :account_balance) RETURNING id",
-                getParameterSource(user), Long.class));
-        return user;
+    public User create(User object) {
+        getCurrentSession().save(object);
+        return object;
     }
 
     @Override
-    public User update(User user) {
-        template.update("UPDATE users SET name = :name, surname = :surname, birthday_date = :birthday_date, changed = :changed," +
-                " is_active = :is_active, address = :adress, passport_id = :passport_id, driver_id = :driver_id, driving_experience = :driving_experience," +
-                " role_id = :role_id, rating = :rating, account_balance = :account_balance WHERE id = :id", getParameterSource(user));
-        return user;
+    public User update(User object) {
+        getCurrentSession().update(object);
+        return object;
     }
 
     @Override
     public void delete(Long id) {
-        template.update("UPDATE users SET is_active = false WHERE id = :id", new MapSqlParameterSource("id", id));
+        String query = "UPDATE User set active = false";
+        getCurrentSession().createQuery(query, User.class);
     }
 
     @Override
     public void hardDelete(Long id) {
-        template.update("DELETE FROM users WHERE id = :id", new MapSqlParameterSource("id", id));
-    }
-
-    @Override
-    public boolean checkIdValid(Long id) {
-        Integer count = template.queryForObject("SELECT COUNT(*) FROM users WHERE id = :id", new MapSqlParameterSource("id", id), Integer.class);
-        return count > 1;
+        getCurrentSession().delete(read(id));
     }
 
     @Override
     public List<Role> getUserAuthorities(Long userId) {
-        return template.query("SELECT * FROM roles INNER JOIN users u ON u.id = roles.user_id WHERE user_id = " + userId + " ORDER BY roles.id DESC", roleRowMapper);
+        Session session = getCurrentSession();
+        String hql = "FROM Role r WHERE r.user.id = :userId ORDER BY r.id DESC";
+        Query<Role> query = session.createQuery(hql, Role.class);
+        query.setParameter("userId", userId);
+        return query.getResultList();
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        User user = template.queryForObject("SELECT * FROM users where email = :email", new MapSqlParameterSource("email", email), userRowMapper);
-        return Optional.of(user);
+        Session session = getCurrentSession();
+        String hql = "SELECT u FROM User u WHERE u.authenticationInfo.email = :email";
+        Query<User> query = session.createQuery(hql, User.class);
+        query.setParameter("email", email);
+        return query.getResultStream().findFirst();
     }
 
-    private SqlParameterSource getParameterSource(User user) {
-        return new MapSqlParameterSource()
-                .addValue("id", user.getId())
-                .addValue("name", user.getName())
-                .addValue("surname", user.getSurname())
-                .addValue("birthday_date", user.getBirthdayDate())
-                .addValue("changed", Timestamp.valueOf(LocalDateTime.now()))
-                .addValue("is_active", user.getActive())
-                .addValue("address", user.getAddress())
-                .addValue("passport_id", user.getPassportId())
-                .addValue("driver_id", user.getDriverId())
-                .addValue("driving_experience", user.getDrivingExperience())
-                .addValue("rating", user.getRating())
-                .addValue("account_balance", user.getAccountBalance())
-                .addValue("email", user.getEmail())
-                .addValue("user_password", user.getPassword());
-
+    private Session getCurrentSession() {
+        return sessionFactory.getCurrentSession();
     }
-
 }

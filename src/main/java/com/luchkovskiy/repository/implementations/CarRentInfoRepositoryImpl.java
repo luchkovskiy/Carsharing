@@ -1,61 +1,66 @@
 package com.luchkovskiy.repository.implementations;
 
-import com.luchkovskiy.models.CarRentInfo;
-import com.luchkovskiy.repository.CarRentInfoRepository;
-import com.luchkovskiy.repository.implementations.rowmappers.CarRentInfoRowMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.stereotype.Repository;
+import com.luchkovskiy.models.*;
+import com.luchkovskiy.repository.*;
+import lombok.*;
+import org.hibernate.Session;
+import org.hibernate.*;
+import org.springframework.stereotype.*;
 
-import java.util.List;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
 public class CarRentInfoRepositoryImpl implements CarRentInfoRepository {
 
-    private final NamedParameterJdbcTemplate template;
-    private final CarRentInfoRowMapper carRentInfoRowMapper;
+    private final SessionFactory sessionFactory;
+
+    @Override
+    public boolean checkIdValid(Long id) {
+        Session session = getCurrentSession();
+        Transaction transaction = session.getTransaction();
+        transaction.begin();
+        Object entity = session.get(CarRentInfo.class, id);
+        session.flush();
+        transaction.commit();
+        return entity != null;
+    }
 
     @Override
     public CarRentInfo read(Long id) {
-        return template.queryForObject("SELECT * FROM cars_rent_info WHERE id = :id", new MapSqlParameterSource("id", id), carRentInfoRowMapper);
+        Session session = getCurrentSession();
+        Transaction transaction = session.getTransaction();
+        transaction.begin();
+        CarRentInfo carRentInfo = session.get(CarRentInfo.class, id);
+        session.flush();
+        transaction.commit();
+        return carRentInfo;
     }
 
     @Override
     public List<CarRentInfo> readAll() {
-        return template.query("SELECT * FROM cars_rent_info", carRentInfoRowMapper);
+        String query = "SELECT u FROM CarRentInfo u";
+        return getCurrentSession().createQuery(query, CarRentInfo.class).getResultList();
     }
 
     @Override
-    public CarRentInfo create(CarRentInfo carRentInfo) {
-        carRentInfo.setId(template.queryForObject("INSERT INTO cars_rent_info (car_id, gas_remaining, is_repairing, current_location, is_available, condition)" +
-                        " VALUES (:car_id, :gas_remaining, :is_repairing, :current_location, :is_available, :condition) RETURNING id",
-                getParameterSource(carRentInfo), Long.class));
-        return carRentInfo;
+    public CarRentInfo create(CarRentInfo object) {
+        getCurrentSession().save(object);
+        return object;
     }
 
     @Override
-    public CarRentInfo update(CarRentInfo carRentInfo) {
-        template.update("UPDATE cars_rent_info SET car_id = :car_id, gas_remaining = :gas_remaining, is_repairing = :is_repairing, current_location = :current_location," +
-                " is_available = :is_available, condition = :condition WHERE id = :id", getParameterSource(carRentInfo));
-        return carRentInfo;
+    public CarRentInfo update(CarRentInfo object) {
+        getCurrentSession().update(object);
+        return object;
     }
 
     @Override
     public void delete(Long id) {
-        template.update("DELETE FROM cars_rent_info WHERE id = :id", new MapSqlParameterSource("id", id));
+        getCurrentSession().delete(read(id));
     }
 
-    private SqlParameterSource getParameterSource(CarRentInfo carRentInfo) {
-        return new MapSqlParameterSource()
-                .addValue("id", carRentInfo.getId())
-                .addValue("car_id", carRentInfo.getCar().getId())
-                .addValue("gas_remaining", carRentInfo.getGasRemaining())
-                .addValue("is_repairing", carRentInfo.getRepairing())
-                .addValue("current_location", carRentInfo.getCurrentLocation())
-                .addValue("condition", carRentInfo.getCondition());
-
+    private Session getCurrentSession() {
+        return sessionFactory.getCurrentSession();
     }
 }

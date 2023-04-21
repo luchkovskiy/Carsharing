@@ -27,8 +27,8 @@ public class UserDetailsProvider implements UserDetailsService {
             if (searchResult.isPresent()) {
                 User user = searchResult.get();
                 return new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
+                        user.getAuthenticationInfo().getEmail(),
+                        user.getAuthenticationInfo().getPassword(),
 //                        ["ROLE_USER", "ROLE_ADMIN"]
                         AuthorityUtils.commaSeparatedStringToAuthorityList(
                                 userService.getUserAuthorities(user.getId())

@@ -9,6 +9,5 @@ public interface SessionRepository extends CRUDRepository<Long, Session> {
 
     Boolean checkIdValid(Long id);
 
-    LocalDateTime getLongestDuration(User id);
 
 }

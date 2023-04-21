@@ -4,4 +4,6 @@ import com.luchkovskiy.models.CarRentInfo;
 
 public interface CarRentInfoRepository extends CRUDRepository<Long, CarRentInfo> {
 
+    boolean checkIdValid(Long id);
+
 }

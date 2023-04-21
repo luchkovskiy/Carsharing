@@ -1,8 +1,9 @@
 package com.luchkovskiy.controllers;
 
 
-import com.luchkovskiy.controllers.requests.UserCreateRequest;
-import com.luchkovskiy.models.User;
+import com.luchkovskiy.controllers.requests.create.UserCreateRequest;
+import com.luchkovskiy.controllers.requests.update.*;
+import com.luchkovskiy.models.*;
 import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,13 +33,37 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> create(@RequestBody UserCreateRequest request) {
-        User createdUser = userService.create(getUser(request));
+        User user = new User();
+        user.setName(request.getName());
+        user.setSurname(request.getSurname());
+        user.setBirthdayDate(request.getBirthdayDate());
+        user.setActive(request.getActive());
+        user.setAddress(request.getAddress());
+        user.setPassportId(request.getPassportId());
+        user.setDriverId(request.getDriverId());
+        user.setDrivingExperience(request.getDrivingExperience());
+        user.setRating(request.getRating());
+        user.setAccountBalance(request.getAccountBalance());
+        user.setAuthenticationInfo(new AuthenticationInfo(request.getEmail(), request.getPassword()));
+        User createdUser = userService.create(user);
         return new ResponseEntity<>(createdUser, HttpStatus.OK);
     }
 
-    @PatchMapping
-    public ResponseEntity<User> update(@RequestBody UserCreateRequest request) {
-        User updatedUser = userService.update(getUser(request));
+    @PutMapping
+    public ResponseEntity<User> update(@RequestBody UserUpdateRequest request) {
+        User readedUser = userService.read(request.getId());
+        readedUser.setId(request.getId());
+        readedUser.setName(request.getName());
+        readedUser.setSurname(request.getSurname());
+        readedUser.setBirthdayDate(request.getBirthdayDate());
+        readedUser.setActive(request.getActive());
+        readedUser.setAddress(request.getAddress());
+        readedUser.setPassportId(request.getPassportId());
+        readedUser.setDriverId(request.getDriverId());
+        readedUser.setDrivingExperience(request.getDrivingExperience());
+        readedUser.setRating(request.getRating());
+        readedUser.setAccountBalance(request.getAccountBalance());
+        User updatedUser = userService.update(readedUser);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
@@ -47,19 +72,4 @@ public class UserController {
         userService.delete(id);
     }
 
-    private User getUser(UserCreateRequest request) {
-        return User.builder()
-                .id(request.getId())
-                .name(request.getName())
-                .surname(request.getSurname())
-                .birthdayDate(request.getBirthdayDate())
-                .active(request.getActive())
-                .address(request.getAddress())
-                .passportId(request.getPassportId())
-                .driverId(request.getDriverId())
-                .drivingExperience(request.getDrivingExperience())
-                .rating(request.getRating())
-                .accountBalance(request.getAccountBalance())
-                .build();
-    }
 }

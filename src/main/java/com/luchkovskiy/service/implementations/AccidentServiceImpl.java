@@ -63,8 +63,4 @@ public class AccidentServiceImpl implements AccidentService {
         return accidentRepository.getAccidentsBySession(sessionId);
     }
 
-    @Override
-    public Integer countAccidents(Long sessionId) {
-        return accidentRepository.countAccidents(sessionId);
-    }
 }

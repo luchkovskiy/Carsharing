@@ -1,7 +1,8 @@
 package com.luchkovskiy.controllers;
 
 
-import com.luchkovskiy.controllers.requests.SubscriptionCreateRequest;
+import com.luchkovskiy.controllers.requests.create.SubscriptionCreateRequest;
+import com.luchkovskiy.controllers.requests.update.*;
 import com.luchkovskiy.models.Subscription;
 import com.luchkovskiy.service.SubscriptionService;
 import com.luchkovskiy.service.UserService;
@@ -34,13 +35,30 @@ public class SubscriptionController {
 
     @PostMapping
     public ResponseEntity<Subscription> create(@RequestBody SubscriptionCreateRequest request) {
-        Subscription createdSubscription = subscriptionService.create(getSubscription(request));
+        Subscription subscription = new Subscription();
+        subscription.setUser(userService.read(request.getUserId()));
+        subscription.setStartTime(request.getStartTime());
+        subscription.setEndTime(request.getEndTime());
+        subscription.setStatus(request.getStatus());
+        subscription.setTripsAmount(request.getTripsAmount());
+        subscription.setDaysTotal(request.getDaysTotal());
+        subscription.setLevelId(request.getLevelId());
+        Subscription createdSubscription = subscriptionService.create(subscription);
         return new ResponseEntity<>(createdSubscription, HttpStatus.OK);
     }
 
-    @PatchMapping
-    public ResponseEntity<Subscription> update(@RequestBody SubscriptionCreateRequest request) {
-        Subscription updatedSubscription = subscriptionService.update(getSubscription(request));
+    @PutMapping
+    public ResponseEntity<Subscription> update(@RequestBody SubscriptionUpdateRequest request) {
+        Subscription readedSubscription = subscriptionService.read(request.getId());
+        readedSubscription.setId(request.getId());
+        readedSubscription.setUser(userService.read(request.getUserId()));
+        readedSubscription.setStartTime(request.getStartTime());
+        readedSubscription.setEndTime(request.getEndTime());
+        readedSubscription.setStatus(request.getStatus());
+        readedSubscription.setTripsAmount(request.getTripsAmount());
+        readedSubscription.setDaysTotal(request.getDaysTotal());
+        readedSubscription.setLevelId(request.getLevelId());
+        Subscription updatedSubscription = subscriptionService.update(readedSubscription);
         return new ResponseEntity<>(updatedSubscription, HttpStatus.OK);
     }
 
@@ -49,16 +67,4 @@ public class SubscriptionController {
         subscriptionService.delete(id);
     }
 
-    private Subscription getSubscription(SubscriptionCreateRequest request) {
-        return Subscription.builder()
-                .id(request.getId())
-                .user(userService.read(request.getUserId()))
-                .startTime(request.getStartTime())
-                .endTime(request.getEndTime())
-                .status(request.getStatus())
-                .tripsAmount(request.getTripsAmount())
-                .daysTotal(request.getDaysTotal())
-                .levelId(request.getLevelId())
-                .build();
-    }
 }

@@ -1,14 +1,12 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.Session;
-import com.luchkovskiy.models.User;
-import com.luchkovskiy.repository.SessionRepository;
-import com.luchkovskiy.service.SessionService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.luchkovskiy.models.*;
+import com.luchkovskiy.repository.*;
+import com.luchkovskiy.service.*;
+import lombok.*;
+import org.springframework.stereotype.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -52,8 +50,4 @@ public class SessionServiceImpl implements SessionService {
         return sessionRepository.checkIdValid(id);
     }
 
-    @Override
-    public LocalDateTime getLongestDuration(User id) {
-        return sessionRepository.getLongestDuration(id);
-    }
 }

@@ -1,14 +1,19 @@
 package com.luchkovskiy.controllers;
 
-import com.luchkovskiy.controllers.requests.AccidentCreateRequest;
+import com.luchkovskiy.controllers.exceptions.*;
+import com.luchkovskiy.controllers.requests.create.AccidentCreateRequest;
+import com.luchkovskiy.controllers.requests.update.AccidentUpdateRequest;
 import com.luchkovskiy.models.Accident;
 import com.luchkovskiy.service.AccidentService;
 import com.luchkovskiy.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.*;
+import org.springframework.validation.*;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.*;
 import java.util.List;
 
 @RestController
@@ -31,15 +36,39 @@ public class AccidentController {
         return new ResponseEntity<>(accidents, HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<Accident> create(@RequestBody AccidentCreateRequest request) {
-        Accident createdAccident = accidentService.create(getAccident(request));
+    // TODO: 18.04.2023 Не забыть конвертер
+
+    @PostMapping
+    public ResponseEntity<Accident> create(@Valid @RequestBody AccidentCreateRequest request, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            throw new IllegalRequestException(bindingResult);
+        }
+
+        Accident accident = new Accident();
+        accident.setSession(sessionService.read(request.getSessionId()));
+        accident.setName(request.getName());
+        accident.setFine(request.getFine());
+        accident.setTime(request.getTime());
+        accident.setRatingSubtraction(request.getRatingSubtraction());
+        accident.setDamageLevel(request.getDamageLevel());
+        accident.setCritical(request.getCritical());
+        Accident createdAccident = accidentService.create(accident);
         return new ResponseEntity<>(createdAccident, HttpStatus.CREATED);
     }
 
-    @PatchMapping
-    public ResponseEntity<Accident> update(@RequestBody AccidentCreateRequest request) {
-        Accident updatedAccident = accidentService.update(getAccident(request));
+    @PutMapping
+    public ResponseEntity<Accident> update(@RequestBody AccidentUpdateRequest request) {
+        Accident readedAccident = accidentService.read(request.getId());
+        readedAccident.setId(request.getId());
+        readedAccident.setSession(sessionService.read(request.getSessionId()));
+        readedAccident.setName(request.getName());
+        readedAccident.setFine(request.getFine());
+        readedAccident.setTime(request.getTime());
+        readedAccident.setRatingSubtraction(request.getRatingSubtraction());
+        readedAccident.setDamageLevel(request.getDamageLevel());
+        readedAccident.setCritical(request.getCritical());
+        Accident updatedAccident = accidentService.update(readedAccident);
         return new ResponseEntity<>(updatedAccident, HttpStatus.OK);
     }
 
@@ -48,16 +77,4 @@ public class AccidentController {
         accidentService.delete(id);
     }
 
-    private Accident getAccident(AccidentCreateRequest request) {
-        return Accident.builder()
-                .id(request.getId())
-                .session(sessionService.read(request.getSessionId()))
-                .name(request.getName())
-                .fine(request.getFine())
-                .time(request.getTime())
-                .ratingSubtraction(request.getRatingSubtraction())
-                .damageLevel(request.getDamageLevel())
-                .critical(request.getCritical())
-                .build();
-    }
 }

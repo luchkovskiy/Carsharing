@@ -1,28 +1,56 @@
 package com.luchkovskiy.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import javax.persistence.*;
+import java.sql.Timestamp;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Builder
+@Setter
+@Getter
+@EqualsAndHashCode(exclude = {
+        "car",
+})
+@Entity
+@Table(name = "cars_rent_info")
 public class CarRentInfo {
 
+    @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "car_id")
+    @JsonBackReference
+    @ToStringExclude
     private Car car;
+
+    @Column(name = "gas_remaining")
     private Float gasRemaining;
+
+    @Column(name = "is_repairing")
     private Boolean repairing;
+
+    @Column(name = "current_location")
     private String currentLocation;
+
+    @Column (name = "is_available")
+    private Boolean available;
+
+    @Column
     private Float condition;
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
-    }
+    @Column
+    private Timestamp created;
+
+    @Column
+    private Timestamp changed;
+
 
 }

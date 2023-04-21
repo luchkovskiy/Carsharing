@@ -1,4 +1,4 @@
-package com.luchkovskiy.controllers.requests;
+package com.luchkovskiy.controllers.requests.create;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class CarRentInfoCreateRequest {
-    private Long id;
+
     private Long carId;
     private Float gasRemaining;
     private Boolean repairing;

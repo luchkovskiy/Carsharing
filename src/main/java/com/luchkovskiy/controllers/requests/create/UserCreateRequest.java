@@ -1,4 +1,4 @@
-package com.luchkovskiy.controllers.requests;
+package com.luchkovskiy.controllers.requests.create;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,6 @@ import java.sql.Date;
 @Data
 public class UserCreateRequest {
 
-    private Long id;
     private String name;
     private String surname;
     private Date birthdayDate;
@@ -22,5 +21,7 @@ public class UserCreateRequest {
     private Float drivingExperience;
     private Float rating;
     private Float accountBalance;
+    private String email;
+    private String password;
 
 }

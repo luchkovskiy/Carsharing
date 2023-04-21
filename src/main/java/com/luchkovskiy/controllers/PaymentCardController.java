@@ -1,6 +1,7 @@
 package com.luchkovskiy.controllers;
 
-import com.luchkovskiy.controllers.requests.PaymentCardCreateRequest;
+import com.luchkovskiy.controllers.requests.create.PaymentCardCreateRequest;
+import com.luchkovskiy.controllers.requests.update.*;
 import com.luchkovskiy.models.PaymentCard;
 import com.luchkovskiy.service.PaymentCardService;
 import lombok.RequiredArgsConstructor;
@@ -31,13 +32,24 @@ public class PaymentCardController {
 
     @PostMapping
     public ResponseEntity<PaymentCard> create(@RequestBody PaymentCardCreateRequest request) {
-        PaymentCard createdPaymentCard = paymentCardService.create(getPaymentCard(request));
+        PaymentCard paymentCard = new PaymentCard();
+        paymentCard.setCardNumber(request.getCardNumber());
+        paymentCard.setExpirationDate(request.getExpirationDate());
+        paymentCard.setCvv(request.getCvv());
+        paymentCard.setCardholder(request.getCardholder());
+        PaymentCard createdPaymentCard = paymentCardService.create(paymentCard);
         return new ResponseEntity<>(createdPaymentCard, HttpStatus.OK);
     }
 
-    @PatchMapping
-    public ResponseEntity<PaymentCard> update(@RequestBody PaymentCardCreateRequest request) {
-        PaymentCard updatedPaymentCard = paymentCardService.update(getPaymentCard(request));
+    @PutMapping
+    public ResponseEntity<PaymentCard> update(@RequestBody PaymentCardUpdateRequest request) {
+        PaymentCard readedPaymentCard = paymentCardService.read(request.getId());
+        readedPaymentCard.setId(request.getId());
+        readedPaymentCard.setCardNumber(request.getCardNumber());
+        readedPaymentCard.setExpirationDate(request.getExpirationDate());
+        readedPaymentCard.setCvv(request.getCvv());
+        readedPaymentCard.setCardholder(request.getCardholder());
+        PaymentCard updatedPaymentCard = paymentCardService.update(readedPaymentCard);
         return new ResponseEntity<>(updatedPaymentCard, HttpStatus.OK);
     }
 
@@ -46,13 +58,4 @@ public class PaymentCardController {
         paymentCardService.delete(id);
     }
 
-    private PaymentCard getPaymentCard(PaymentCardCreateRequest request) {
-        return PaymentCard.builder()
-                .id(request.getId())
-                .cardNumber(request.getCardNumber())
-                .expirationDate(request.getExpirationDate())
-                .cvv(request.getCvv())
-                .cardholder(request.getCardholder())
-                .build();
-    }
 }

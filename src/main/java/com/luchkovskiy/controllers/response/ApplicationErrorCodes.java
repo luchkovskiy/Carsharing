@@ -4,8 +4,12 @@ package com.luchkovskiy.controllers.response;
 public enum ApplicationErrorCodes {
 
     SQL_ERROR(10),
+
     NOT_FOUND_ERROR(40),
-    FATAL_ERROR(1);
+
+    FATAL_ERROR(1),
+
+    BAD_REQUEST_ERROR(12);
 
     public int getCodeId() {
         return codeId;

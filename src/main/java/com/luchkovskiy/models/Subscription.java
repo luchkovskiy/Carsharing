@@ -1,35 +1,59 @@
 package com.luchkovskiy.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Builder
+@Setter
+@Getter
+@EqualsAndHashCode(exclude = {
+        "user"
+})
+@Entity
+@Table(name = "subscriptions")
 public class Subscription {
 
+    @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
-    private User user;
-    private Timestamp startTime;
-    private Timestamp endTime;
-    private String status;
-    private Integer tripsAmount;
-    private Integer daysTotal;
-    private Timestamp created;
-    private Timestamp changed;
-    private Integer levelId;
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
-    }
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    @ToStringExclude
+    private User user;
+
+    @Column (name = "start_time")
+    private Timestamp startTime;
+
+    @Column (name = "end_time")
+    private Timestamp endTime;
+
+    @Column
+    private String status;
+
+    @Column (name = "amount_of_trips")
+    private Integer tripsAmount;
+
+    @Column (name = "days_total")
+    private Integer daysTotal;
+
+    @Column
+    private Timestamp created;
+
+    @Column
+    private Timestamp changed;
+
+    @Column (name = "level_id")
+    private Integer levelId;
 
 }

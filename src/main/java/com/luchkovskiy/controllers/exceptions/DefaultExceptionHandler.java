@@ -3,17 +3,41 @@ package com.luchkovskiy.controllers.exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.*;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.stream.*;
 
 import static com.luchkovskiy.controllers.response.ApplicationErrorCodes.*;
 
 @ControllerAdvice
 @Slf4j
 public class DefaultExceptionHandler {
+
+    @ExceptionHandler(IllegalRequestException.class)
+    public ResponseEntity<ErrorMessage> handleIllegalRequestException(IllegalRequestException e) {
+        String exceptionUniqueId = UUID.randomUUID().toString();
+
+        BindingResult bindingResult = e.getBindingResult();
+        String collect = bindingResult
+                .getAllErrors()
+                .stream()
+                .map(ObjectError::toString)
+                .collect(Collectors.joining(","));
+
+        log.error(exceptionUniqueId + e.getMessage(), e);
+
+        return new ResponseEntity<>(
+                new ErrorMessage(
+                        exceptionUniqueId,
+                        BAD_REQUEST_ERROR.getCodeId(),
+                        collect
+                ),
+                HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorMessage> handleOthersException(Exception e) {

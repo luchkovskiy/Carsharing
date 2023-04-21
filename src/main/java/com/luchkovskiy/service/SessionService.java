@@ -9,5 +9,4 @@ public interface SessionService extends CRUDService<Long, Session> {
 
     boolean checkIdExist(Long id);
 
-    LocalDateTime getLongestDuration(User id);
 }

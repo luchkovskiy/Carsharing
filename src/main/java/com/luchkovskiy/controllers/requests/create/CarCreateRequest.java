@@ -1,4 +1,4 @@
-package com.luchkovskiy.controllers.requests;
+package com.luchkovskiy.controllers.requests.create;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class CarCreateRequest {
 
-    private Long id;
     private String brand;
     private String model;
     private Float maxSpeed;

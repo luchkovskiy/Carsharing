@@ -1,4 +1,4 @@
-package com.luchkovskiy.controllers.requests;
+package com.luchkovskiy.controllers.requests.create;
 
 import com.luchkovskiy.models.Car;
 import com.luchkovskiy.models.User;
@@ -13,7 +13,6 @@ import java.sql.Timestamp;
 @Data
 public class SessionCreateRequest {
 
-    private Long id;
     private Long userId;
     private Long carId;
     private Timestamp startTime;

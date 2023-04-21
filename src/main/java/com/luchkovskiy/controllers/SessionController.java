@@ -1,6 +1,7 @@
 package com.luchkovskiy.controllers;
 
-import com.luchkovskiy.controllers.requests.SessionCreateRequest;
+import com.luchkovskiy.controllers.requests.create.SessionCreateRequest;
+import com.luchkovskiy.controllers.requests.update.*;
 import com.luchkovskiy.models.Session;
 import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.SessionService;
@@ -36,13 +37,26 @@ public class SessionController {
 
     @PostMapping
     public ResponseEntity<Session> create(@RequestBody SessionCreateRequest request) {
-        Session createdSession = sessionService.create(getSession(request));
+        Session session = new Session();
+        session.setUser(userService.read(request.getUserId()));
+        session.setCar(carService.read(request.getCarId()));
+        session.setStartTime(request.getStartTime());
+        session.setEndTime(request.getEndTime());
+        session.setDistancePassed(request.getDistancePassed());
+        Session createdSession = sessionService.create(session);
         return new ResponseEntity<>(createdSession, HttpStatus.OK);
     }
 
-    @PatchMapping
-    public ResponseEntity<Session> update(@RequestBody SessionCreateRequest request) {
-        Session updatedSession = sessionService.update(getSession(request));
+    @PutMapping
+    public ResponseEntity<Session> update(@RequestBody SessionUpdateRequest request) {
+        Session readedSession = sessionService.read(request.getId());
+        readedSession.setId(request.getId());
+        readedSession.setUser(userService.read(request.getUserId()));
+        readedSession.setCar(carService.read(request.getCarId()));
+        readedSession.setStartTime(request.getStartTime());
+        readedSession.setEndTime(request.getEndTime());
+        readedSession.setDistancePassed(request.getDistancePassed());
+        Session updatedSession = sessionService.update(readedSession);
         return new ResponseEntity<>(updatedSession, HttpStatus.OK);
     }
 
@@ -51,14 +65,4 @@ public class SessionController {
         sessionService.delete(id);
     }
 
-    private Session getSession(SessionCreateRequest request) {
-        return Session.builder()
-                .id(request.getId())
-                .user(userService.read(request.getUserId()))
-                .car(carService.read(request.getCarId()))
-                .startTime(request.getStartTime())
-                .endTime(request.getEndTime())
-                .distancePassed(request.getDistancePassed())
-                .build();
-    }
 }
