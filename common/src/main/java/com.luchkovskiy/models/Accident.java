@@ -1,13 +1,12 @@
 package com.luchkovskiy.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.*;
+import lombok.Builder;
 import lombok.*;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringExclude;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.*;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.sql.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,7 +21,7 @@ import java.sql.Timestamp;
 public class Accident {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -40,7 +39,7 @@ public class Accident {
     @Column
     private Timestamp time;
 
-    @Column(name= "rating_subtraction")
+    @Column(name = "rating_subtraction")
     private Float ratingSubtraction;
 
     @Column(name = "damage_level")

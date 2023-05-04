@@ -1,15 +1,13 @@
 package com.luchkovskiy.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
+import lombok.Builder;
 import lombok.*;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringExclude;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.*;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.Set;
+import java.sql.*;
+import java.util.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,7 +22,7 @@ import java.util.Set;
 public class Car {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column

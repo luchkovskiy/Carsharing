@@ -22,4 +22,5 @@ public class HibernateConfig {
         em.setJpaVendorAdapter(vendorAdapter);
         return em;
     }
+
 }
