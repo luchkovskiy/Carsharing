@@ -1,6 +1,6 @@
 package com.luchkovskiy.repository;
 
-import com.luchkovskiy.domain.Car;
+import com.luchkovskiy.models.Car;
 
 public interface CarRepository extends CRUDRepository<Long, Car> {
 

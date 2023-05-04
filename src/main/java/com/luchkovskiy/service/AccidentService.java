@@ -1,6 +1,6 @@
 package com.luchkovskiy.service;
 
-import com.luchkovskiy.domain.Accident;
+import com.luchkovskiy.models.Accident;
 
 import java.util.List;
 
@@ -9,4 +9,6 @@ public interface AccidentService extends CRUDService<Long, Accident> {
     boolean checkIdExist(Long id);
 
     List<Accident> getAccidentsBySession(Long sessionId);
+
+    Integer countAccidents(Long sessionId);
 }

@@ -1,6 +1,6 @@
 package com.luchkovskiy.repository;
 
-import com.luchkovskiy.domain.User;
+import com.luchkovskiy.models.User;
 
 public interface UserRepository extends CRUDRepository<Long, User> {
 
