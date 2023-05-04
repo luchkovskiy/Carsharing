@@ -13,15 +13,15 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class LoggingAspect {
 
-    @Pointcut("execution(public * com.luchkovskiy.repository.implementations.*.*(..)))")
+    @Pointcut("execution(* com.luchkovskiy.service.*.*(..)))")
     public void loggingPointCut() {
     }
 
     @Around("loggingPointCut()")
     public Object logExecuteTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        log.info("Method " + joinPoint.getSignature() + " start");
+        log.info("Method " + joinPoint.getSignature().getName() + " start");
         Object proceed = joinPoint.proceed();
-        log.info("Method " + joinPoint.getSignature() + " finished");
+        log.info("Method " + joinPoint.getSignature().getName() + " finished");
         return proceed;
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class PerformanceBenchmarkAspect {
-    @Pointcut("execution(public * com.luchkovskiy.repository.implementations.*.*(..)))")
+    @Pointcut("execution(public * com.luchkovskiy.service.*.*(..)))")
     public void benchmarkPointCut() {
     }
 
