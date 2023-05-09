@@ -1,11 +1,13 @@
 package com.luchkovskiy.configuration;
 
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.context.annotation.*;
-import org.springframework.orm.jpa.*;
-import org.springframework.orm.jpa.vendor.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
-import javax.sql.*;
+import javax.sql.DataSource;
 
 @Configuration
 public class HibernateConfig {

@@ -2,13 +2,29 @@ package com.luchkovskiy.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringExclude;
 
-
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.sql.Date;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
 
@@ -26,7 +42,7 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
@@ -35,28 +51,28 @@ public class User {
     @Column
     private String surname;
 
-    @Column (name = "birthday_date")
+    @Column(name = "birthday_date")
     private Date birthdayDate;
 
     @Column
-    private Timestamp created;
+    private LocalDateTime created;
 
     @Column
-    private Timestamp changed;
+    private LocalDateTime changed;
 
-    @Column (name = "is_active")
+    @Column(name = "is_active")
     private Boolean active;
 
     @Column
     private String address;
 
-    @Column (name = "passport_id")
+    @Column(name = "passport_id")
     private String passportId;
 
-    @Column (name = "driver_id")
+    @Column(name = "driver_id")
     private String driverId;
 
-    @Column (name = "driving_experience")
+    @Column(name = "driving_experience")
     private Float drivingExperience;
 
     @Column

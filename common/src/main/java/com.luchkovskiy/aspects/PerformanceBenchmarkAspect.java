@@ -21,7 +21,7 @@ public class PerformanceBenchmarkAspect {
         long startTime = System.nanoTime();
         Object result = joinPoint.proceed();
         long endTime = System.nanoTime();
-        long duration = (endTime - startTime)/1000;
+        long duration = (endTime - startTime) / 1000;
         log.info("Method [" + joinPoint.getSignature().getName() + "] executed in {" + duration + "} microseconds");
         return result;
     }

@@ -1,13 +1,30 @@
 package com.luchkovskiy.models;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.*;
-import org.apache.commons.lang3.builder.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
-import javax.persistence.*;
-import java.sql.*;
-import java.util.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +32,7 @@ import java.util.*;
 @Setter
 @Getter
 @EqualsAndHashCode(exclude = {
-        "sessions", "carRentInfo"
+        "sessions", "carRentInfo", "carClass"
 })
 @Entity
 @Table(name = "cars")
@@ -32,10 +49,10 @@ public class Car {
     private String model;
 
     @Column
-    private Timestamp created;
+    private LocalDateTime created;
 
     @Column
-    private Timestamp changed;
+    private LocalDateTime changed;
 
     @Column(name = "is_visible")
     private Boolean visible;
@@ -55,8 +72,11 @@ public class Car {
     @Column(name = "amount_of_sits")
     private Integer sitsAmount;
 
-    @Column(name = "class_id")
-    private Integer classId;
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    @JsonBackReference
+    @ToStringExclude
+    private CarClass carClass;
 
     @Column(name = "gas_consumption")
     private Float gasConsumption;

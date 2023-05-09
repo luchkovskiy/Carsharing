@@ -1,13 +1,13 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.*;
-import com.luchkovskiy.repository.*;
-import com.luchkovskiy.service.*;
-import lombok.*;
-import org.springframework.context.annotation.*;
-import org.springframework.stereotype.*;
+import com.luchkovskiy.models.Accident;
+import com.luchkovskiy.repository.AccidentRepository;
+import com.luchkovskiy.service.AccidentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 @Primary

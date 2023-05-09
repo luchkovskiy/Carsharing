@@ -1,12 +1,12 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.*;
-import com.luchkovskiy.repository.*;
-import com.luchkovskiy.service.*;
-import lombok.*;
-import org.springframework.stereotype.*;
+import com.luchkovskiy.models.CarRentInfo;
+import com.luchkovskiy.repository.CarRentInfoRepository;
+import com.luchkovskiy.service.CarRentInfoService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

@@ -16,7 +16,7 @@ public class CarCreateRequest {
     private Integer releaseYear;
     private String gearboxType;
     private Integer sitsAmount;
-    private Integer classId;
+    private Long classId;
     private Float gasConsumption;
     private String licensePlateNumber;
 

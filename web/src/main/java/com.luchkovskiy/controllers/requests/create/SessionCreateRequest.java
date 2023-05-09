@@ -1,12 +1,10 @@
 package com.luchkovskiy.controllers.requests.create;
 
-import com.luchkovskiy.models.Car;
-import com.luchkovskiy.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,8 +13,11 @@ public class SessionCreateRequest {
 
     private Long userId;
     private Long carId;
-    private Timestamp startTime;
-    private Timestamp endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+
+    private String status;
+
     private Float distancePassed;
 
 }

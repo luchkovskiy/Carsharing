@@ -1,16 +1,26 @@
 package com.luchkovskiy.controllers;
 
 
+import com.luchkovskiy.controllers.exceptions.IllegalRequestException;
 import com.luchkovskiy.controllers.requests.create.SubscriptionCreateRequest;
-import com.luchkovskiy.controllers.requests.update.*;
+import com.luchkovskiy.controllers.requests.update.SubscriptionUpdateRequest;
 import com.luchkovskiy.models.Subscription;
 import com.luchkovskiy.service.SubscriptionService;
-import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,7 +29,8 @@ import java.util.List;
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
-    private final UserService userService;
+
+    private final ConversionService conversionService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Subscription> read(@PathVariable("id") Long id) {
@@ -34,31 +45,19 @@ public class SubscriptionController {
     }
 
     @PostMapping
-    public ResponseEntity<Subscription> create(@RequestBody SubscriptionCreateRequest request) {
-        Subscription subscription = new Subscription();
-        subscription.setUser(userService.read(request.getUserId()));
-        subscription.setStartTime(request.getStartTime());
-        subscription.setEndTime(request.getEndTime());
-        subscription.setStatus(request.getStatus());
-        subscription.setTripsAmount(request.getTripsAmount());
-        subscription.setDaysTotal(request.getDaysTotal());
-        subscription.setLevelId(request.getLevelId());
+    public ResponseEntity<Subscription> create(@Valid @RequestBody SubscriptionCreateRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new IllegalRequestException(bindingResult);
+        }
+        Subscription subscription = conversionService.convert(request, Subscription.class);
         Subscription createdSubscription = subscriptionService.create(subscription);
-        return new ResponseEntity<>(createdSubscription, HttpStatus.OK);
+        return new ResponseEntity<>(createdSubscription, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<Subscription> update(@RequestBody SubscriptionUpdateRequest request) {
-        Subscription readedSubscription = subscriptionService.read(request.getId());
-        readedSubscription.setId(request.getId());
-        readedSubscription.setUser(userService.read(request.getUserId()));
-        readedSubscription.setStartTime(request.getStartTime());
-        readedSubscription.setEndTime(request.getEndTime());
-        readedSubscription.setStatus(request.getStatus());
-        readedSubscription.setTripsAmount(request.getTripsAmount());
-        readedSubscription.setDaysTotal(request.getDaysTotal());
-        readedSubscription.setLevelId(request.getLevelId());
-        Subscription updatedSubscription = subscriptionService.update(readedSubscription);
+        Subscription subscription = conversionService.convert(request, Subscription.class);
+        Subscription updatedSubscription = subscriptionService.update(subscription);
         return new ResponseEntity<>(updatedSubscription, HttpStatus.OK);
     }
 

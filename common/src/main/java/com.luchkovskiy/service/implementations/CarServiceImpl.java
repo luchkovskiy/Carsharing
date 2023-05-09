@@ -1,6 +1,6 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.*;
+import com.luchkovskiy.models.Car;
 import com.luchkovskiy.repository.CarRepository;
 import com.luchkovskiy.service.CarService;
 import lombok.RequiredArgsConstructor;

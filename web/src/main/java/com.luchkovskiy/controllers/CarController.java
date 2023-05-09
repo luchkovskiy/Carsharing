@@ -1,14 +1,25 @@
 package com.luchkovskiy.controllers;
 
+import com.luchkovskiy.controllers.exceptions.IllegalRequestException;
 import com.luchkovskiy.controllers.requests.create.CarCreateRequest;
-import com.luchkovskiy.controllers.requests.update.*;
+import com.luchkovskiy.controllers.requests.update.CarUpdateRequest;
 import com.luchkovskiy.models.Car;
 import com.luchkovskiy.service.CarService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -17,6 +28,8 @@ import java.util.List;
 public class CarController {
 
     private final CarService carService;
+
+    private final ConversionService conversionService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Car> read(@PathVariable("id") Long id) {
@@ -31,37 +44,19 @@ public class CarController {
     }
 
     @PostMapping
-    public ResponseEntity<Car> create(@RequestBody CarCreateRequest request) {
-        Car car = new Car();
-        car.setBrand(request.getBrand());
-        car.setModel(request.getModel());
-        car.setMaxSpeed(request.getMaxSpeed());
-        car.setColor(request.getColor());
-        car.setReleaseYear(request.getReleaseYear());
-        car.setGearboxType(request.getGearboxType());
-        car.setSitsAmount(request.getSitsAmount());
-        car.setClassId(request.getClassId());
-        car.setGasConsumption(request.getGasConsumption());
-        car.setLicensePlateNumber(request.getLicensePlateNumber());
+    public ResponseEntity<Car> create(@Valid @RequestBody CarCreateRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new IllegalRequestException(bindingResult);
+        }
+        Car car = conversionService.convert(request, Car.class);
         Car createdCar = carService.create(car);
-        return new ResponseEntity<>(createdCar, HttpStatus.OK);
+        return new ResponseEntity<>(createdCar, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<Car> update(@RequestBody CarUpdateRequest request) {
-        Car readedCar = carService.read(request.getId());
-        readedCar.setId(request.getId());
-        readedCar.setBrand(request.getBrand());
-        readedCar.setModel(request.getModel());
-        readedCar.setMaxSpeed(request.getMaxSpeed());
-        readedCar.setColor(request.getColor());
-        readedCar.setReleaseYear(request.getReleaseYear());
-        readedCar.setGearboxType(request.getGearboxType());
-        readedCar.setSitsAmount(request.getSitsAmount());
-        readedCar.setClassId(request.getClassId());
-        readedCar.setGasConsumption(request.getGasConsumption());
-        readedCar.setLicensePlateNumber(request.getLicensePlateNumber());
-        Car updatedCar = carService.update(readedCar);
+        Car car = conversionService.convert(request, Car.class);
+        Car updatedCar = carService.update(car);
         return new ResponseEntity<>(updatedCar, HttpStatus.OK);
     }
 

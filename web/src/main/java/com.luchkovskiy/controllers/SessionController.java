@@ -1,16 +1,25 @@
 package com.luchkovskiy.controllers;
 
+import com.luchkovskiy.controllers.exceptions.IllegalRequestException;
 import com.luchkovskiy.controllers.requests.create.SessionCreateRequest;
-import com.luchkovskiy.controllers.requests.update.*;
+import com.luchkovskiy.controllers.requests.update.SessionUpdateRequest;
 import com.luchkovskiy.models.Session;
-import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.SessionService;
-import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -20,8 +29,7 @@ import java.util.List;
 public class SessionController {
 
     private final SessionService sessionService;
-    private final UserService userService;
-    private final CarService carService;
+    private final ConversionService conversionService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Session> read(@PathVariable("id") Long id) {
@@ -36,27 +44,19 @@ public class SessionController {
     }
 
     @PostMapping
-    public ResponseEntity<Session> create(@RequestBody SessionCreateRequest request) {
-        Session session = new Session();
-        session.setUser(userService.read(request.getUserId()));
-        session.setCar(carService.read(request.getCarId()));
-        session.setStartTime(request.getStartTime());
-        session.setEndTime(request.getEndTime());
-        session.setDistancePassed(request.getDistancePassed());
+    public ResponseEntity<Session> create(@Valid @RequestBody SessionCreateRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new IllegalRequestException(bindingResult);
+        }
+        Session session = conversionService.convert(request, Session.class);
         Session createdSession = sessionService.create(session);
-        return new ResponseEntity<>(createdSession, HttpStatus.OK);
+        return new ResponseEntity<>(createdSession, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<Session> update(@RequestBody SessionUpdateRequest request) {
-        Session readedSession = sessionService.read(request.getId());
-        readedSession.setId(request.getId());
-        readedSession.setUser(userService.read(request.getUserId()));
-        readedSession.setCar(carService.read(request.getCarId()));
-        readedSession.setStartTime(request.getStartTime());
-        readedSession.setEndTime(request.getEndTime());
-        readedSession.setDistancePassed(request.getDistancePassed());
-        Session updatedSession = sessionService.update(readedSession);
+        Session session = conversionService.convert(request, Session.class);
+        Session updatedSession = sessionService.update(session);
         return new ResponseEntity<>(updatedSession, HttpStatus.OK);
     }
 

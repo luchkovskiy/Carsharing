@@ -1,7 +1,8 @@
 package com.luchkovskiy.controllers.exceptions;
 
-import lombok.*;
-import org.springframework.validation.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.validation.BindingResult;
 
 @Getter
 @Setter

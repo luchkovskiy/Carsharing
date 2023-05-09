@@ -1,14 +1,25 @@
 package com.luchkovskiy.controllers;
 
+import com.luchkovskiy.controllers.exceptions.IllegalRequestException;
 import com.luchkovskiy.controllers.requests.create.PaymentCardCreateRequest;
-import com.luchkovskiy.controllers.requests.update.*;
+import com.luchkovskiy.controllers.requests.update.PaymentCardUpdateRequest;
 import com.luchkovskiy.models.PaymentCard;
 import com.luchkovskiy.service.PaymentCardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -17,6 +28,8 @@ import java.util.List;
 public class PaymentCardController {
 
     private final PaymentCardService paymentCardService;
+
+    private final ConversionService conversionService;
 
     @GetMapping("/{id}")
     public ResponseEntity<PaymentCard> read(@PathVariable("id") Long id) {
@@ -31,25 +44,19 @@ public class PaymentCardController {
     }
 
     @PostMapping
-    public ResponseEntity<PaymentCard> create(@RequestBody PaymentCardCreateRequest request) {
-        PaymentCard paymentCard = new PaymentCard();
-        paymentCard.setCardNumber(request.getCardNumber());
-        paymentCard.setExpirationDate(request.getExpirationDate());
-        paymentCard.setCvv(request.getCvv());
-        paymentCard.setCardholder(request.getCardholder());
+    public ResponseEntity<PaymentCard> create(@Valid @RequestBody PaymentCardCreateRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new IllegalRequestException(bindingResult);
+        }
+        PaymentCard paymentCard = conversionService.convert(request, PaymentCard.class);
         PaymentCard createdPaymentCard = paymentCardService.create(paymentCard);
-        return new ResponseEntity<>(createdPaymentCard, HttpStatus.OK);
+        return new ResponseEntity<>(createdPaymentCard, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<PaymentCard> update(@RequestBody PaymentCardUpdateRequest request) {
-        PaymentCard readedPaymentCard = paymentCardService.read(request.getId());
-        readedPaymentCard.setId(request.getId());
-        readedPaymentCard.setCardNumber(request.getCardNumber());
-        readedPaymentCard.setExpirationDate(request.getExpirationDate());
-        readedPaymentCard.setCvv(request.getCvv());
-        readedPaymentCard.setCardholder(request.getCardholder());
-        PaymentCard updatedPaymentCard = paymentCardService.update(readedPaymentCard);
+        PaymentCard paymentCard = conversionService.convert(request, PaymentCard.class);
+        PaymentCard updatedPaymentCard = paymentCardService.update(paymentCard);
         return new ResponseEntity<>(updatedPaymentCard, HttpStatus.OK);
     }
 

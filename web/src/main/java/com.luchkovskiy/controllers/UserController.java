@@ -1,15 +1,26 @@
 package com.luchkovskiy.controllers;
 
 
+import com.luchkovskiy.controllers.exceptions.IllegalRequestException;
 import com.luchkovskiy.controllers.requests.create.UserCreateRequest;
-import com.luchkovskiy.controllers.requests.update.*;
-import com.luchkovskiy.models.*;
+import com.luchkovskiy.controllers.requests.update.UserUpdateRequest;
+import com.luchkovskiy.models.User;
 import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -18,6 +29,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    private final ConversionService conversionService;
 
     @GetMapping("/{id}")
     public ResponseEntity<User> read(@PathVariable("id") Long id) {
@@ -32,38 +45,19 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody UserCreateRequest request) {
-        User user = new User();
-        user.setName(request.getName());
-        user.setSurname(request.getSurname());
-        user.setBirthdayDate(request.getBirthdayDate());
-        user.setActive(request.getActive());
-        user.setAddress(request.getAddress());
-        user.setPassportId(request.getPassportId());
-        user.setDriverId(request.getDriverId());
-        user.setDrivingExperience(request.getDrivingExperience());
-        user.setRating(request.getRating());
-        user.setAccountBalance(request.getAccountBalance());
-        user.setAuthenticationInfo(new AuthenticationInfo(request.getEmail(), request.getPassword()));
+    public ResponseEntity<User> create(@Valid @RequestBody UserCreateRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new IllegalRequestException(bindingResult);
+        }
+        User user = conversionService.convert(request, User.class);
         User createdUser = userService.create(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.OK);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<User> update(@RequestBody UserUpdateRequest request) {
-        User readedUser = userService.read(request.getId());
-        readedUser.setId(request.getId());
-        readedUser.setName(request.getName());
-        readedUser.setSurname(request.getSurname());
-        readedUser.setBirthdayDate(request.getBirthdayDate());
-        readedUser.setActive(request.getActive());
-        readedUser.setAddress(request.getAddress());
-        readedUser.setPassportId(request.getPassportId());
-        readedUser.setDriverId(request.getDriverId());
-        readedUser.setDrivingExperience(request.getDrivingExperience());
-        readedUser.setRating(request.getRating());
-        readedUser.setAccountBalance(request.getAccountBalance());
-        User updatedUser = userService.update(readedUser);
+        User user = conversionService.convert(request, User.class);
+        User updatedUser = userService.update(user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 

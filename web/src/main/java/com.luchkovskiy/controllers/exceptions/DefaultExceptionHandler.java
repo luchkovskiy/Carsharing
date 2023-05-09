@@ -3,15 +3,19 @@ package com.luchkovskiy.controllers.exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.sql.SQLException;
 import java.util.UUID;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
-import static com.luchkovskiy.controllers.response.ApplicationErrorCodes.*;
+import static com.luchkovskiy.controllers.response.ApplicationErrorCodes.BAD_REQUEST_ERROR;
+import static com.luchkovskiy.controllers.response.ApplicationErrorCodes.FATAL_ERROR;
+import static com.luchkovskiy.controllers.response.ApplicationErrorCodes.NOT_FOUND_ERROR;
+import static com.luchkovskiy.controllers.response.ApplicationErrorCodes.SQL_ERROR;
 
 @ControllerAdvice
 @Slf4j

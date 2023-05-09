@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,12 +12,12 @@ import java.sql.Timestamp;
 public class SubscriptionCreateRequest {
 
     private Long userId;
-    private Timestamp startTime;
-    private Timestamp endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private String status;
     private Integer tripsAmount;
     private Integer daysTotal;
-    private Integer levelId;
+    private Long levelId;
 
 }
 

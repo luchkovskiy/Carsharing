@@ -1,12 +1,12 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.*;
-import com.luchkovskiy.repository.*;
-import com.luchkovskiy.service.*;
-import lombok.*;
-import org.springframework.stereotype.*;
+import com.luchkovskiy.models.Subscription;
+import com.luchkovskiy.repository.SubscriptionRepository;
+import com.luchkovskiy.service.SubscriptionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

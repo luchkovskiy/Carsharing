@@ -1,12 +1,26 @@
 package com.luchkovskiy.models;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.*;
-import org.apache.commons.lang3.builder.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ToStringExclude;
+import org.springframework.cache.annotation.Cacheable;
 
-import javax.persistence.*;
-import java.sql.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +32,7 @@ import java.sql.*;
 })
 @Entity
 @Table(name = "roles")
+@Cacheable("roles")
 public class Role {
 
     @Id
@@ -35,9 +50,9 @@ public class Role {
     private User user;
 
     @Column
-    private Timestamp created;
+    private LocalDateTime created;
 
     @Column
-    private Timestamp changed;
+    private LocalDateTime changed;
 
 }

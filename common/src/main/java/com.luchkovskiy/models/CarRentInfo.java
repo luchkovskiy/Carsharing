@@ -1,12 +1,23 @@
 package com.luchkovskiy.models;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.*;
-import org.apache.commons.lang3.builder.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
-import javax.persistence.*;
-import java.sql.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -46,10 +57,10 @@ public class CarRentInfo {
     private Float condition;
 
     @Column
-    private Timestamp created;
+    private LocalDateTime created;
 
     @Column
-    private Timestamp changed;
+    private LocalDateTime changed;
 
 
 }

@@ -2,12 +2,26 @@ package com.luchkovskiy.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import org.apache.commons.lang3.builder.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
 
@@ -25,7 +39,7 @@ import java.util.Set;
 public class Session {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -40,26 +54,26 @@ public class Session {
     @ToStringExclude
     private Car car;
 
-    @Column (name = "start_time")
-    private Timestamp startTime;
+    @Column(name = "start_time")
+    private LocalDateTime startTime;
 
-    @Column (name = "end_time")
-    private Timestamp endTime;
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
 
-    @Column (name = "total_price")
+    @Column(name = "total_price")
     private Float totalPrice;
 
     @Column
     private String status;
 
-    @Column (name = "distance_passed")
+    @Column(name = "distance_passed")
     private Float distancePassed;
 
     @Column
-    private Timestamp created;
+    private LocalDateTime created;
 
     @Column
-    private Timestamp changed;
+    private LocalDateTime changed;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference

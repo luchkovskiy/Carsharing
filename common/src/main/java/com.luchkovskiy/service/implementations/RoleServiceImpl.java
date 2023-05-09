@@ -1,12 +1,14 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.*;
-import com.luchkovskiy.repository.*;
-import com.luchkovskiy.service.*;
-import lombok.*;
-import org.springframework.stereotype.*;
+import com.luchkovskiy.models.Role;
+import com.luchkovskiy.repository.RoleRepository;
+import com.luchkovskiy.repository.UserRepository;
+import com.luchkovskiy.service.RoleService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ public class RoleServiceImpl implements RoleService {
         return roleRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
     }
 
+    @Cacheable("roles")
     @Override
     public List<Role> readAll() {
         return roleRepository.findAll();
