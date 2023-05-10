@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,6 +51,7 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<User> create(@Valid @RequestBody UserCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
@@ -57,6 +60,7 @@ public class UserController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<User> update(@Valid @RequestBody UserUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
@@ -65,6 +69,7 @@ public class UserController {
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") @NotEmpty @Min(1) Long id, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);

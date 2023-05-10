@@ -15,6 +15,7 @@ public class SubscriptionLevelServiceImpl implements SubscriptionLevelService {
 
     private final SubscriptionLevelRepository subscriptionLevelRepository;
 
+    @Cacheable("subscriptionLevels")
     @Override
     public SubscriptionLevel read(Long id) {
         return subscriptionLevelRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));

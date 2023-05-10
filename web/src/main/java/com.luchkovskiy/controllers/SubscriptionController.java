@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,6 +51,7 @@ public class SubscriptionController {
         return new ResponseEntity<>(subscriptions, HttpStatus.OK);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<Subscription> create(@Valid @RequestBody SubscriptionCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
@@ -57,6 +60,7 @@ public class SubscriptionController {
         return new ResponseEntity<>(createdSubscription, HttpStatus.CREATED);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<Subscription> update(@Valid @RequestBody SubscriptionUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
@@ -65,6 +69,7 @@ public class SubscriptionController {
         return new ResponseEntity<>(updatedSubscription, HttpStatus.OK);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") @NotEmpty @Min(1) Long id, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);

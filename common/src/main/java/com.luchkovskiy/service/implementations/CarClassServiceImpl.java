@@ -15,6 +15,7 @@ public class CarClassServiceImpl implements CarClassService {
 
     private final CarClassRepository carClassRepository;
 
+    @Cacheable("carClasses")
     @Override
     public CarClass read(Long id) {
         return carClassRepository.findById(id).orElseThrow(() -> new RuntimeException("CarClass not found!"));

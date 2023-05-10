@@ -18,6 +18,7 @@ public class RoleServiceImpl implements RoleService {
 
     private final UserRepository userRepository;
 
+    @Cacheable("roles")
     @Override
     public Role read(Long id) {
         return roleRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
@@ -49,6 +50,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Cacheable("roles")
     public List<Role> getUserAuthorities(Long userId) {
         return userRepository.getUserAuthorities(userId);
     }

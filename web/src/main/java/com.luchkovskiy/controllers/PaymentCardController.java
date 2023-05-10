@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,6 +50,7 @@ public class PaymentCardController {
         return new ResponseEntity<>(paymentCards, HttpStatus.OK);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<PaymentCard> create(@Valid @RequestBody PaymentCardCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
@@ -56,6 +59,7 @@ public class PaymentCardController {
         return new ResponseEntity<>(createdPaymentCard, HttpStatus.CREATED);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<PaymentCard> update(@Valid @RequestBody PaymentCardUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
@@ -64,6 +68,7 @@ public class PaymentCardController {
         return new ResponseEntity<>(updatedPaymentCard, HttpStatus.OK);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") @NotEmpty @Min(1) Long id, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
