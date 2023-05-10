@@ -5,13 +5,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 @Setter
 @Getter
 @RequiredArgsConstructor
 @AllArgsConstructor
+@Validated
 public class AccidentUpdateRequest extends AccidentCreateRequest {
 
+    @NotEmpty
+    @Min(1)
     private Long id;
 
 }

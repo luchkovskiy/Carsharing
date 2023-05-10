@@ -5,6 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -13,14 +19,27 @@ import java.time.LocalDateTime;
 @Validated
 public class AccidentCreateRequest {
 
-    // TODO: 18.04.2023 Добавить валидацию
-
+    @NotBlank
     private Long sessionId;
+
+    @Max(30)
+    @NotBlank
     private String name;
+
+    @NotBlank
     private Float fine;
+
+    @NotBlank
+    @PastOrPresent
     private LocalDateTime time;
+
+    @NotBlank
     private Float ratingSubtraction;
+
+    @NotBlank
     private Integer damageLevel;
+
+    @NotEmpty
     private Boolean critical;
 
 }

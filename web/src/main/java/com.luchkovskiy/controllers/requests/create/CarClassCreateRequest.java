@@ -5,6 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,12 +17,18 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class CarClassCreateRequest {
 
+    @Max(20)
+    @NotBlank
     private String name;
 
+    @NotEmpty
     private Integer accessLevel;
 
+    @NotBlank
     private String comfortType;
 
+    @NotEmpty
+    @Max(10)
     private Float pricePerHour;
 
 }
