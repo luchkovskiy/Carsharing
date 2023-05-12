@@ -1,10 +1,19 @@
 package com.luchkovskiy.controllers;
 
+import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.AccidentCreateRequest;
 import com.luchkovskiy.controllers.requests.update.AccidentUpdateRequest;
 import com.luchkovskiy.models.Accident;
 import com.luchkovskiy.service.AccidentService;
 import com.luchkovskiy.util.ExceptionChecker;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
@@ -24,45 +33,148 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
 @RequestMapping("/accidents")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "Accident Controller", description = "This controller allows basic CRUD operations for Accidents and other functionality")
 public class AccidentController {
-
 
     private final AccidentService accidentService;
 
     private final ConversionService conversionService;
 
+    @Operation(
+            summary = "Spring Data Find Accident By Id",
+            description = "This method returns an accident from the database by the given Id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Accident successfully loaded",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Accident.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Accident doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<Accident> read(@PathVariable("id") @NotEmpty @Min(1) Long id, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+    public ResponseEntity<Accident> read(@PathVariable("id") @Parameter(description = "Accident ID in database", required = true, example = "1")
+                                         @NotNull @Min(1) Long id) {
         Accident accident = accidentService.read(id);
         return new ResponseEntity<>(accident, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Find All Accidents",
+            description = "This method returns an array of all accidents in the database",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Accidents successfully loaded",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Accident.class)))
+                    ),
+            }
+    )
     @GetMapping
     public ResponseEntity<Object> readAll() {
         List<Accident> accidents = accidentService.readAll();
         return new ResponseEntity<>(accidents, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Create New Accident",
+            description = "This method adds new accident in database and returns it with generated ID",
+            parameters = {
+                    @Parameter(name = "sessionId", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "Id of the session in which the accident happened")),
+                    @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Car issue", type = "String",
+                                    description = "Name of accident")),
+                    @Parameter(name = "fine", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "50.5", type = "Float",
+                                    description = "Fine that user have to pay to company")),
+                    @Parameter(name = "time", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "10.02.2023 10:05 AM", type = "LocalDateTime",
+                                    description = "The time when the accident happened")),
+                    @Parameter(name = "ratingSubtraction", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "0.5", type = "Float",
+                                    description = "User rating subtraction")),
+                    @Parameter(name = "damageLevel", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Integer",
+                                    description = "Car damage scale from 1 to 5")),
+                    @Parameter(name = "critical", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "Boolean",
+                                    description = "Does the car need repair after the incident?"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Accident successfully added",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Accident.class)))
+                    ),
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<Accident> create(@Valid @RequestBody AccidentCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Accident> create(@Valid @Parameter(hidden = true) @RequestBody AccidentCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Accident accident = conversionService.convert(request, Accident.class);
         Accident createdAccident = accidentService.create(accident);
         return new ResponseEntity<>(createdAccident, HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Spring Data Update Accident",
+            description = "This method updates an existing accident and returns it from database",
+            parameters = {
+                    @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "Id of the accident")),
+                    @Parameter(name = "sessionId", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "Id of the session in which the accident happened")),
+                    @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Car issue", type = "String",
+                                    description = "Name of accident")),
+                    @Parameter(name = "fine", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "50.5", type = "Float",
+                                    description = "Fine that user have to pay to company")),
+                    @Parameter(name = "time", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "10.02.2023 10:05 AM", type = "LocalDateTime",
+                                    description = "The time when the accident happened")),
+                    @Parameter(name = "ratingSubtraction", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "0.5", type = "Float",
+                                    description = "User rating subtraction")),
+                    @Parameter(name = "damageLevel", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Integer",
+                                    description = "Car damage scale from 1 to 5")),
+                    @Parameter(name = "critical", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "Boolean",
+                                    description = "Does the car need repair after the incident?"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Accident successfully updated",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Accident.class)))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Accident doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<Accident> update(@Valid @RequestBody AccidentUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Accident> update(@Valid @Parameter(hidden = true) @RequestBody AccidentUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Accident accident = conversionService.convert(request, Accident.class);
         Accident updatedAccident = accidentService.update(accident);
@@ -70,10 +182,24 @@ public class AccidentController {
 
     }
 
+    @Operation(
+            summary = "Spring Data Delete Accident",
+            description = "This method deletes accident from database by id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Accident deleted"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Accident doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") @NotEmpty @Min(1) Long id, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+    public void delete(@PathVariable("id") @Parameter(description = "Accident ID in database", required = true, example = "1") @Min(1) @NotNull Long id) {
         accidentService.delete(id);
     }
 

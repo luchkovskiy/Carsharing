@@ -1,33 +1,43 @@
 package com.luchkovskiy.controllers.requests.create;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Validated
+@Schema(description = "Car class information to save in database")
 public class CarClassCreateRequest {
 
-    @Max(20)
-    @NotBlank
+    @Size(min = 4, max = 25)
+    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Business", type = "String", description = "Name of car class")
     private String name;
 
-    @NotEmpty
+    @NotNull
+    @Min(1)
+    @Max(3)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Integer", description = "Access level to be used by user subscription from 1 to 3")
     private Integer accessLevel;
 
-    @NotBlank
+    @NotNull
+    @Size(min = 3, max = 50)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "High", type = "String", description = "Comfort level of current class: may be high, low or normal")
     private String comfortType;
 
-    @NotEmpty
-    @Max(10)
+    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "16.4", type = "Float", description = "Current price for the car rent")
+    @Min(10)
     private Float pricePerHour;
 
 }

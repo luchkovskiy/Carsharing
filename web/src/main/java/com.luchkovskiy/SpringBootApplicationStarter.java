@@ -4,6 +4,7 @@ package com.luchkovskiy;
 import com.luchkovskiy.configuration.ApplicationConfig;
 import com.luchkovskiy.configuration.CacheConfig;
 import com.luchkovskiy.configuration.HibernateConfig;
+import com.luchkovskiy.configuration.SwaggerConfig;
 import com.luchkovskiy.configuration.WebMVCConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,7 +23,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
         {ApplicationConfig.class,
                 HibernateConfig.class,
                     WebMVCConfig.class,
-                        CacheConfig.class}
+                        CacheConfig.class,
+                            SwaggerConfig.class}
 )
 public class SpringBootApplicationStarter {
 

@@ -1,12 +1,22 @@
 package com.luchkovskiy.controllers;
 
+import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.RoleCreateRequest;
 import com.luchkovskiy.controllers.requests.update.RoleUpdateRequest;
 import com.luchkovskiy.models.Role;
+import com.luchkovskiy.models.SystemRoles;
 import com.luchkovskiy.models.User;
 import com.luchkovskiy.service.RoleService;
 import com.luchkovskiy.service.UserService;
 import com.luchkovskiy.util.ExceptionChecker;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
@@ -26,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,6 +46,7 @@ import java.util.Map;
 @RequestMapping("/roles")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "Role Controller", description = "This controller allows basic CRUD operations for Roles and other functionality")
 public class RoleController {
 
     private final RoleService roleService;
@@ -44,21 +55,64 @@ public class RoleController {
 
     private final ConversionService conversionService;
 
+    @Operation(
+            summary = "Spring Data Find Role By Id",
+            description = "This method returns a role from the database by the given Id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Role successfully loaded",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Role.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Role doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<Role> read(@PathVariable("id") @NotEmpty @Min(1) Long id, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+    public ResponseEntity<Role> read(@PathVariable("id") @Parameter(description = "Role ID in database", required = true, example = "1")
+                                     @NotNull @Min(1) Long id) {
         Role role = roleService.read(id);
         return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Find All Roles",
+            description = "This method returns an array of all roles in the database",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Roles successfully loaded",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Role.class)))
+                    ),
+            }
+    )
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllRoles() {
         List<Role> roles = roleService.readAll();
         return new ResponseEntity<>(Collections.singletonMap("roles", roles), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Find User Authorities",
+            description = "This method returns a map of user authorities by user Id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "User authorities successfully loaded"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Role doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @GetMapping("/{userId}")
-    public ResponseEntity<Map<String, Object>> getUsersAuthorities(@PathVariable @NotEmpty @Min(1) Long userId, BindingResult bindingResult) {
+    public ResponseEntity<Map<String, Object>> getUsersAuthorities(@PathVariable @Parameter(description = "User id ID in database", required = true, example = "1")
+                                                                   @NotNull @Min(1) Long userId, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         User user = userService.read(userId);
         List<Role> roles = roleService.getUserAuthorities(userId);
@@ -70,28 +124,89 @@ public class RoleController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Create New Role",
+            description = "This method adds new role in database and returns it with generated ID",
+            parameters = {
+                    @Parameter(name = "systemRole", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ROLE_USER", type = "SystemRoles",
+                                    implementation = SystemRoles.class, description = "User's role")),
+                    @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "User's Id in database"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Role successfully added",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Role.class)))
+                    ),
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<Role> create(@Valid @RequestBody RoleCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Role> create(@Valid @Parameter(hidden = true) @RequestBody RoleCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Role role = conversionService.convert(request, Role.class);
         Role createdRole = roleService.create(role);
         return new ResponseEntity<>(createdRole, HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Spring Data Update Role",
+            description = "This method updates an existing role and returns it from database",
+            parameters = {
+                    @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "Id of the role")),
+                    @Parameter(name = "systemRole", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ROLE_USER", type = "SystemRoles",
+                                    implementation = SystemRoles.class, description = "User's role")),
+                    @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "User's Id in database"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Role successfully updated",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Role.class)))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Role doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<Role> update(@Valid @RequestBody RoleUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Role> update(@Valid @Parameter(hidden = true) @RequestBody RoleUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Role role = conversionService.convert(request, Role.class);
         Role updatedRole = roleService.update(role);
         return new ResponseEntity<>(updatedRole, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Delete Role",
+            description = "This method deletes role from database by id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Role deleted"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Role doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") @NotEmpty @Min(1) Long id, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+    public void delete(@PathVariable("id") @Parameter(description = "Role ID in database", required = true, example = "1")
+                       @Min(1) @NotNull Long id) {
         roleService.delete(id);
     }
 

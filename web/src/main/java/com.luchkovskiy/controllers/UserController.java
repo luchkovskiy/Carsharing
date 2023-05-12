@@ -1,11 +1,20 @@
 package com.luchkovskiy.controllers;
 
 
+import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.UserCreateRequest;
 import com.luchkovskiy.controllers.requests.update.UserUpdateRequest;
 import com.luchkovskiy.models.User;
 import com.luchkovskiy.service.UserService;
 import com.luchkovskiy.util.ExceptionChecker;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
@@ -25,54 +34,203 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "User Controller", description = "This controller allows basic CRUD operations for Users and other functionality")
 public class UserController {
 
     private final UserService userService;
 
     private final ConversionService conversionService;
 
+    @Operation(
+            summary = "Spring Data Find User By Id",
+            description = "This method returns a user from the database by the given Id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "User successfully loaded",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "User doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<User> read(@PathVariable("id") @NotEmpty @Min(1) Long id, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+    public ResponseEntity<User> read(@PathVariable("id") @Parameter(description = "User ID in database", required = true, example = "1")
+                                     @NotNull @Min(1) Long id) {
         User user = userService.read(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Find All Users",
+            description = "This method returns an array of all users in the database",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Users successfully loaded",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))
+                    ),
+            }
+    )
     @GetMapping
     public ResponseEntity<Object> readAll() {
         List<User> users = userService.readAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Create New User",
+            description = "This method adds new user in database and returns it with generated ID",
+            parameters = {
+                    @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Aleksey", type = "String",
+                                    description = "User name")),
+                    @Parameter(name = "surname", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Luchkovskiy", type = "String",
+                                    description = "User surname")),
+                    @Parameter(name = "birthdayDate", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2002.01.24", type = "Date",
+                                    description = "User birthday date")),
+                    @Parameter(name = "active", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "Boolean",
+                                    description = "Is user active in the system?")),
+                    @Parameter(name = "address", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mogilev, Pervomayskaya st.23", type = "String",
+                                    description = "User address")),
+                    @Parameter(name = "passportId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234567A001PB6", type = "String",
+                                    description = "User passport Id")),
+                    @Parameter(name = "driverId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "AA 12345678", type = "String",
+                                    description = "User driver Id")),
+                    @Parameter(name = "drivingExperience", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "3.5", type = "Float",
+                                    description = "User driving experience")),
+                    @Parameter(name = "rating", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2.2", type = "Float",
+                                    description = "User rating")),
+                    @Parameter(name = "accountBalance", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "120.5", type = "Float",
+                                    description = "User account balance")),
+                    @Parameter(name = "email", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "luchkovskialexey@gmail.com", type = "String",
+                                    description = "User email")),
+                    @Parameter(name = "password", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "example123", type = "String",
+                                    description = "User password in the system"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "User successfully added",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))
+                    ),
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<User> create(@Valid @RequestBody UserCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<User> create(@Valid @Parameter(hidden = true) @RequestBody UserCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         User user = conversionService.convert(request, User.class);
         User createdUser = userService.create(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Spring Data Update User",
+            description = "This method updates an existing user and returns it from database",
+            parameters = {
+                    @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "Id of the user")),
+                    @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Aleksey", type = "String",
+                                    description = "User name")),
+                    @Parameter(name = "surname", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Luchkovskiy", type = "String",
+                                    description = "User surname")),
+                    @Parameter(name = "birthdayDate", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2002.01.24", type = "Date",
+                                    description = "User birthday date")),
+                    @Parameter(name = "active", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "Boolean",
+                                    description = "Is user active in the system?")),
+                    @Parameter(name = "address", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mogilev, Pervomayskaya st.23", type = "String",
+                                    description = "User address")),
+                    @Parameter(name = "passportId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234567A001PB6", type = "String",
+                                    description = "User passport Id")),
+                    @Parameter(name = "driverId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "AA 12345678", type = "String",
+                                    description = "User driver Id")),
+                    @Parameter(name = "drivingExperience", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "3.5", type = "Float",
+                                    description = "User driving experience")),
+                    @Parameter(name = "rating", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2.2", type = "Float",
+                                    description = "User rating")),
+                    @Parameter(name = "accountBalance", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "120.5", type = "Float",
+                                    description = "User account balance")),
+                    @Parameter(name = "email", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "luchkovskialexey@gmail.com", type = "String",
+                                    description = "User email")),
+                    @Parameter(name = "password", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "example123", type = "String",
+                                    description = "User password in the system"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "User successfully updated",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "User doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<User> update(@Valid @RequestBody UserUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<User> update(@Valid @Parameter(hidden = true) @RequestBody UserUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         User user = conversionService.convert(request, User.class);
         User updatedUser = userService.update(user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Delete User",
+            description = "This method deletes user from database by id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "User deleted"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "User doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") @NotEmpty @Min(1) Long id, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+    public void delete(@PathVariable("id") @Parameter(description = "User ID in database", required = true, example = "1")
+                       @Min(1) @NotNull Long id) {
         userService.delete(id);
     }
 

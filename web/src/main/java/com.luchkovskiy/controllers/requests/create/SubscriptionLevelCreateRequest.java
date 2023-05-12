@@ -1,26 +1,37 @@
 package com.luchkovskiy.controllers.requests.create;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Validated
+@Schema(description = "Subscription level information to save in database")
 public class SubscriptionLevelCreateRequest {
 
-    @NotEmpty
+    @NotNull
+    @Min(1)
+    @Max(3)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Long", description = "Subscription's access level")
     private Integer accessLevel;
 
-    @NotEmpty
+    @NotNull
+    @Min(80)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "97.5", type = "Float", description = "Subscription's price per day")
     private Float pricePerDay;
 
-    @NotBlank
+    @NotNull
+    @Size(min = 3, max = 30)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Standard", type = "String", description = "Subscription's level name")
     private String name;
 
 }

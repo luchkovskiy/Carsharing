@@ -1,11 +1,20 @@
 package com.luchkovskiy.controllers;
 
 
+import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.SubscriptionCreateRequest;
 import com.luchkovskiy.controllers.requests.update.SubscriptionUpdateRequest;
 import com.luchkovskiy.models.Subscription;
 import com.luchkovskiy.service.SubscriptionService;
 import com.luchkovskiy.util.ExceptionChecker;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
@@ -25,54 +34,173 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
 @RequestMapping("/subscriptions")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "Subscription Controller", description = "This controller allows basic CRUD operations for Subscriptions and other functionality")
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
 
     private final ConversionService conversionService;
 
+    @Operation(
+            summary = "Spring Data Find Subscription By Id",
+            description = "This method returns a subscription from the database by the given Id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Subscription successfully loaded",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Subscription.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Subscription doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<Subscription> read(@PathVariable("id") @NotEmpty @Min(1) Long id, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+    public ResponseEntity<Subscription> read(@PathVariable("id") @Parameter(description = "Subscription ID in database", required = true, example = "1")
+                                             @NotNull @Min(1) Long id) {
         Subscription subscription = subscriptionService.read(id);
         return new ResponseEntity<>(subscription, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Find All Subscriptions",
+            description = "This method returns an array of all subscriptions in the database",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Subscriptions successfully loaded",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Subscription.class)))
+                    ),
+            }
+    )
     @GetMapping
     public ResponseEntity<Object> readAll() {
         List<Subscription> subscriptions = subscriptionService.readAll();
         return new ResponseEntity<>(subscriptions, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Create New Subscription",
+            description = "This method adds new subscription in database and returns it with generated ID",
+            parameters = {
+                    @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "User's Id in database")),
+                    @Parameter(name = "startTime", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22 17:24:01", type = "LocalDateTime",
+                                    description = "The time when the subscription started")),
+                    @Parameter(name = "endTime", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-24 17:24:01", type = "LocalDateTime",
+                                    description = "The time when the subscription ended")),
+                    @Parameter(name = "status", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Active", type = "String",
+                                    description = "Subscription status")),
+                    @Parameter(name = "tripsAmount", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "Integer",
+                                    description = "Amount of trips during the current subscription")),
+                    @Parameter(name = "daysTotal", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Integer",
+                                    description = "Amount of days the subscription was active")),
+                    @Parameter(name = "levelId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "Subscription's level Id"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Subscription successfully added",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Subscription.class)))
+                    ),
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<Subscription> create(@Valid @RequestBody SubscriptionCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Subscription> create(@Valid @Parameter(hidden = true) @RequestBody SubscriptionCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Subscription subscription = conversionService.convert(request, Subscription.class);
         Subscription createdSubscription = subscriptionService.create(subscription);
         return new ResponseEntity<>(createdSubscription, HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Spring Data Update Subscription",
+            description = "This method updates an existing subscription and returns it from database",
+            parameters = {
+                    @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "Id of the subscription")),
+                    @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "User's Id in database")),
+                    @Parameter(name = "startTime", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22 17:24:01", type = "LocalDateTime",
+                                    description = "The time when the subscription started")),
+                    @Parameter(name = "endTime", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-24 17:24:01", type = "LocalDateTime",
+                                    description = "The time when the subscription ended")),
+                    @Parameter(name = "status", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Active", type = "String",
+                                    description = "Subscription status")),
+                    @Parameter(name = "tripsAmount", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "Integer",
+                                    description = "Amount of trips during the current subscription")),
+                    @Parameter(name = "daysTotal", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Integer",
+                                    description = "Amount of days the subscription was active")),
+                    @Parameter(name = "levelId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                                    description = "Subscription's level Id"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Subscription successfully updated",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Subscription.class)))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Subscription doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<Subscription> update(@Valid @RequestBody SubscriptionUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Subscription> update(@Valid @Parameter(hidden = true) @RequestBody SubscriptionUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Subscription subscription = conversionService.convert(request, Subscription.class);
         Subscription updatedSubscription = subscriptionService.update(subscription);
         return new ResponseEntity<>(updatedSubscription, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Spring Data Delete Subscription",
+            description = "This method deletes subscription from database by id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Subscription deleted"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Subscription doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") @NotEmpty @Min(1) Long id, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+    public void delete(@PathVariable("id") @Parameter(description = "Subscription ID in database", required = true, example = "1")
+                       @Min(1) @NotNull Long id) {
         subscriptionService.delete(id);
     }
 
