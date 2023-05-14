@@ -18,4 +18,7 @@ public class JWTConfiguration {
     private String secret;
 
     private Integer expiration;
+
+    private String serverPasswordSalt;
+
 }

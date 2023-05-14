@@ -24,10 +24,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +37,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping("/subscription_levels")
+@RequestMapping("/subscriptions/levels")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Subscription Level Controller", description = "This controller allows basic CRUD operations for Subscription levels")
@@ -92,13 +92,13 @@ public class SubscriptionLevelController {
             description = "This method adds new subscription level in database and returns it with generated ID",
             parameters = {
                     @Parameter(name = "accessLevel", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "integer",
                                     description = "Subscription's access level")),
                     @Parameter(name = "pricePerDay", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "97.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "97.5", type = "number",
                                     description = "Subscription's price per day")),
                     @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Standard", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Standard", type = "string",
                                     description = "Subscription's level name"))
             },
             responses = {
@@ -111,7 +111,7 @@ public class SubscriptionLevelController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<SubscriptionLevel> create(@Valid @Parameter(hidden = true) @RequestBody SubscriptionLevelCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<SubscriptionLevel> create(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionLevelCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         SubscriptionLevel subscriptionLevel = conversionService.convert(request, SubscriptionLevel.class);
         SubscriptionLevel createdSubscriptionLevel = subscriptionLevelService.create(subscriptionLevel);
@@ -123,16 +123,16 @@ public class SubscriptionLevelController {
             description = "This method updates an existing subscription level and returns it from database",
             parameters = {
                     @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the subscription level")),
                     @Parameter(name = "accessLevel", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "integer",
                                     description = "Subscription's access level")),
                     @Parameter(name = "pricePerDay", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "97.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "97.5", type = "number",
                                     description = "Subscription's price per day")),
                     @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Standard", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Standard", type = "string",
                                     description = "Subscription's level name"))
             },
             responses = {
@@ -150,7 +150,7 @@ public class SubscriptionLevelController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<SubscriptionLevel> update(@Valid @Parameter(hidden = true) @RequestBody SubscriptionLevelUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<SubscriptionLevel> update(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionLevelUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         SubscriptionLevel subscriptionLevel = conversionService.convert(request, SubscriptionLevel.class);
         SubscriptionLevel updatedSubscriptionLevel = subscriptionLevelService.update(subscriptionLevel);

@@ -18,12 +18,12 @@ import javax.validation.constraints.NotNull;
 public class RoleCreateRequest {
 
     @NotNull
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ROLE_USER", type = "SystemRoles", description = "User's role")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ROLE_USER", type = "systemRoles", description = "User's role")
     private SystemRoles systemRole;
 
     @NotNull
     @Min(1)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long", description = "User's Id in database")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer", description = "User's Id in database")
     private Long userId;
 
 }

@@ -21,7 +21,7 @@ public class CarRentInfoUpdateRequest extends CarRentInfoCreateRequest {
 
     @NotNull
     @Min(1)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long", description = "Id of the car rent info")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer", description = "Id of the car rent info")
     private Long id;
 
 }

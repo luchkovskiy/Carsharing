@@ -27,5 +27,4 @@ public class CacheConfig {
                 .recordStats();
     }
 
-    // TODO: 08.05.2023 Добавить индексы в таблицы
 }

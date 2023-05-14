@@ -24,10 +24,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +37,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping("/car_classes")
+@RequestMapping("/cars/classes")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Car class Controller", description = "This controller allows basic CRUD operations for Car classes and other functionality")
@@ -92,16 +92,16 @@ public class CarClassController {
             description = "This method adds new car class in database and returns it with generated ID",
             parameters = {
                     @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Business", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Business", type = "string",
                                     description = "Name of car class")),
                     @Parameter(name = "accessLevel", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Access level to be used by user subscription from 1 to 3")),
                     @Parameter(name = "comfortType", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "High", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "High", type = "string",
                                     description = "Comfort level of current class: may be high, low or normal")),
                     @Parameter(name = "pricePerHour", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "16.4", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "16.4", type = "number",
                                     description = "Current price for the car rent"))
             },
             responses = {
@@ -114,7 +114,7 @@ public class CarClassController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<CarClass> create(@Valid @Parameter(hidden = true) @RequestBody CarClassCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<CarClass> create(@Valid @Parameter(hidden = true) @ModelAttribute CarClassCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         CarClass carClass = conversionService.convert(request, CarClass.class);
         CarClass createdCarClass = carClassService.create(carClass);
@@ -126,19 +126,19 @@ public class CarClassController {
             description = "This method updates an existing car class and returns it from database",
             parameters = {
                     @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the car class")),
                     @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Business", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Business", type = "string",
                                     description = "Name of car class")),
                     @Parameter(name = "accessLevel", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Access level to be used by user subscription from 1 to 3")),
                     @Parameter(name = "comfortType", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "High", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "High", type = "string",
                                     description = "Comfort level of current class: may be high, low or normal")),
                     @Parameter(name = "pricePerHour", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "16.4", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "16.4", type = "number",
                                     description = "Current price for the car rent"))
             },
             responses = {
@@ -156,12 +156,11 @@ public class CarClassController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<CarClass> update(@Valid @Parameter(hidden = true) @RequestBody CarClassUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<CarClass> update(@Valid @Parameter(hidden = true) @ModelAttribute CarClassUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         CarClass carClass = conversionService.convert(request, CarClass.class);
         CarClass updatedCarClass = carClassService.update(carClass);
         return new ResponseEntity<>(updatedCarClass, HttpStatus.OK);
-
     }
 
     @Operation(

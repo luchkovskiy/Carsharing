@@ -24,10 +24,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -92,25 +92,25 @@ public class AccidentController {
             description = "This method adds new accident in database and returns it with generated ID",
             parameters = {
                     @Parameter(name = "sessionId", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the session in which the accident happened")),
                     @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Car issue", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Car issue", type = "string",
                                     description = "Name of accident")),
                     @Parameter(name = "fine", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "50.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "50.5", type = "number",
                                     description = "Fine that user have to pay to company")),
                     @Parameter(name = "time", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "10.02.2023 10:05 AM", type = "LocalDateTime",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22 17:24:01", type = "date-time",
                                     description = "The time when the accident happened")),
                     @Parameter(name = "ratingSubtraction", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "0.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "0.5", type = "number",
                                     description = "User rating subtraction")),
                     @Parameter(name = "damageLevel", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "integer",
                                     description = "Car damage scale from 1 to 5")),
                     @Parameter(name = "critical", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "Boolean",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "boolean",
                                     description = "Does the car need repair after the incident?"))
             },
             responses = {
@@ -123,7 +123,7 @@ public class AccidentController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<Accident> create(@Valid @Parameter(hidden = true) @RequestBody AccidentCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Accident> create(@Valid @Parameter(hidden = true) @ModelAttribute AccidentCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Accident accident = conversionService.convert(request, Accident.class);
         Accident createdAccident = accidentService.create(accident);
@@ -135,28 +135,28 @@ public class AccidentController {
             description = "This method updates an existing accident and returns it from database",
             parameters = {
                     @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the accident")),
                     @Parameter(name = "sessionId", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the session in which the accident happened")),
                     @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Car issue", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Car issue", type = "string",
                                     description = "Name of accident")),
                     @Parameter(name = "fine", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "50.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "50.5", type = "number",
                                     description = "Fine that user have to pay to company")),
                     @Parameter(name = "time", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "10.02.2023 10:05 AM", type = "LocalDateTime",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "10.02.2023T10:05:00", type = "date-time",
                                     description = "The time when the accident happened")),
                     @Parameter(name = "ratingSubtraction", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "0.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "0.5", type = "number",
                                     description = "User rating subtraction")),
                     @Parameter(name = "damageLevel", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "integer",
                                     description = "Car damage scale from 1 to 5")),
                     @Parameter(name = "critical", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "Boolean",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "boolean",
                                     description = "Does the car need repair after the incident?"))
             },
             responses = {
@@ -174,7 +174,7 @@ public class AccidentController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<Accident> update(@Valid @Parameter(hidden = true) @RequestBody AccidentUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Accident> update(@Valid @Parameter(hidden = true) @ModelAttribute AccidentUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Accident accident = conversionService.convert(request, Accident.class);
         Accident updatedAccident = accidentService.update(accident);

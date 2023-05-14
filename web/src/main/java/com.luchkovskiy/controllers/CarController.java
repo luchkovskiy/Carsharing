@@ -24,10 +24,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -92,34 +92,34 @@ public class CarController {
             description = "This method adds new car in database and returns it with generated ID",
             parameters = {
                     @Parameter(name = "brand", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Audi", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Audi", type = "string",
                                     description = "Brand of the car")),
                     @Parameter(name = "model", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "RS7", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "RS7", type = "string",
                                     description = "Model of the car")),
                     @Parameter(name = "maxSpeed", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "210.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "210.5", type = "float",
                                     description = "Maximum car's speed")),
                     @Parameter(name = "color", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Blue", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Blue", type = "string",
                                     description = "Color of the car")),
                     @Parameter(name = "releaseYear", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2018", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2018", type = "integer",
                                     description = "Year when the car was released")),
                     @Parameter(name = "gearboxType", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mechanical", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mechanical", type = "string",
                                     description = "Gearbox type of the car")),
                     @Parameter(name = "sitsAmount", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "integer",
                                     description = "Amount of sits in the car")),
                     @Parameter(name = "classId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "long",
                                     description = "Id of the class level in database")),
                     @Parameter(name = "gasConsumption", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "7.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "7.5", type = "float",
                                     description = "Fuel consumption per 100 km in average")),
                     @Parameter(name = "licensePlateNumber", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234 AX-3", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234 AX-3", type = "string",
                                     description = "License plate number of the car"))
             },
             responses = {
@@ -132,7 +132,7 @@ public class CarController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<Car> create(@Valid @Parameter(hidden = true) @RequestBody CarCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Car> create(@Valid @Parameter(hidden = true) @ModelAttribute CarCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Car car = conversionService.convert(request, Car.class);
         Car createdCar = carService.create(car);
@@ -144,37 +144,37 @@ public class CarController {
             description = "This method updates an existing car and returns it from database",
             parameters = {
                     @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the car")),
                     @Parameter(name = "brand", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Audi", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Audi", type = "string",
                                     description = "Brand of the car")),
                     @Parameter(name = "model", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "RS7", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "RS7", type = "string",
                                     description = "Model of the car")),
                     @Parameter(name = "maxSpeed", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "210.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "210.5", type = "number",
                                     description = "Maximum car's speed")),
                     @Parameter(name = "color", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Blue", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Blue", type = "string",
                                     description = "Color of the car")),
                     @Parameter(name = "releaseYear", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2018", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2018", type = "integer",
                                     description = "Year when the car was released")),
                     @Parameter(name = "gearboxType", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mechanical", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mechanical", type = "string",
                                     description = "Gearbox type of the car")),
                     @Parameter(name = "sitsAmount", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "integer",
                                     description = "Amount of sits in the car")),
                     @Parameter(name = "classId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the class level in database")),
                     @Parameter(name = "gasConsumption", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "7.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "7.5", type = "number",
                                     description = "Fuel consumption per 100 km in average")),
                     @Parameter(name = "licensePlateNumber", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234 AX-3", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234AX-3", type = "string",
                                     description = "License plate number of the car"))
 
             },
@@ -193,7 +193,7 @@ public class CarController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<Car> update(@Valid @Parameter(hidden = true) @RequestBody CarUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Car> update(@Valid @Parameter(hidden = true) @ModelAttribute CarUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Car car = conversionService.convert(request, Car.class);
         Car updatedCar = carService.update(car);

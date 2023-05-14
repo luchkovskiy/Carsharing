@@ -21,7 +21,7 @@ public class RoleUpdateRequest extends RoleCreateRequest {
 
     @NotNull
     @Min(1)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long", description = "Id of the role")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer", description = "Id of the role")
     private Long id;
 
 }

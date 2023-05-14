@@ -1,5 +1,6 @@
 package com.luchkovskiy.security.controller;
 
+import com.luchkovskiy.security.config.JWTConfiguration;
 import com.luchkovskiy.security.dto.AuthRequest;
 import com.luchkovskiy.security.dto.AuthResponse;
 import com.luchkovskiy.security.jwt.TokenProvider;
@@ -26,6 +27,8 @@ public class AuthenticationController {
 
     private final UserDetailsService userProvider;
 
+    private final JWTConfiguration configuration;
+
     @PostMapping
     public ResponseEntity<AuthResponse> loginUser(@RequestBody AuthRequest request) {
 
@@ -33,7 +36,7 @@ public class AuthenticationController {
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getLogin(),
-                        request.getPassword()
+                        request.getPassword() + configuration.getServerPasswordSalt()
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authenticate);

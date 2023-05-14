@@ -25,10 +25,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -93,40 +93,40 @@ public class UserController {
             description = "This method adds new user in database and returns it with generated ID",
             parameters = {
                     @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Aleksey", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Aleksey", type = "string",
                                     description = "User name")),
                     @Parameter(name = "surname", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Luchkovskiy", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Luchkovskiy", type = "string",
                                     description = "User surname")),
                     @Parameter(name = "birthdayDate", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2002.01.24", type = "Date",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2000-05-13T16:30:00", type = "date-time",
                                     description = "User birthday date")),
                     @Parameter(name = "active", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "Boolean",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "boolean",
                                     description = "Is user active in the system?")),
                     @Parameter(name = "address", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mogilev, Pervomayskaya st.23", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mogilev, Pervomayskaya st.23", type = "string",
                                     description = "User address")),
                     @Parameter(name = "passportId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234567A001PB6", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234567A001PB6", type = "string",
                                     description = "User passport Id")),
                     @Parameter(name = "driverId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "AA 12345678", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "AA 12345678", type = "string",
                                     description = "User driver Id")),
                     @Parameter(name = "drivingExperience", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "3.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "3.5", type = "number",
                                     description = "User driving experience")),
                     @Parameter(name = "rating", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2.2", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2.2", type = "number",
                                     description = "User rating")),
                     @Parameter(name = "accountBalance", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "120.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "120.5", type = "number",
                                     description = "User account balance")),
-                    @Parameter(name = "email", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "luchkovskialexey@gmail.com", type = "String",
+                    @Parameter(name = "email", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "luchkovskialexey@gmail.com", type = "string",
                                     description = "User email")),
-                    @Parameter(name = "password", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "example123", type = "String",
+                    @Parameter(name = "password", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "example123", type = "string",
                                     description = "User password in the system"))
             },
             responses = {
@@ -139,7 +139,7 @@ public class UserController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<User> create(@Valid @Parameter(hidden = true) @RequestBody UserCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<User> create(@Valid @Parameter(hidden = true) @ModelAttribute UserCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         User user = conversionService.convert(request, User.class);
         User createdUser = userService.create(user);
@@ -151,43 +151,43 @@ public class UserController {
             description = "This method updates an existing user and returns it from database",
             parameters = {
                     @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the user")),
                     @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Aleksey", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Aleksey", type = "string",
                                     description = "User name")),
                     @Parameter(name = "surname", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Luchkovskiy", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Luchkovskiy", type = "string",
                                     description = "User surname")),
                     @Parameter(name = "birthdayDate", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2002.01.24", type = "Date",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2002-01-24T15:00:00", type = "date-time",
                                     description = "User birthday date")),
                     @Parameter(name = "active", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "Boolean",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "boolean",
                                     description = "Is user active in the system?")),
                     @Parameter(name = "address", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mogilev, Pervomayskaya st.23", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mogilev, Pervomayskaya st.23", type = "string",
                                     description = "User address")),
                     @Parameter(name = "passportId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234567A001PB6", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234567A001PB6", type = "string",
                                     description = "User passport Id")),
                     @Parameter(name = "driverId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "AA 12345678", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "AA 12345678", type = "string",
                                     description = "User driver Id")),
                     @Parameter(name = "drivingExperience", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "3.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "3.5", type = "number",
                                     description = "User driving experience")),
                     @Parameter(name = "rating", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2.2", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2.2", type = "number",
                                     description = "User rating")),
                     @Parameter(name = "accountBalance", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "120.5", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "120.5", type = "number",
                                     description = "User account balance")),
                     @Parameter(name = "email", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "luchkovskialexey@gmail.com", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "luchkovskialexey@gmail.com", type = "string",
                                     description = "User email")),
                     @Parameter(name = "password", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "example123", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "example123", type = "string",
                                     description = "User password in the system"))
             },
             responses = {
@@ -205,7 +205,7 @@ public class UserController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<User> update(@Valid @Parameter(hidden = true) @RequestBody UserUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<User> update(@Valid @Parameter(hidden = true) @ModelAttribute UserUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         User user = conversionService.convert(request, User.class);
         User updatedUser = userService.update(user);

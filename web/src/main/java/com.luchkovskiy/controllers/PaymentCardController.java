@@ -24,10 +24,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -92,16 +92,16 @@ public class PaymentCardController {
             description = "This method adds new payment card in database and returns it with generated ID",
             parameters = {
                     @Parameter(name = "cardNumber", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234123412341234", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234123412341234", type = "string",
                                     description = "Payment card main number")),
                     @Parameter(name = "expirationDate", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "03/24", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "03/24", type = "string",
                                     description = "Card's expiration date")),
                     @Parameter(name = "cvv", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "123", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "123", type = "string",
                                     description = "Card's CVV")),
                     @Parameter(name = "cardholder", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ALEKSEY LUCHKOVSKIY", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ALEKSEY LUCHKOVSKIY", type = "string",
                                     description = "Full name of the cardholder"))
             },
             responses = {
@@ -114,7 +114,7 @@ public class PaymentCardController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<PaymentCard> create(@Valid @Parameter(hidden = true) @RequestBody PaymentCardCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<PaymentCard> create(@Valid @Parameter(hidden = true) @ModelAttribute PaymentCardCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         PaymentCard paymentCard = conversionService.convert(request, PaymentCard.class);
         PaymentCard createdPaymentCard = paymentCardService.create(paymentCard);
@@ -126,19 +126,19 @@ public class PaymentCardController {
             description = "This method updates an existing payment card and returns it from database",
             parameters = {
                     @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the payment card")),
                     @Parameter(name = "cardNumber", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234123412341234", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1234123412341234", type = "string",
                                     description = "Payment card main number")),
                     @Parameter(name = "expirationDate", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "03/24", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "03/24", type = "string",
                                     description = "Card's expiration date")),
                     @Parameter(name = "cvv", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "123", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "123", type = "string",
                                     description = "Card's CVV")),
                     @Parameter(name = "cardholder", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ALEKSEY LUCHKOVSKIY", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ALEKSEY LUCHKOVSKIY", type = "string",
                                     description = "Full name of the cardholder"))
             },
             responses = {
@@ -156,7 +156,7 @@ public class PaymentCardController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<PaymentCard> update(@Valid @Parameter(hidden = true) @RequestBody PaymentCardUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<PaymentCard> update(@Valid @Parameter(hidden = true) @ModelAttribute PaymentCardUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         PaymentCard paymentCard = conversionService.convert(request, PaymentCard.class);
         PaymentCard updatedPaymentCard = paymentCardService.update(paymentCard);

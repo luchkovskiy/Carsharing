@@ -22,3 +22,5 @@ public class UserUpdateConverter extends UserBaseConverter<UserUpdateRequest, Us
     }
 
 }
+
+// TODO: 13.05.2023 Разобраться с датами (что нужно класть в Request - строку с регуляркой или LocalDateTime @Pattern(regexp = "^\\d{4}.\\d{2}.\\d{2}$") для юзера birthday

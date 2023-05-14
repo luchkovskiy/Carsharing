@@ -23,7 +23,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
@@ -52,7 +51,7 @@ public class User {
     private String surname;
 
     @Column(name = "birthday_date")
-    private Date birthdayDate;
+    private LocalDateTime birthdayDate;
 
     @Column
     private LocalDateTime created;

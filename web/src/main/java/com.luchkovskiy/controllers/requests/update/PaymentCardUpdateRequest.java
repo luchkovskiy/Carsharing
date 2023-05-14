@@ -21,7 +21,7 @@ public class PaymentCardUpdateRequest extends PaymentCardCreateRequest {
 
     @NotNull
     @Min(1)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long", description = "Id of the payment card")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer", description = "Id of the payment card")
     private Long id;
 
 

@@ -21,7 +21,7 @@ public class UserUpdateRequest extends UserCreateRequest {
 
     @NotNull
     @Min(1)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long", description = "Id of the user")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer", description = "Id of the user")
     private Long id;
 
 }

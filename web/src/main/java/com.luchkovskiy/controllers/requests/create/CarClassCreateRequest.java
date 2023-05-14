@@ -21,22 +21,22 @@ public class CarClassCreateRequest {
 
     @Size(min = 4, max = 25)
     @NotNull
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Business", type = "String", description = "Name of car class")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Business", type = "string", description = "Name of car class")
     private String name;
 
     @NotNull
     @Min(1)
     @Max(3)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Integer", description = "Access level to be used by user subscription from 1 to 3")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer", description = "Access level to be used by user subscription from 1 to 3")
     private Integer accessLevel;
 
     @NotNull
     @Size(min = 3, max = 50)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "High", type = "String", description = "Comfort level of current class: may be high, low or normal")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "High", type = "string", description = "Comfort level of current class: may be high, low or normal")
     private String comfortType;
 
     @NotNull
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "16.4", type = "Float", description = "Current price for the car rent")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "16.4", type = "number", description = "Current price for the car rent")
     @Min(10)
     private Float pricePerHour;
 

@@ -24,10 +24,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +37,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cars_info")
+@RequestMapping("/cars/info")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Car Rent Info Controller", description = "This controller allows basic CRUD operations for Car rent info")
@@ -92,22 +92,22 @@ public class CarRentInfoController {
             description = "This method adds new car rent info in database and returns it with generated ID",
             parameters = {
                     @Parameter(name = "carId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the car")),
                     @Parameter(name = "gasRemaining", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "12.8", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "12.8", type = "number",
                                     description = "Current balance of fuel")),
                     @Parameter(name = "repairing", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "Boolean",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "boolean",
                                     description = "Is the car repairing right now?")),
                     @Parameter(name = "currentLocation", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "53.978527, 30.395270", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "53.978527, 30.395270", type = "string",
                                     description = "Latitude and longitude of current car's location")),
                     @Parameter(name = "available", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "Boolean",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "boolean",
                                     description = "Is the car available right now?")),
                     @Parameter(name = "condition", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "4.6", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "4.6", type = "number",
                                     description = "Car's condition level from 1 to 5"))
             },
             responses = {
@@ -120,7 +120,7 @@ public class CarRentInfoController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<CarRentInfo> create(@Valid @Parameter(hidden = true) @RequestBody CarRentInfoCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<CarRentInfo> create(@Valid @Parameter(hidden = true) @ModelAttribute CarRentInfoCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         CarRentInfo carRentInfo = conversionService.convert(request, CarRentInfo.class);
         CarRentInfo createdCarRentInfo = carRentInfoService.create(carRentInfo);
@@ -132,25 +132,25 @@ public class CarRentInfoController {
             description = "This method updates an existing car rent info and returns it from database",
             parameters = {
                     @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the car rent info")),
                     @Parameter(name = "carId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the car")),
                     @Parameter(name = "gasRemaining", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "12.8", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "12.8", type = "number",
                                     description = "Current balance of fuel")),
                     @Parameter(name = "repairing", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "Boolean",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "boolean",
                                     description = "Is the car repairing right now?")),
                     @Parameter(name = "currentLocation", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "53.978527, 30.395270", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "53.978527, 30.395270", type = "string",
                                     description = "Latitude and longitude of current car's location")),
                     @Parameter(name = "available", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "Boolean",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "boolean",
                                     description = "Is the car available right now?")),
                     @Parameter(name = "condition", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "4.6", type = "Float",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "4.6", type = "number",
                                     description = "Car's condition level from 1 to 5"))
             },
             responses = {
@@ -168,7 +168,7 @@ public class CarRentInfoController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<Object> update(@Valid @Parameter(hidden = true) @RequestBody CarRentInfoUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Object> update(@Valid @Parameter(hidden = true) @ModelAttribute CarRentInfoUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         CarRentInfo carRentInfo = conversionService.convert(request, CarRentInfo.class);
         CarRentInfo updatedCarRentInfo = carRentInfoService.update(carRentInfo);

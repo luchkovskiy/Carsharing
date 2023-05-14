@@ -27,10 +27,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -129,10 +129,10 @@ public class RoleController {
             description = "This method adds new role in database and returns it with generated ID",
             parameters = {
                     @Parameter(name = "systemRole", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ROLE_USER", type = "SystemRoles",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ROLE_USER", type = "systemRoles",
                                     implementation = SystemRoles.class, description = "User's role")),
                     @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "User's Id in database"))
             },
             responses = {
@@ -145,7 +145,7 @@ public class RoleController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<Role> create(@Valid @Parameter(hidden = true) @RequestBody RoleCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Role> create(@Valid @Parameter(hidden = true) @ModelAttribute RoleCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Role role = conversionService.convert(request, Role.class);
         Role createdRole = roleService.create(role);
@@ -157,13 +157,13 @@ public class RoleController {
             description = "This method updates an existing role and returns it from database",
             parameters = {
                     @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the role")),
                     @Parameter(name = "systemRole", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ROLE_USER", type = "SystemRoles",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ROLE_USER", type = "systemRoles",
                                     implementation = SystemRoles.class, description = "User's role")),
                     @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "User's Id in database"))
             },
             responses = {
@@ -181,7 +181,7 @@ public class RoleController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<Role> update(@Valid @Parameter(hidden = true) @RequestBody RoleUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Role> update(@Valid @Parameter(hidden = true) @ModelAttribute RoleUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Role role = conversionService.convert(request, Role.class);
         Role updatedRole = roleService.update(role);

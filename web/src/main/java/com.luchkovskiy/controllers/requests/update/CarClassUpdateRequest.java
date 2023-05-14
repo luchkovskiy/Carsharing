@@ -21,7 +21,7 @@ public class CarClassUpdateRequest extends CarClassCreateRequest {
 
     @NotNull
     @Min(1)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long", description = "Id of the car class")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer", description = "Id of the car class")
     private Long id;
 
 }

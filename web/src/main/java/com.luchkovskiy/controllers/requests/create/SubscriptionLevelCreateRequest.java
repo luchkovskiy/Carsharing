@@ -21,17 +21,17 @@ public class SubscriptionLevelCreateRequest {
     @NotNull
     @Min(1)
     @Max(3)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Long", description = "Subscription's access level")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "integer", description = "Subscription's access level")
     private Integer accessLevel;
 
     @NotNull
     @Min(80)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "97.5", type = "Float", description = "Subscription's price per day")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "97.5", type = "number", description = "Subscription's price per day")
     private Float pricePerDay;
 
     @NotNull
     @Size(min = 3, max = 30)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Standard", type = "String", description = "Subscription's level name")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Standard", type = "string", description = "Subscription's level name")
     private String name;
 
 }

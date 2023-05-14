@@ -25,10 +25,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -93,25 +93,25 @@ public class SubscriptionController {
             description = "This method adds new subscription in database and returns it with generated ID",
             parameters = {
                     @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "User's Id in database")),
                     @Parameter(name = "startTime", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22 17:24:01", type = "LocalDateTime",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22T17:24:01", type = "date-time",
                                     description = "The time when the subscription started")),
                     @Parameter(name = "endTime", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-24 17:24:01", type = "LocalDateTime",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-24T17:24:01", type = "date-time",
                                     description = "The time when the subscription ended")),
                     @Parameter(name = "status", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Active", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Active", type = "string",
                                     description = "Subscription status")),
                     @Parameter(name = "tripsAmount", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "integer",
                                     description = "Amount of trips during the current subscription")),
                     @Parameter(name = "daysTotal", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "integer",
                                     description = "Amount of days the subscription was active")),
                     @Parameter(name = "levelId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Subscription's level Id"))
             },
             responses = {
@@ -124,7 +124,7 @@ public class SubscriptionController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
-    public ResponseEntity<Subscription> create(@Valid @Parameter(hidden = true) @RequestBody SubscriptionCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Subscription> create(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Subscription subscription = conversionService.convert(request, Subscription.class);
         Subscription createdSubscription = subscriptionService.create(subscription);
@@ -136,28 +136,28 @@ public class SubscriptionController {
             description = "This method updates an existing subscription and returns it from database",
             parameters = {
                     @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the subscription")),
                     @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "User's Id in database")),
                     @Parameter(name = "startTime", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22 17:24:01", type = "LocalDateTime",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22T17:24:01", type = "date-time",
                                     description = "The time when the subscription started")),
                     @Parameter(name = "endTime", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-24 17:24:01", type = "LocalDateTime",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-24T17:24:01", type = "date-time",
                                     description = "The time when the subscription ended")),
                     @Parameter(name = "status", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Active", type = "String",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Active", type = "string",
                                     description = "Subscription status")),
                     @Parameter(name = "tripsAmount", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "integer",
                                     description = "Amount of trips during the current subscription")),
                     @Parameter(name = "daysTotal", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "Integer",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "integer",
                                     description = "Amount of days the subscription was active")),
                     @Parameter(name = "levelId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "Long",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Subscription's level Id"))
             },
             responses = {
@@ -175,7 +175,7 @@ public class SubscriptionController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
-    public ResponseEntity<Subscription> update(@Valid @Parameter(hidden = true) @RequestBody SubscriptionUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<Subscription> update(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.check(bindingResult);
         Subscription subscription = conversionService.convert(request, Subscription.class);
         Subscription updatedSubscription = subscriptionService.update(subscription);

@@ -14,6 +14,7 @@ public abstract class UserBaseConverter<S, T> implements Converter<S, T> {
         userForUpdate.setSurname(request.getSurname());
         userForUpdate.setBirthdayDate(request.getBirthdayDate());
         userForUpdate.setActive(request.getActive());
+        userForUpdate.setAddress(request.getAddress());
         userForUpdate.setPassportId(request.getPassportId());
         userForUpdate.setDriverId(request.getDriverId());
         userForUpdate.setDrivingExperience(request.getDrivingExperience());

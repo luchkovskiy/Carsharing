@@ -22,9 +22,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Import(
         {ApplicationConfig.class,
                 HibernateConfig.class,
-                    WebMVCConfig.class,
-                        CacheConfig.class,
-                            SwaggerConfig.class}
+                WebMVCConfig.class,
+                CacheConfig.class,
+                SwaggerConfig.class}
 )
 public class SpringBootApplicationStarter {
 
