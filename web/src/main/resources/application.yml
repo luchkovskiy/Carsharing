@@ -43,3 +43,7 @@ jwtconfig:
   secret: secret
   expiration: 60000
   passwordSalt: 5de4227d-068c-4eab-8dd7-e0fe40761847
+
+---
+googleconfig:
+  apiKey: AIzaSyBx8KnvaBBNK_IBkegbNu9MDVQDv0xeyLI

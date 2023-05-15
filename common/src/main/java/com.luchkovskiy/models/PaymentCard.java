@@ -1,6 +1,7 @@
 package com.luchkovskiy.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -9,14 +10,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringExclude;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -56,10 +60,9 @@ public class PaymentCard {
     @Column
     private String cardholder;
 
-    @ManyToMany
-    @JoinTable(name = "l_users_cards", joinColumns = @JoinColumn(name = "card_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @JsonIgnoreProperties("cards")
+    @OneToMany(mappedBy = "paymentCard", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     @ToStringExclude
-    private Set<User> users = Collections.emptySet();
+    private Set<UserCard> users = Collections.emptySet();
 
 }

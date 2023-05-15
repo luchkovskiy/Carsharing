@@ -41,7 +41,7 @@ public class Role {
 
     @Column(name = "role_name")
     @Enumerated(EnumType.STRING)
-    private SystemRoles systemRole = SystemRoles.ROLE_USER;
+    private SystemRole systemRole;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

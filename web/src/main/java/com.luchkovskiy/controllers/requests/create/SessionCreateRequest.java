@@ -1,5 +1,6 @@
 package com.luchkovskiy.controllers.requests.create;
 
+import com.luchkovskiy.models.StatusType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,9 +45,12 @@ public class SessionCreateRequest {
     private LocalDateTime endTime;
 
     @NotNull
-    @Size(min = 3, max = 20)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Active", type = "string", description = "Status of the session")
-    private String status;
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ACTIVE", type = "statusType", description = "Status of the session")
+    private StatusType status;
+
+    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "120.2", type = "number", description = "Total price of the session")
+    private Float totalPrice;
 
     @Min(0)
     @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "15.5", type = "number", description = "Amount of kilometers passed during the session")

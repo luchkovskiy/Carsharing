@@ -67,7 +67,7 @@ public class CarCreateRequest {
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "7.5", type = "number", description = "Fuel consumption per 100 km in average")
     private Float gasConsumption;
 
-    @Pattern(regexp = "^[1-9]{4} [АВЕКМНОРСТУХABEIKMHOPCTYX]{2}-[1-7]")
+    @Pattern(regexp = "^[1-9]{4}[АВЕКМНОРСТУХABEIKMHOPCTYX]{2}-[1-7]")
     @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1234AX-3", type = "string", description = "License plate number of the car")
     private String licensePlateNumber;
 

@@ -54,4 +54,9 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findByEmail(String email) {
         return userRepository.findByAuthenticationInfoEmail(email);
     }
+
+    @Override
+    public void linkPaymentCard(Long userId, Long cardId) {
+
+    }
 }

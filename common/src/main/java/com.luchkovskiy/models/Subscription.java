@@ -9,8 +9,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringExclude;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,8 +52,9 @@ public class Subscription {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @Column
-    private String status;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private StatusType status;
 
     @Column(name = "amount_of_trips")
     private Integer tripsAmount;
@@ -63,7 +68,7 @@ public class Subscription {
     @Column
     private LocalDateTime changed;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "level_id")
     @JsonBackReference
     @ToStringExclude

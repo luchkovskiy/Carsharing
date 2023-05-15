@@ -42,4 +42,9 @@ public class CarRentInfoServiceImpl implements CarRentInfoService {
             throw new RuntimeException();
         carRentInfoRepository.deleteById(id);
     }
+
+    @Override
+    public CarRentInfo readByCarId(Long carId) {
+        return carRentInfoRepository.readCarRentInfoByCarId(carId);
+    }
 }

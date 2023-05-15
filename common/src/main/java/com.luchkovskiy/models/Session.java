@@ -13,6 +13,8 @@ import org.apache.commons.lang3.builder.ToStringExclude;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -63,8 +65,9 @@ public class Session {
     @Column(name = "total_price")
     private Float totalPrice;
 
-    @Column
-    private String status;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private StatusType status;
 
     @Column(name = "distance_passed")
     private Float distancePassed;
@@ -74,6 +77,9 @@ public class Session {
 
     @Column
     private LocalDateTime changed;
+
+    @Column(name = "start_location")
+    private String startLocation;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference

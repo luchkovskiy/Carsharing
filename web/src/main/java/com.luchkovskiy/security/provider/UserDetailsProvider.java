@@ -1,7 +1,7 @@
 package com.luchkovskiy.security.provider;
 
 import com.luchkovskiy.models.Role;
-import com.luchkovskiy.models.SystemRoles;
+import com.luchkovskiy.models.SystemRole;
 import com.luchkovskiy.models.User;
 import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class UserDetailsProvider implements UserDetailsService {
                                 userService.getUserAuthorities(user.getId())
                                         .stream()
                                         .map(Role::getSystemRole)
-                                        .map(SystemRoles::name)
+                                        .map(SystemRole::name)
                                         .collect(Collectors.joining(","))
                         )
                 );

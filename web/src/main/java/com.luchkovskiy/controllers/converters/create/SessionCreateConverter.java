@@ -2,7 +2,9 @@ package com.luchkovskiy.controllers.converters.create;
 
 import com.luchkovskiy.controllers.converters.base.SessionBaseConverter;
 import com.luchkovskiy.controllers.requests.create.SessionCreateRequest;
+import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.models.Session;
+import com.luchkovskiy.service.CarRentInfoService;
 import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ public class SessionCreateConverter extends SessionBaseConverter<SessionCreateRe
 
     private final CarService carService;
 
+    private final CarRentInfoService carRentInfoService;
+
     @Override
     public Session convert(SessionCreateRequest request) {
 
@@ -26,6 +30,7 @@ public class SessionCreateConverter extends SessionBaseConverter<SessionCreateRe
         session.setCreated(LocalDateTime.now());
         session.setUser(userService.read(request.getUserId()));
         session.setCar(carService.read(request.getCarId()));
+        session.setStartLocation(carRentInfoService.readByCarId(request.getCarId()).getCurrentLocation());
 
         return doConvert(session, request);
     }

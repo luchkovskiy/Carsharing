@@ -4,7 +4,7 @@ import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.RoleCreateRequest;
 import com.luchkovskiy.controllers.requests.update.RoleUpdateRequest;
 import com.luchkovskiy.models.Role;
-import com.luchkovskiy.models.SystemRoles;
+import com.luchkovskiy.models.SystemRole;
 import com.luchkovskiy.models.User;
 import com.luchkovskiy.service.RoleService;
 import com.luchkovskiy.service.UserService;
@@ -110,10 +110,9 @@ public class RoleController {
                     )
             }
     )
-    @GetMapping("/{userId}")
+    @GetMapping("/auth/{userId}")
     public ResponseEntity<Map<String, Object>> getUsersAuthorities(@PathVariable @Parameter(description = "User id ID in database", required = true, example = "1")
-                                                                   @NotNull @Min(1) Long userId, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+                                                                   @NotNull @Min(1) Long userId) {
         User user = userService.read(userId);
         List<Role> roles = roleService.getUserAuthorities(userId);
 
@@ -130,7 +129,7 @@ public class RoleController {
             parameters = {
                     @Parameter(name = "systemRole", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ROLE_USER", type = "systemRoles",
-                                    implementation = SystemRoles.class, description = "User's role")),
+                                    implementation = SystemRole.class, description = "User's role")),
                     @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "User's Id in database"))
@@ -161,7 +160,7 @@ public class RoleController {
                                     description = "Id of the role")),
                     @Parameter(name = "systemRole", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ROLE_USER", type = "systemRoles",
-                                    implementation = SystemRoles.class, description = "User's role")),
+                                    implementation = SystemRole.class, description = "User's role")),
                     @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "User's Id in database"))

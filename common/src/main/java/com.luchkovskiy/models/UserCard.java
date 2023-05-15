@@ -15,7 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
@@ -25,36 +25,27 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @EqualsAndHashCode(exclude = {
-        "car",
+        "user", "paymentCard"
 })
 @Entity
-@Table(name = "cars_rent_info")
-public class CarRentInfo {
+@Table(name = "l_users_cards")
+public class UserCard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "car_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     @JsonBackReference
     @ToStringExclude
-    private Car car;
+    private User user;
 
-    @Column(name = "gas_remaining")
-    private Float gasRemaining;
-
-    @Column(name = "is_repairing")
-    private Boolean repairing;
-
-    @Column(name = "is_available")
-    private Boolean available;
-
-    @Column(name = "current_location")
-    private String currentLocation;
-
-    @Column
-    private Float condition;
+    @ManyToOne
+    @JoinColumn(name = "card_id")
+    @JsonBackReference
+    @ToStringExclude
+    private PaymentCard paymentCard;
 
     @Column
     private LocalDateTime created;

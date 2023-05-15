@@ -1,12 +1,21 @@
 package com.luchkovskiy.controllers;
 
 
+import com.google.maps.GeoApiContext;
+import com.google.maps.model.DistanceMatrix;
+import com.google.maps.model.TravelMode;
 import com.luchkovskiy.controllers.exceptions.ErrorMessage;
+import com.luchkovskiy.controllers.requests.create.UserCardCreateRequest;
 import com.luchkovskiy.controllers.requests.create.UserCreateRequest;
 import com.luchkovskiy.controllers.requests.update.UserUpdateRequest;
+import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.models.User;
+import com.luchkovskiy.models.UserCard;
+import com.luchkovskiy.repository.UserCardRepository;
+import com.luchkovskiy.service.CarRentInfoService;
 import com.luchkovskiy.service.UserService;
 import com.luchkovskiy.util.ExceptionChecker;
+import com.luchkovskiy.util.LocationManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -46,7 +55,15 @@ public class UserController {
 
     private final UserService userService;
 
+    private final CarRentInfoService carRentInfoService;
+
     private final ConversionService conversionService;
+
+    private final GeoApiContext context;
+
+    private final LocationManager locationManager;
+
+    private final UserCardRepository userCardRepository;
 
     @Operation(
             summary = "Spring Data Find User By Id",
@@ -134,7 +151,7 @@ public class UserController {
                             responseCode = "200 OK",
                             description = "User successfully added",
                             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))
-                    ),
+                    )
             }
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
@@ -159,7 +176,7 @@ public class UserController {
                     @Parameter(name = "surname", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Luchkovskiy", type = "string",
                                     description = "User surname")),
-                    @Parameter(name = "birthdayDate", in = ParameterIn.QUERY,
+                    @Parameter(name = "birthdayDate", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2002-01-24T15:00:00", type = "date-time",
                                     description = "User birthday date")),
                     @Parameter(name = "active", in = ParameterIn.QUERY, required = true,
@@ -234,4 +251,83 @@ public class UserController {
         userService.delete(id);
     }
 
+    @Operation(
+            summary = "Check distance to car",
+            description = "This method calculates distance between user and car current locations",
+            parameters = {
+                    @Parameter(name = "address", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mogilev, Pervomayskaya 21", type = "string",
+                                    description = "Current user address")),
+                    @Parameter(name = "carId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
+                                    description = "Car Id")),
+            }
+    )
+    @GetMapping("/distance")
+    public DistanceMatrix getCarDistance(String address, Long carId) {
+        CarRentInfo carInfo = carRentInfoService.readByCarId(carId);
+        String destination = carInfo.getCurrentLocation();
+        return locationManager.getRouteTime(address, destination, context, TravelMode.WALKING);
+    }
+
+    @Operation(
+            summary = "Link payment card to user account",
+            description = "This method links user account with payment card and returns linking object",
+            parameters = {
+                    @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
+                                    description = "User Id")),
+                    @Parameter(name = "cardId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
+                                    description = "Payment card Id")),
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Link successfully added",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserCard.class)))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "User doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Payment card doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )}
+    )
+    @PutMapping("/card")
+    public ResponseEntity<UserCard> linkPaymentCard(@Valid @Parameter(hidden = true) @ModelAttribute UserCardCreateRequest request, BindingResult bindingResult) {
+        ExceptionChecker.check(bindingResult);
+        UserCard userCard = conversionService.convert(request, UserCard.class);
+        UserCard savedUserCard = userCardRepository.save(userCard);
+        return new ResponseEntity<>(savedUserCard, HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Unlink payment card from user account",
+            description = "This method unlinks payment card from user account",
+            parameters = {
+                    @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
+                                    description = "User Id")),
+                    @Parameter(name = "cardId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
+                                    description = "Payment card Id")),
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Successfully unlinked",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserCard.class)))
+                    )}
+    )
+    @DeleteMapping("/card")
+    public void unlinkPaymentCard(@NotNull @Min(1) Long userId, @NotNull @Min(1) Long cardId) {
+        userCardRepository.unlinkPaymentCard(userId,cardId);
+    }
+
 }
+

@@ -14,6 +14,7 @@ public abstract class SessionBaseConverter<S, T> implements Converter<S, T> {
         sessionForUpdate.setEndTime(request.getEndTime());
         sessionForUpdate.setStatus(request.getStatus());
         sessionForUpdate.setDistancePassed(request.getDistancePassed());
+        sessionForUpdate.setTotalPrice(request.getTotalPrice());
         sessionForUpdate.setChanged(LocalDateTime.now());
 
         return sessionForUpdate;

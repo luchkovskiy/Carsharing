@@ -29,16 +29,10 @@ public class CarRentInfoCreateRequest {
     private Float gasRemaining;
 
     @NotNull
-    @Size(min = 4, max = 5)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "boolean", description = "Is the car repairing right now?")
     private Boolean repairing;
 
-    @Size(min = 8, max = 50)
-    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "53.978527, 30.395270", type = "string", description = "Latitude and longitude of current car's location")
-    private String currentLocation;
-
     @NotNull
-    @Size(min = 4, max = 5)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "boolean", description = "Is the car available right now?")
     private Boolean available;
 
@@ -47,4 +41,8 @@ public class CarRentInfoCreateRequest {
     @Max(5)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "4.6", type = "number", description = "Car's condition level from 1 to 5")
     private Float condition;
+
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Minsk, Dzerzhinskogo 18", type = "string", description = "Car's current address")
+    private String currentLocation;
+
 }

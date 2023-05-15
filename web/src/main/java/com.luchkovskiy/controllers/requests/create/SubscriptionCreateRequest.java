@@ -1,5 +1,6 @@
 package com.luchkovskiy.controllers.requests.create;
 
+import com.luchkovskiy.models.StatusType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,25 +26,20 @@ public class SubscriptionCreateRequest {
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer", description = "User's Id in database")
     private Long userId;
 
-    @NotNull
-    @PastOrPresent
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22T17:24:01", type = "date-time",
             description = "The time when the subscription started")
     private LocalDateTime startTime;
 
 
-    @PastOrPresent
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-24T17:24:01", type = "date-time",
             description = "The time when the subscription ended")
     private LocalDateTime endTime;
 
-    // TODO: 12.05.2023 Перевести статусы на енамы
     @NotNull
-    @Size(min = 3, max = 15)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Active", type = "string", description = "Subscription status")
-    private String status;
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ACTIVE", type = "statusType", description = "Status of the subscription")
+    private StatusType status;
 
     @NotNull
     @Min(0)

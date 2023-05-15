@@ -1,11 +1,25 @@
 package com.luchkovskiy.controllers;
 
+import com.google.maps.GeoApiContext;
+import com.google.maps.model.DistanceMatrix;
+import com.google.maps.model.DistanceMatrixElement;
+import com.google.maps.model.DistanceMatrixRow;
+import com.google.maps.model.TravelMode;
 import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.SessionCreateRequest;
 import com.luchkovskiy.controllers.requests.update.SessionUpdateRequest;
+import com.luchkovskiy.models.Car;
+import com.luchkovskiy.models.CarClass;
+import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.models.Session;
+import com.luchkovskiy.models.StatusType;
+import com.luchkovskiy.service.CarClassService;
+import com.luchkovskiy.service.CarRentInfoService;
+import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.SessionService;
+import com.luchkovskiy.service.UserService;
 import com.luchkovskiy.util.ExceptionChecker;
+import com.luchkovskiy.util.LocationManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -34,6 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -45,7 +60,20 @@ import java.util.List;
 public class SessionController {
 
     private final SessionService sessionService;
+
     private final ConversionService conversionService;
+
+    private final CarService carService;
+
+    private final UserService userService;
+
+    private final CarRentInfoService carRentInfoService;
+
+    private final LocationManager locationManager;
+
+    private final CarClassService carClassService;
+
+    private final GeoApiContext context;
 
     @Operation(
             summary = "Spring Data Find Session By Id",
@@ -97,15 +125,18 @@ public class SessionController {
                     @Parameter(name = "carId", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Car's Id in database")),
-                    @Parameter(name = "startTime", in = ParameterIn.QUERY, required = true,
+                    @Parameter(name = "startTime", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22T17:24:01", type = "date-time",
                                     description = "The time when the session started")),
                     @Parameter(name = "endTime", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22T19:14:56", type = "date-time",
                                     description = "The time when the session ended")),
                     @Parameter(name = "status", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Active", type = "string",
-                                    description = "Status of the session")),
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ACTIVE", type = "statusType",
+                                    implementation = StatusType.class, description = "Session status")),
+                    @Parameter(name = "totalPrice", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "120.2", type = "number",
+                                    description = "Total price of the session")),
                     @Parameter(name = "distancePassed", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "15.5", type = "number",
                                     description = "Amount of kilometers passed during the session"))
@@ -140,15 +171,18 @@ public class SessionController {
                     @Parameter(name = "carId", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Car's Id in database")),
-                    @Parameter(name = "startTime", in = ParameterIn.QUERY, required = true,
+                    @Parameter(name = "startTime", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22T17:24:01", type = "date-time",
                                     description = "The time when the session started")),
-                    @Parameter(name = "endTime", in = ParameterIn.QUERY, required = true,
+                    @Parameter(name = "endTime", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22T19:14:56", type = "date-time",
                                     description = "The time when the session ended")),
                     @Parameter(name = "status", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Active", type = "string",
-                                    description = "Status of the session")),
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ACTIVE", type = "statusType",
+                                    implementation = StatusType.class, description = "Session status")),
+                    @Parameter(name = "totalPrice", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "120.2", type = "number",
+                                    description = "Total price of the session")),
                     @Parameter(name = "distancePassed", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "15.5", type = "number",
                                     description = "Amount of kilometers passed during the session"))
@@ -197,4 +231,104 @@ public class SessionController {
         sessionService.delete(id);
     }
 
+    @Operation(
+            summary = "Start session",
+            description = "This method creates new session, here can null-value parameters, such as totalPrice, distance etc.",
+            parameters = {
+                    @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
+                                    description = "User id in database")),
+                    @Parameter(name = "carId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
+                                    description = "Car id in database"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Session started",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Session.class)))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "User doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Car doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
+    @PostMapping("/start")
+    public ResponseEntity<Session> startSession(Long userId, Long carId) {
+        Session session = new Session();
+        session.setCar(carService.read(carId));
+        session.setUser(userService.read(userId));
+        session.setStartTime(LocalDateTime.now());
+        session.setStatus(StatusType.ACTIVE);
+        session.setCreated(LocalDateTime.now());
+        session.setChanged(LocalDateTime.now());
+        CarRentInfo carRentInfo = carRentInfoService.readByCarId(carId);
+        carRentInfo.setAvailable(false);
+        carRentInfo.setCurrentLocation(null);
+        carRentInfo.setChanged(LocalDateTime.now());
+        session.setStartLocation(carRentInfo.getCurrentLocation());
+        Session startSession = sessionService.startSession(session, carRentInfo);
+        return new ResponseEntity<>(startSession, HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "End session",
+            description = "This method updates current session and fills it with required parameters",
+            parameters = {
+                    @Parameter(name = "sessionId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
+                                    description = "Session id")),
+                    @Parameter(name = "location", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mohilev, Pervomayskaya 21", type = "string",
+                                    description = "Current car's location"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Session ended",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Session.class)))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Session doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+            }
+    )
+    @PostMapping("/end")
+    public ResponseEntity<Session> endSession(Long sessionId, String location) {
+        Session readedSession = sessionService.read(sessionId);
+        float sessionDuration = 0;
+        DistanceMatrix route = locationManager.getRouteTime(readedSession.getStartLocation(), location, context, TravelMode.DRIVING);
+        DistanceMatrixRow[] rows = route.rows;
+        for (DistanceMatrixRow row : rows) {
+            DistanceMatrixElement[] elements = row.elements;
+            for (DistanceMatrixElement element : elements) {
+                long distance = element.distance.inMeters;
+                readedSession.setDistancePassed(distance / 1000f);
+                long duration = element.duration.inSeconds;
+                sessionDuration = duration/3600f;
+            }
+        }
+        readedSession.setStatus(StatusType.FINISHED);
+        readedSession.setEndTime(LocalDateTime.now());
+        readedSession.setChanged(LocalDateTime.now());
+        CarRentInfo carRentInfo = carRentInfoService.readByCarId(readedSession.getCar().getId());
+        Car readedCar = carService.read(readedSession.getCar().getId());
+        CarClass carClass = carClassService.read(readedCar.getCarClass().getId());
+        carRentInfo.setGasRemaining(carRentInfo.getGasRemaining() - readedSession.getDistancePassed()/100 * readedCar.getGasConsumption());
+        carRentInfo.setAvailable(true);
+        carRentInfo.setCurrentLocation(location);
+        carRentInfo.setChanged(LocalDateTime.now());
+        readedSession.setTotalPrice(sessionDuration * carClass.getPricePerHour());
+        Session session = sessionService.endSession(readedSession,carRentInfo);
+        return new ResponseEntity<>(session, HttpStatus.OK);
+    }
 }

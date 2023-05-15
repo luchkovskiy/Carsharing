@@ -14,6 +14,7 @@ public abstract class AccidentBaseConverter<S, T> implements Converter<S, T> {
         accidentForUpdate.setName(request.getName());
         accidentForUpdate.setName(request.getName());
         accidentForUpdate.setTime(request.getTime());
+        accidentForUpdate.setFine(request.getFine());
         accidentForUpdate.setRatingSubtraction(request.getRatingSubtraction());
         accidentForUpdate.setDamageLevel(request.getDamageLevel());
         accidentForUpdate.setCritical(request.getCritical());

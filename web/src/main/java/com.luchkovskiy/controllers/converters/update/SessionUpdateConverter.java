@@ -3,6 +3,7 @@ package com.luchkovskiy.controllers.converters.update;
 import com.luchkovskiy.controllers.converters.base.SessionBaseConverter;
 import com.luchkovskiy.controllers.requests.update.SessionUpdateRequest;
 import com.luchkovskiy.models.Session;
+import com.luchkovskiy.service.CarRentInfoService;
 import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.SessionService;
 import com.luchkovskiy.service.UserService;
@@ -19,12 +20,15 @@ public class SessionUpdateConverter extends SessionBaseConverter<SessionUpdateRe
 
     private final SessionService sessionService;
 
+    private final CarRentInfoService carRentInfoService;
+
     @Override
     public Session convert(SessionUpdateRequest request) {
 
         Session session = sessionService.read(request.getId());
         session.setUser(userService.read(request.getUserId()));
         session.setCar(carService.read(request.getCarId()));
+        session.setStartLocation(carRentInfoService.readByCarId(request.getCarId()).getCurrentLocation());
 
         return doConvert(session, request);
     }

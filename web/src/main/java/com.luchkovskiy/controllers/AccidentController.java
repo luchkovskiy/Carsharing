@@ -1,5 +1,7 @@
 package com.luchkovskiy.controllers;
 
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeolocationApi;
 import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.AccidentCreateRequest;
 import com.luchkovskiy.controllers.requests.update.AccidentUpdateRequest;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.xml.stream.Location;
 import java.util.List;
 
 @RestController
@@ -46,6 +49,8 @@ public class AccidentController {
     private final AccidentService accidentService;
 
     private final ConversionService conversionService;
+
+    private final GeoApiContext geoApiContext;
 
     @Operation(
             summary = "Spring Data Find Accident By Id",
@@ -100,8 +105,8 @@ public class AccidentController {
                     @Parameter(name = "fine", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "50.5", type = "number",
                                     description = "Fine that user have to pay to company")),
-                    @Parameter(name = "time", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22 17:24:01", type = "date-time",
+                    @Parameter(name = "time", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22T17:24:01", type = "date-time",
                                     description = "The time when the accident happened")),
                     @Parameter(name = "ratingSubtraction", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "0.5", type = "number",
@@ -146,8 +151,8 @@ public class AccidentController {
                     @Parameter(name = "fine", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "50.5", type = "number",
                                     description = "Fine that user have to pay to company")),
-                    @Parameter(name = "time", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "10.02.2023T10:05:00", type = "date-time",
+                    @Parameter(name = "time", in = ParameterIn.QUERY,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22T17:24:01", type = "date-time",
                                     description = "The time when the accident happened")),
                     @Parameter(name = "ratingSubtraction", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "0.5", type = "number",

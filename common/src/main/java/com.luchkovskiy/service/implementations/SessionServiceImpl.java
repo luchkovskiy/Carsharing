@@ -1,18 +1,27 @@
 package com.luchkovskiy.service.implementations;
 
+import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.models.Session;
+import com.luchkovskiy.models.User;
+import com.luchkovskiy.repository.CarRentInfoRepository;
 import com.luchkovskiy.repository.SessionRepository;
+import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
 
     private final SessionRepository sessionRepository;
+
+    private final CarRentInfoRepository carRentInfoRepository;
+
+    private final UserRepository userRepository;
 
     @Override
     public Session read(Long id) {
@@ -43,4 +52,17 @@ public class SessionServiceImpl implements SessionService {
         sessionRepository.deleteById(id);
     }
 
+    @Override
+    public Session startSession(Session session, CarRentInfo carRentInfo) {
+        carRentInfoRepository.save(carRentInfo);
+        return sessionRepository.save(session);
+    }
+
+    @Override
+    public Session endSession(Session session, CarRentInfo carRentInfo) {
+        User user = userRepository.findById(session.getUser().getId()).orElseThrow(RuntimeException::new);
+        user.setAccountBalance(user.getAccountBalance() - session.getTotalPrice());
+        carRentInfoRepository.save(carRentInfo);
+        return sessionRepository.save(session);
+    }
 }

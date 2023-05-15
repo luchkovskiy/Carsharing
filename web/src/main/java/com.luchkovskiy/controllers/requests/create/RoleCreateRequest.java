@@ -1,6 +1,6 @@
 package com.luchkovskiy.controllers.requests.create;
 
-import com.luchkovskiy.models.SystemRoles;
+import com.luchkovskiy.models.SystemRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +19,7 @@ public class RoleCreateRequest {
 
     @NotNull
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ROLE_USER", type = "systemRoles", description = "User's role")
-    private SystemRoles systemRole;
+    private SystemRole systemRole;
 
     @NotNull
     @Min(1)

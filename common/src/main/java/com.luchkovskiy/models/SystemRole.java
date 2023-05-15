@@ -1,6 +1,6 @@
 package com.luchkovskiy.models;
 
-public enum SystemRoles {
+public enum SystemRole {
 
     ROLE_ADMIN,
     ROLE_USER,
