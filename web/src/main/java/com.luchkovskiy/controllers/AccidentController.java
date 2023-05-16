@@ -1,7 +1,6 @@
 package com.luchkovskiy.controllers;
 
 import com.google.maps.GeoApiContext;
-import com.google.maps.GeolocationApi;
 import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.AccidentCreateRequest;
 import com.luchkovskiy.controllers.requests.update.AccidentUpdateRequest;
@@ -36,7 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.xml.stream.Location;
 import java.util.List;
 
 @RestController

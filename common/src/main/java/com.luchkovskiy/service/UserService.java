@@ -12,6 +12,6 @@ public interface UserService extends CRUDService<Long, User> {
 
     Optional<User> findByEmail(String email);
 
-    void linkPaymentCard (Long userId, Long cardId);
+    void linkPaymentCard(Long userId, Long cardId);
 
 }

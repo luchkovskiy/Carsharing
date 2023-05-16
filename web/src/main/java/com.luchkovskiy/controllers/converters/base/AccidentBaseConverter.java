@@ -20,5 +20,7 @@ public abstract class AccidentBaseConverter<S, T> implements Converter<S, T> {
         accidentForUpdate.setCritical(request.getCritical());
         accidentForUpdate.setChanged(LocalDateTime.now());
         return accidentForUpdate;
+
     }
+
 }

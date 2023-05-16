@@ -314,7 +314,7 @@ public class SessionController {
                 long distance = element.distance.inMeters;
                 readedSession.setDistancePassed(distance / 1000f);
                 long duration = element.duration.inSeconds;
-                sessionDuration = duration/3600f;
+                sessionDuration = duration / 3600f;
             }
         }
         readedSession.setStatus(StatusType.FINISHED);
@@ -323,12 +323,13 @@ public class SessionController {
         CarRentInfo carRentInfo = carRentInfoService.readByCarId(readedSession.getCar().getId());
         Car readedCar = carService.read(readedSession.getCar().getId());
         CarClass carClass = carClassService.read(readedCar.getCarClass().getId());
-        carRentInfo.setGasRemaining(carRentInfo.getGasRemaining() - readedSession.getDistancePassed()/100 * readedCar.getGasConsumption());
+        carRentInfo.setGasRemaining(carRentInfo.getGasRemaining() - readedSession.getDistancePassed() / 100 * readedCar.getGasConsumption());
         carRentInfo.setAvailable(true);
         carRentInfo.setCurrentLocation(location);
         carRentInfo.setChanged(LocalDateTime.now());
         readedSession.setTotalPrice(sessionDuration * carClass.getPricePerHour());
-        Session session = sessionService.endSession(readedSession,carRentInfo);
+        Session session = sessionService.endSession(readedSession, carRentInfo);
         return new ResponseEntity<>(session, HttpStatus.OK);
     }
+
 }

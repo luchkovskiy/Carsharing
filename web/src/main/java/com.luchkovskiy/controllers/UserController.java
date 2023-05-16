@@ -326,7 +326,7 @@ public class UserController {
     )
     @DeleteMapping("/card")
     public void unlinkPaymentCard(@NotNull @Min(1) Long userId, @NotNull @Min(1) Long cardId) {
-        userCardRepository.unlinkPaymentCard(userId,cardId);
+        userCardRepository.unlinkPaymentCard(userId, cardId);
     }
 
 }

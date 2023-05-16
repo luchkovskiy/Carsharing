@@ -20,7 +20,7 @@ public class GoogleConfig {
     private String apiKey;
 
     @Bean
-    public GeoApiContext geoApiContext(){
+    public GeoApiContext geoApiContext() {
         return new GeoApiContext.Builder().apiKey(apiKey).build();
     }
 

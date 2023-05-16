@@ -1,6 +1,5 @@
 package com.luchkovskiy.configuration;
 
-import com.google.maps.GeoApiContext;
 import com.luchkovskiy.util.LocationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +15,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public LocationManager locationManager(){
+    public LocationManager locationManager() {
         return new LocationManager();
     }
 

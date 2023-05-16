@@ -2,7 +2,6 @@ package com.luchkovskiy.controllers.converters.create;
 
 import com.luchkovskiy.controllers.converters.base.SessionBaseConverter;
 import com.luchkovskiy.controllers.requests.create.SessionCreateRequest;
-import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.models.Session;
 import com.luchkovskiy.service.CarRentInfoService;
 import com.luchkovskiy.service.CarService;
