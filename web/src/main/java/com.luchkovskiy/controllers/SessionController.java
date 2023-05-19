@@ -53,7 +53,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/sessions")
+@RequestMapping("/rest/sessions")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Session Controller", description = "This controller allows basic CRUD operations for Sessions and other functionality")

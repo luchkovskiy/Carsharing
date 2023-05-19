@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/roles")
+@RequestMapping("/rest/roles")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Role Controller", description = "This controller allows basic CRUD operations for Roles and other functionality")

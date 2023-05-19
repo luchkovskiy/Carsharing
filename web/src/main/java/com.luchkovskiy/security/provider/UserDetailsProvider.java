@@ -1,5 +1,6 @@
 package com.luchkovskiy.security.provider;
 
+import com.luchkovskiy.models.AuthenticationInfo;
 import com.luchkovskiy.models.Role;
 import com.luchkovskiy.models.SystemRole;
 import com.luchkovskiy.models.User;
@@ -21,14 +22,15 @@ public class UserDetailsProvider implements UserDetailsService {
     private final UserService userService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         try {
-            Optional<User> searchResult = userService.findByEmail(username);
+            Optional<User> searchResult = userService.findByEmail(email);
             if (searchResult.isPresent()) {
                 User user = searchResult.get();
+                AuthenticationInfo authenticationInfo = user.getAuthenticationInfo();
                 return new org.springframework.security.core.userdetails.User(
-                        user.getAuthenticationInfo().getEmail(),
-                        user.getAuthenticationInfo().getPassword(),
+                        authenticationInfo.getEmail(),
+                        authenticationInfo.getPassword(),
 //                        ["ROLE_USER", "ROLE_ADMIN"]
                         AuthorityUtils.commaSeparatedStringToAuthorityList(
                                 userService.getUserAuthorities(user.getId())
@@ -39,7 +41,7 @@ public class UserDetailsProvider implements UserDetailsService {
                         )
                 );
             } else {
-                throw new UsernameNotFoundException(String.format("No user found with email '%s'.", username));
+                throw new UsernameNotFoundException(String.format("No user found with email '%s'.", email));
             }
         } catch (Exception e) {
             throw new UsernameNotFoundException("User with this login not found");

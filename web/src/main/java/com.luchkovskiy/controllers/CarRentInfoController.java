@@ -37,7 +37,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cars/info")
+@RequestMapping("/rest/cars/info")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Car Rent Info Controller", description = "This controller allows basic CRUD operations for Car rent info")

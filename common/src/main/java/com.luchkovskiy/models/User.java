@@ -32,7 +32,7 @@ import java.util.Set;
 @Setter
 @Getter
 @EqualsAndHashCode(exclude = {
-        "cards", "sessions", "roles", "subscriptions"
+        "cards", "sessions", "roles", "subscriptions", "codes"
 })
 @Entity
 @Table(name = "users")
@@ -104,5 +104,10 @@ public class User {
     @JsonManagedReference
     @ToStringExclude
     private Set<Subscription> subscriptions = Collections.emptySet();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonManagedReference
+    @ToStringExclude
+    private Set<VerificationCode> codes = Collections.emptySet();
 
 }

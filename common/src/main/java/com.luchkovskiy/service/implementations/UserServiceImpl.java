@@ -1,12 +1,15 @@
 package com.luchkovskiy.service.implementations;
 
 import com.luchkovskiy.models.Role;
+import com.luchkovskiy.models.SystemRole;
 import com.luchkovskiy.models.User;
+import com.luchkovskiy.repository.RoleRepository;
 import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +18,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    private final RoleRepository roleRepository;
 
     @Override
     public User read(Long id) {
@@ -28,6 +33,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User object) {
+        Role role = new Role();
+        role.setUser(object);
+        role.setSystemRole(SystemRole.ROLE_USER);
+        role.setCreated(LocalDateTime.now());
+        role.setChanged(LocalDateTime.now());
+        roleRepository.save(role);
         return userRepository.save(object);
     }
 

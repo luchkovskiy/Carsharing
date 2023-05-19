@@ -11,9 +11,12 @@ import com.luchkovskiy.controllers.requests.update.UserUpdateRequest;
 import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.models.User;
 import com.luchkovskiy.models.UserCard;
+import com.luchkovskiy.models.VerificationCode;
 import com.luchkovskiy.repository.UserCardRepository;
+import com.luchkovskiy.repository.VerificationCodeRepository;
 import com.luchkovskiy.service.CarRentInfoService;
 import com.luchkovskiy.service.UserService;
+import com.luchkovskiy.util.EmailManager;
 import com.luchkovskiy.util.ExceptionChecker;
 import com.luchkovskiy.util.LocationManager;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,10 +47,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/rest/users")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "User Controller", description = "This controller allows basic CRUD operations for Users and other functionality")
@@ -64,6 +68,10 @@ public class UserController {
     private final LocationManager locationManager;
 
     private final UserCardRepository userCardRepository;
+
+    private final EmailManager emailManager;
+
+    private final VerificationCodeRepository verificationCodeRepository;
 
     @Operation(
             summary = "Spring Data Find User By Id",
@@ -118,9 +126,6 @@ public class UserController {
                     @Parameter(name = "birthdayDate", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2000-05-13T16:30:00", type = "date-time",
                                     description = "User birthday date")),
-                    @Parameter(name = "active", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "boolean",
-                                    description = "Is user active in the system?")),
                     @Parameter(name = "address", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mogilev, Pervomayskaya st.23", type = "string",
                                     description = "User address")),
@@ -160,6 +165,12 @@ public class UserController {
         ExceptionChecker.check(bindingResult);
         User user = conversionService.convert(request, User.class);
         User createdUser = userService.create(user);
+        String code = emailManager.sendCode(createdUser);
+        VerificationCode verificationCode = new VerificationCode();
+        verificationCode.setUser(createdUser);
+        verificationCode.setCode(code);
+        verificationCode.setCreated(LocalDateTime.now());
+        verificationCodeRepository.save(verificationCode);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 

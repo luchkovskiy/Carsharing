@@ -39,7 +39,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping("/subscriptions")
+@RequestMapping("/rest/subscriptions")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Subscription Controller", description = "This controller allows basic CRUD operations for Subscriptions and other functionality")

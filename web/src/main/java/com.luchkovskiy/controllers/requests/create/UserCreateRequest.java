@@ -38,10 +38,6 @@ public class UserCreateRequest {
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2000-05-13T16:30:00", type = "date-time", description = "User birthday date")
     private LocalDateTime birthdayDate;
 
-    @NotNull
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "true", type = "boolean", description = "Is user active in the system?")
-    private Boolean active;
-
     @Size(min = 5, max = 100)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mogilev, Pervomayskaya st.23", type = "string", description = "User address")
     private String address;

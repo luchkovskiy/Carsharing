@@ -37,7 +37,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping("/payment_cards")
+@RequestMapping("/rest/payment_cards")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Payment Card Controller", description = "This controller allows basic CRUD operations for Payment cards and other functionality")
