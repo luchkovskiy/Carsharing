@@ -3,6 +3,7 @@ package com.luchkovskiy.configuration;
 import com.luchkovskiy.util.EmailManager;
 import com.luchkovskiy.util.LocationManager;
 import com.luchkovskiy.util.SpringSecurityUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,6 +15,9 @@ import java.util.Properties;
 
 @Configuration
 public class ApplicationConfig {
+
+    @Value("${emailconfig.smtpPassword}")
+    private String smtpPassword;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -36,7 +40,7 @@ public class ApplicationConfig {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(465);
         mailSender.setUsername("carsharingjd2@gmail.com");
-        mailSender.setPassword("uzkulzdhzhupmher");
+        mailSender.setPassword(smtpPassword);
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.starttls.required", "true");

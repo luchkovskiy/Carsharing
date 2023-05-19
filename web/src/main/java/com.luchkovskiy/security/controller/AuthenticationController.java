@@ -133,7 +133,7 @@ public class AuthenticationController {
     public void verifyEmail(Principal principal, String code) {
         User user = userService.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
         VerificationCode verificationCode = verificationCodeRepository.findByUserId(user.getId()).orElseThrow(RuntimeException::new);
-        if (verificationCode.getCode().equals(code)) {
+        if (verificationCode.getCode().equals(code.toUpperCase())) {
             user.setActive(true);
             verificationCodeRepository.delete(verificationCode);
             userService.update(user);

@@ -270,10 +270,10 @@ public class SessionController {
         session.setCreated(LocalDateTime.now());
         session.setChanged(LocalDateTime.now());
         CarRentInfo carRentInfo = carRentInfoService.readByCarId(carId);
+        session.setStartLocation(carRentInfo.getCurrentLocation());
         carRentInfo.setAvailable(false);
         carRentInfo.setCurrentLocation(null);
         carRentInfo.setChanged(LocalDateTime.now());
-        session.setStartLocation(carRentInfo.getCurrentLocation());
         Session startSession = sessionService.startSession(session, carRentInfo);
         return new ResponseEntity<>(startSession, HttpStatus.OK);
     }
