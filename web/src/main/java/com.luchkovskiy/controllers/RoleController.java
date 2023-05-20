@@ -145,7 +145,7 @@ public class RoleController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<Role> create(@Valid @Parameter(hidden = true) @ModelAttribute RoleCreateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         Role role = conversionService.convert(request, Role.class);
         Role createdRole = roleService.create(role);
         return new ResponseEntity<>(createdRole, HttpStatus.CREATED);
@@ -181,7 +181,7 @@ public class RoleController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<Role> update(@Valid @Parameter(hidden = true) @ModelAttribute RoleUpdateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         Role role = conversionService.convert(request, Role.class);
         Role updatedRole = roleService.update(role);
         return new ResponseEntity<>(updatedRole, HttpStatus.OK);

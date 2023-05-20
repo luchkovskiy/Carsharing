@@ -48,10 +48,10 @@ public class SubscriptionLevel {
     private String name;
 
     @Column
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 
     @Column
-    private LocalDateTime changed;
+    private LocalDateTime changed = LocalDateTime.now();
 
     @OneToMany(mappedBy = "subscriptionLevel", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference

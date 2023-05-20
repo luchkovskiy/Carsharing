@@ -73,10 +73,10 @@ public class Session {
     private Float distancePassed;
 
     @Column
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 
     @Column
-    private LocalDateTime changed;
+    private LocalDateTime changed = LocalDateTime.now();
 
     @Column(name = "start_location")
     private String startLocation;
@@ -84,6 +84,6 @@ public class Session {
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference
     @ToStringExclude
-    Set<Accident> accidents = Collections.emptySet();
+    private Set<Accident> accidents = Collections.emptySet();
 
 }

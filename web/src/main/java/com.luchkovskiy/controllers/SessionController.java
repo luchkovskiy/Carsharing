@@ -1,10 +1,5 @@
 package com.luchkovskiy.controllers;
 
-import com.google.maps.GeoApiContext;
-import com.google.maps.model.DistanceMatrix;
-import com.google.maps.model.DistanceMatrixElement;
-import com.google.maps.model.DistanceMatrixRow;
-import com.google.maps.model.TravelMode;
 import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.SessionCreateRequest;
 import com.luchkovskiy.controllers.requests.update.SessionUpdateRequest;
@@ -13,6 +8,7 @@ import com.luchkovskiy.models.CarClass;
 import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.models.Session;
 import com.luchkovskiy.models.StatusType;
+import com.luchkovskiy.models.User;
 import com.luchkovskiy.service.CarClassService;
 import com.luchkovskiy.service.CarRentInfoService;
 import com.luchkovskiy.service.CarService;
@@ -48,8 +44,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 @RestController
@@ -72,8 +71,6 @@ public class SessionController {
     private final LocationManager locationManager;
 
     private final CarClassService carClassService;
-
-    private final GeoApiContext context;
 
     @Operation(
             summary = "Spring Data Find Session By Id",
@@ -152,7 +149,7 @@ public class SessionController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<Session> create(@Valid @Parameter(hidden = true) @ModelAttribute SessionCreateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         Session session = conversionService.convert(request, Session.class);
         Session createdSession = sessionService.create(session);
         return new ResponseEntity<>(createdSession, HttpStatus.CREATED);
@@ -203,7 +200,7 @@ public class SessionController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<Session> update(@Valid @Parameter(hidden = true) @ModelAttribute SessionUpdateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         Session session = conversionService.convert(request, Session.class);
         Session updatedSession = sessionService.update(session);
         return new ResponseEntity<>(updatedSession, HttpStatus.OK);
@@ -235,9 +232,6 @@ public class SessionController {
             summary = "Start session",
             description = "This method creates new session, here can null-value parameters, such as totalPrice, distance etc.",
             parameters = {
-                    @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
-                                    description = "User id in database")),
                     @Parameter(name = "carId", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Car id in database"))
@@ -261,19 +255,18 @@ public class SessionController {
             }
     )
     @PostMapping("/start")
-    public ResponseEntity<Session> startSession(Long userId, Long carId) {
+    public ResponseEntity<Session> startSession(Principal principal, Long carId) {
+        ExceptionChecker.authCheck(principal);
         Session session = new Session();
         session.setCar(carService.read(carId));
-        session.setUser(userService.read(userId));
-        session.setStartTime(LocalDateTime.now());
+        User user = userService.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
+        activeSessionCheck(user);
+        session.setUser(user);
         session.setStatus(StatusType.ACTIVE);
-        session.setCreated(LocalDateTime.now());
-        session.setChanged(LocalDateTime.now());
         CarRentInfo carRentInfo = carRentInfoService.readByCarId(carId);
         session.setStartLocation(carRentInfo.getCurrentLocation());
         carRentInfo.setAvailable(false);
         carRentInfo.setCurrentLocation(null);
-        carRentInfo.setChanged(LocalDateTime.now());
         Session startSession = sessionService.startSession(session, carRentInfo);
         return new ResponseEntity<>(startSession, HttpStatus.OK);
     }
@@ -282,9 +275,6 @@ public class SessionController {
             summary = "End session",
             description = "This method updates current session and fills it with required parameters",
             parameters = {
-                    @Parameter(name = "sessionId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
-                                    description = "Session id")),
                     @Parameter(name = "location", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mohilev, Pervomayskaya 21", type = "string",
                                     description = "Current car's location"))
@@ -303,33 +293,43 @@ public class SessionController {
             }
     )
     @PostMapping("/end")
-    public ResponseEntity<Session> endSession(Long sessionId, String location) {
-        Session readedSession = sessionService.read(sessionId);
-        float sessionDuration = 0;
-        DistanceMatrix route = locationManager.getRouteTime(readedSession.getStartLocation(), location, context, TravelMode.DRIVING);
-        DistanceMatrixRow[] rows = route.rows;
-        for (DistanceMatrixRow row : rows) {
-            DistanceMatrixElement[] elements = row.elements;
-            for (DistanceMatrixElement element : elements) {
-                long distance = element.distance.inMeters;
-                readedSession.setDistancePassed(distance / 1000f);
-                long duration = element.duration.inSeconds;
-                sessionDuration = duration / 3600f;
-            }
-        }
+    public ResponseEntity<Session> endSession(Principal principal, String location) {
+        ExceptionChecker.authCheck(principal);
+        User user = userService.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
+        Session readedSession = getActiveSession(user);
+        Map<String, Float> sessionInfo = locationManager.getSessionInfo(readedSession.getStartLocation(), location);
+        Float sessionDistance = sessionInfo.get("distance");
+        Float sessionDuration = sessionInfo.get("duration");
+        readedSession.setDistancePassed(sessionDistance);
         readedSession.setStatus(StatusType.FINISHED);
         readedSession.setEndTime(LocalDateTime.now());
-        readedSession.setChanged(LocalDateTime.now());
-        CarRentInfo carRentInfo = carRentInfoService.readByCarId(readedSession.getCar().getId());
+        CarRentInfo carRentInfo = carRentInfoService.readByCarId(readedSession.getCar().getId()); // TODO: 20.05.2023 Можно сделать сложный sql запрос
         Car readedCar = carService.read(readedSession.getCar().getId());
         CarClass carClass = carClassService.read(readedCar.getCarClass().getId());
         carRentInfo.setGasRemaining(carRentInfo.getGasRemaining() - readedSession.getDistancePassed() / 100 * readedCar.getGasConsumption());
         carRentInfo.setAvailable(true);
         carRentInfo.setCurrentLocation(location);
-        carRentInfo.setChanged(LocalDateTime.now());
         readedSession.setTotalPrice(sessionDuration * carClass.getPricePerHour());
         Session session = sessionService.endSession(readedSession, carRentInfo);
         return new ResponseEntity<>(session, HttpStatus.OK);
     }
 
+
+    private void activeSessionCheck(User user) {
+        Set<Session> sessions = user.getSessions();
+        for (Session userSession : sessions) {
+            if (userSession.getStatus().equals(StatusType.ACTIVE)) {
+                throw new RuntimeException("You can't start new session while another one is active!");
+            }
+        }
+    }
+
+    private Session getActiveSession(User user) {
+        Set<Session> sessions = user.getSessions();
+        for (Session session : sessions) {
+            if (session.getStatus().equals(StatusType.ACTIVE))
+                return session;
+        }
+        throw new RuntimeException("Active session not found");
+    }
 }

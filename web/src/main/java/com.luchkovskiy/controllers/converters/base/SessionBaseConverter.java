@@ -4,8 +4,6 @@ import com.luchkovskiy.controllers.requests.create.SessionCreateRequest;
 import com.luchkovskiy.models.Session;
 import org.springframework.core.convert.converter.Converter;
 
-import java.time.LocalDateTime;
-
 public abstract class SessionBaseConverter<S, T> implements Converter<S, T> {
 
     public Session doConvert(Session sessionForUpdate, SessionCreateRequest request) {
@@ -15,7 +13,6 @@ public abstract class SessionBaseConverter<S, T> implements Converter<S, T> {
         sessionForUpdate.setStatus(request.getStatus());
         sessionForUpdate.setDistancePassed(request.getDistancePassed());
         sessionForUpdate.setTotalPrice(request.getTotalPrice());
-        sessionForUpdate.setChanged(LocalDateTime.now());
 
         return sessionForUpdate;
     }

@@ -52,13 +52,13 @@ public class User {
     private LocalDateTime birthdayDate;
 
     @Column
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 
     @Column
-    private LocalDateTime changed;
+    private LocalDateTime changed = LocalDateTime.now();
 
     @Column(name = "is_active")
-    private Boolean active;
+    private Boolean active = false;
 
     @Column
     private String address;

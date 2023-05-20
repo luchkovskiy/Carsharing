@@ -8,8 +8,6 @@ import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
 @RequiredArgsConstructor
 public class SubscriptionCreateConverter extends SubscriptionBaseConverter<SubscriptionCreateRequest, Subscription> {
@@ -23,7 +21,6 @@ public class SubscriptionCreateConverter extends SubscriptionBaseConverter<Subsc
 
         Subscription subscription = new Subscription();
 
-        subscription.setCreated(LocalDateTime.now());
         subscription.setUser(userService.read(request.getUserId()));
         subscription.setSubscriptionLevel(subscriptionLevelService.read(request.getLevelId()));
         return doConvert(subscription, request);

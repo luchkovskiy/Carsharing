@@ -7,8 +7,6 @@ import com.luchkovskiy.service.CarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
 @RequiredArgsConstructor
 public class CarRentInfoCreateConverter extends CarRentInfoBaseConverter<CarRentInfoCreateRequest, CarRentInfo> {
@@ -21,8 +19,6 @@ public class CarRentInfoCreateConverter extends CarRentInfoBaseConverter<CarRent
         CarRentInfo carRentInfo = new CarRentInfo();
 
         carRentInfo.setCar(carService.read(request.getCarId()));
-        carRentInfo.setCreated(LocalDateTime.now());
-
 
         return doConvert(carRentInfo, request);
     }

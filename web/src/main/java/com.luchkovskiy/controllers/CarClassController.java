@@ -115,7 +115,7 @@ public class CarClassController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<CarClass> create(@Valid @Parameter(hidden = true) @ModelAttribute CarClassCreateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         CarClass carClass = conversionService.convert(request, CarClass.class);
         CarClass createdCarClass = carClassService.create(carClass);
         return new ResponseEntity<>(createdCarClass, HttpStatus.CREATED);
@@ -157,7 +157,7 @@ public class CarClassController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<CarClass> update(@Valid @Parameter(hidden = true) @ModelAttribute CarClassUpdateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         CarClass carClass = conversionService.convert(request, CarClass.class);
         CarClass updatedCarClass = carClassService.update(carClass);
         return new ResponseEntity<>(updatedCarClass, HttpStatus.OK);

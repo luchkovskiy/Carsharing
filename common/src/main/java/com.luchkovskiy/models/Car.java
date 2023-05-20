@@ -49,13 +49,13 @@ public class Car {
     private String model;
 
     @Column
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 
     @Column
-    private LocalDateTime changed;
+    private LocalDateTime changed = LocalDateTime.now();
 
     @Column(name = "is_visible")
-    private Boolean visible;
+    private Boolean visible = true;
 
     @Column(name = "max_speed")
     private Float maxSpeed;

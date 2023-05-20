@@ -22,7 +22,6 @@ public class UserCardUpdateConverter extends UserCardBaseConverter<UserCardUpdat
     @Override
     public UserCard convert(UserCardUpdateRequest request) {
 
-
         UserCard userCard = userCardRepository.findById(request.getId()).orElseThrow(RuntimeException::new);
         userCard.setUser(userService.read(request.getUserId()));
         userCard.setPaymentCard(paymentCardService.read(request.getCardId()));

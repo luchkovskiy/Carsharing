@@ -9,8 +9,6 @@ import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
 @RequiredArgsConstructor
 public class SessionCreateConverter extends SessionBaseConverter<SessionCreateRequest, Session> {
@@ -26,7 +24,6 @@ public class SessionCreateConverter extends SessionBaseConverter<SessionCreateRe
 
         Session session = new Session();
 
-        session.setCreated(LocalDateTime.now());
         session.setUser(userService.read(request.getUserId()));
         session.setCar(carService.read(request.getCarId()));
         session.setStartLocation(carRentInfoService.readByCarId(request.getCarId()).getCurrentLocation());

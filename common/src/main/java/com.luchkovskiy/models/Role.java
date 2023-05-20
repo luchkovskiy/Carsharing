@@ -50,9 +50,9 @@ public class Role {
     private User user;
 
     @Column
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 
     @Column
-    private LocalDateTime changed;
+    private LocalDateTime changed = LocalDateTime.now();
 
 }

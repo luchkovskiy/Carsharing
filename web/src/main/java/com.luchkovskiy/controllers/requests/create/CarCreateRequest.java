@@ -30,7 +30,7 @@ public class CarCreateRequest {
     private String model;
 
     @NotNull
-    @Max(220)
+    @Max(400)
     @Min(150)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "210.5", type = "number", description = "Maximum car's speed")
     private Float maxSpeed;

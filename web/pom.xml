@@ -18,6 +18,11 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <google.maps>2.1.2</google.maps>
+        <swagger.annotations>2.2.8</swagger.annotations>
+        <openapi>1.7.0</openapi>
+        <javax.mail>1.4.7</javax.mail>
+        <jakarta.mail>2.1.0</jakarta.mail>
     </properties>
 
     <dependencies>
@@ -27,10 +32,46 @@
             <version>1.2-SNAPSHOT</version>
         </dependency>
 
+        <!--Google Maps API-->
+
         <dependency>
             <groupId>com.google.maps</groupId>
             <artifactId>google-maps-services</artifactId>
-            <version>2.1.2</version>
+            <version>${google.maps}</version>
+        </dependency>
+
+        <!--Swagger 3-->
+
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.annotations}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${openapi}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-security</artifactId>
+            <version>${openapi}</version>
+        </dependency>
+
+        <!--Mail sending-->
+
+        <dependency>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>${jakarta.mail}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail}</version>
         </dependency>
 
     </dependencies>

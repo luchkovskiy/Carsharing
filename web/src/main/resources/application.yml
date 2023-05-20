@@ -39,6 +39,7 @@ spring:
           characterEncoding: utf8mb4
           CharSet: utf8mb4
           useUnicode: true
+
 ---
 jwtconfig:
   secret: secret
@@ -51,4 +52,7 @@ googleconfig:
 
 ---
 emailconfig:
+  host: smtp.gmail.com
+  port: 465
+  username: carsharingjd2@gmail.com
   smtpPassword: ${emailconfig.smtp_password}

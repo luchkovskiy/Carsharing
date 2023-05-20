@@ -1,13 +1,12 @@
 package com.luchkovskiy.controllers;
 
 
-import com.google.maps.GeoApiContext;
-import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.TravelMode;
 import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.UserCardCreateRequest;
 import com.luchkovskiy.controllers.requests.create.UserCreateRequest;
 import com.luchkovskiy.controllers.requests.update.UserUpdateRequest;
+import com.luchkovskiy.controllers.response.CarDistanceResponse;
 import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.models.User;
 import com.luchkovskiy.models.UserCard;
@@ -15,6 +14,7 @@ import com.luchkovskiy.models.VerificationCode;
 import com.luchkovskiy.repository.UserCardRepository;
 import com.luchkovskiy.repository.VerificationCodeRepository;
 import com.luchkovskiy.service.CarRentInfoService;
+import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.UserService;
 import com.luchkovskiy.util.EmailManager;
 import com.luchkovskiy.util.ExceptionChecker;
@@ -47,8 +47,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/rest/users")
@@ -63,8 +65,6 @@ public class UserController {
 
     private final ConversionService conversionService;
 
-    private final GeoApiContext context;
-
     private final LocationManager locationManager;
 
     private final UserCardRepository userCardRepository;
@@ -72,6 +72,8 @@ public class UserController {
     private final EmailManager emailManager;
 
     private final VerificationCodeRepository verificationCodeRepository;
+
+    private final CarService carService;
 
     @Operation(
             summary = "Spring Data Find User By Id",
@@ -138,9 +140,6 @@ public class UserController {
                     @Parameter(name = "drivingExperience", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "3.5", type = "number",
                                     description = "User driving experience")),
-                    @Parameter(name = "rating", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2.2", type = "number",
-                                    description = "User rating")),
                     @Parameter(name = "accountBalance", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "120.5", type = "number",
                                     description = "User account balance")),
@@ -162,14 +161,13 @@ public class UserController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<User> create(@Valid @Parameter(hidden = true) @ModelAttribute UserCreateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         User user = conversionService.convert(request, User.class);
         User createdUser = userService.create(user);
         String code = emailManager.sendCode(createdUser);
         VerificationCode verificationCode = new VerificationCode();
         verificationCode.setUser(createdUser);
         verificationCode.setCode(code);
-        verificationCode.setCreated(LocalDateTime.now());
         verificationCodeRepository.save(verificationCode);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
@@ -234,7 +232,7 @@ public class UserController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<User> update(@Valid @Parameter(hidden = true) @ModelAttribute UserUpdateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         User user = conversionService.convert(request, User.class);
         User updatedUser = userService.update(user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
@@ -268,17 +266,21 @@ public class UserController {
             parameters = {
                     @Parameter(name = "address", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mogilev, Pervomayskaya 21", type = "string",
-                                    description = "Current user address")),
-                    @Parameter(name = "carId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
-                                    description = "Car Id")),
+                                    description = "Current user address"))
             }
     )
     @GetMapping("/distance")
-    public DistanceMatrix getCarDistance(String address, Long carId) {
-        CarRentInfo carInfo = carRentInfoService.readByCarId(carId);
-        String destination = carInfo.getCurrentLocation();
-        return locationManager.getRouteTime(address, destination, context, TravelMode.WALKING);
+    public ResponseEntity<List<CarDistanceResponse>> getCarsDistance(String address) {
+        Map<Long, String> carsLocations = new HashMap<>();
+        List<CarDistanceResponse> responseDistances = new ArrayList<>();
+        List<CarRentInfo> cars = carRentInfoService.readAll();
+        for (CarRentInfo car : cars) {
+            carsLocations.put(car.getCar().getId(), car.getCurrentLocation());
+        }
+        for (Map.Entry<Long, String> entry : carsLocations.entrySet()) {
+            responseDistances.add(new CarDistanceResponse(carService.read(entry.getKey()), locationManager.getRouteTime(address, entry.getValue(), TravelMode.WALKING)));
+        }
+        return new ResponseEntity<>(responseDistances, HttpStatus.OK);
     }
 
     @Operation(
@@ -311,7 +313,7 @@ public class UserController {
     )
     @PutMapping("/card")
     public ResponseEntity<UserCard> linkPaymentCard(@Valid @Parameter(hidden = true) @ModelAttribute UserCardCreateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         UserCard userCard = conversionService.convert(request, UserCard.class);
         UserCard savedUserCard = userCardRepository.save(userCard);
         return new ResponseEntity<>(savedUserCard, HttpStatus.OK);

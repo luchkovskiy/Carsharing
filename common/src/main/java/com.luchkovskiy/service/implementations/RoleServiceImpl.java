@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -34,15 +31,12 @@ public class RoleServiceImpl implements RoleService {
         return roleRepository.findAll();
     }
 
-
-    public Set<Role> save(Role object) {
-        Set<Role> roles = new HashSet<>();
+    @Override
+    public Role create(Role object) {
         if (object.getSystemRole().equals(SystemRole.ROLE_ADMIN)) {
-            roles.add(saveRole(SystemRole.ROLE_USER, object));
-            roles.add(saveRole(SystemRole.ROLE_MODERATOR, object));
+            createModeratorRole(object);
         }
-        roles.add(roleRepository.save(object));
-        return roles;
+        return roleRepository.save(object);
     }
 
     @Override
@@ -56,6 +50,7 @@ public class RoleServiceImpl implements RoleService {
     public void delete(Long id) {
         if (!roleRepository.existsById(id))
             throw new RuntimeException();
+        basicRoleCheck(id);
         roleRepository.deleteById(id);
     }
 
@@ -65,17 +60,16 @@ public class RoleServiceImpl implements RoleService {
         return userRepository.getUserAuthorities(userId);
     }
 
-    private Role saveRole(SystemRole roleName, Role object) {
+    private void createModeratorRole(Role object) {
         Role role = new Role();
-        role.setSystemRole(roleName);
+        role.setSystemRole(SystemRole.ROLE_MODERATOR);
         role.setUser(object.getUser());
-        role.setCreated(LocalDateTime.now());
-        role.setChanged(LocalDateTime.now());
-        return roleRepository.save(role);
+        roleRepository.save(role);
     }
 
-    @Override
-    public Role create(Role object) {
-        return roleRepository.save(object);
+    private void basicRoleCheck(Long id) {
+        if (roleRepository.findById(id).orElseThrow(RuntimeException::new).getSystemRole().equals(SystemRole.ROLE_USER)) {
+            throw new RuntimeException("Can't delete basic role!");
+        }
     }
 }

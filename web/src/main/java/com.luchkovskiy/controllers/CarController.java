@@ -133,7 +133,7 @@ public class CarController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<Car> create(@Valid @Parameter(hidden = true) @ModelAttribute CarCreateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         Car car = conversionService.convert(request, Car.class);
         Car createdCar = carService.create(car);
         return new ResponseEntity<>(createdCar, HttpStatus.CREATED);
@@ -152,6 +152,9 @@ public class CarController {
                     @Parameter(name = "model", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "RS7", type = "string",
                                     description = "Model of the car")),
+                    @Parameter(name = "visible", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "boolean",
+                                    description = "Is car visible in the system?")),
                     @Parameter(name = "maxSpeed", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "210.5", type = "number",
                                     description = "Maximum car's speed")),
@@ -194,7 +197,7 @@ public class CarController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<Car> update(@Valid @Parameter(hidden = true) @ModelAttribute CarUpdateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         Car car = conversionService.convert(request, Car.class);
         Car updatedCar = carService.update(car);
         return new ResponseEntity<>(updatedCar, HttpStatus.OK);

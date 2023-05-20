@@ -6,8 +6,6 @@ import com.luchkovskiy.models.PaymentCard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
 @RequiredArgsConstructor
 public class PaymentCardCreateConverter extends PaymentCardBaseConverter<PaymentCardCreateRequest, PaymentCard> {
@@ -16,10 +14,6 @@ public class PaymentCardCreateConverter extends PaymentCardBaseConverter<Payment
     public PaymentCard convert(PaymentCardCreateRequest request) {
 
         PaymentCard paymentCard = new PaymentCard();
-
-
-        paymentCard.setCreated(LocalDateTime.now());
-
 
         return doConvert(paymentCard, request);
     }

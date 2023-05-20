@@ -7,8 +7,6 @@ import com.luchkovskiy.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
 @RequiredArgsConstructor
 public class AccidentCreateConverter extends AccidentBaseConverter<AccidentCreateRequest, Accident> {
@@ -20,7 +18,6 @@ public class AccidentCreateConverter extends AccidentBaseConverter<AccidentCreat
 
         Accident accident = new Accident();
         accident.setSession(sessionService.read(request.getSessionId()));
-        accident.setCreated(LocalDateTime.now());
 
         return doConvert(accident, request);
     }

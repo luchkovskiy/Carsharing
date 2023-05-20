@@ -9,7 +9,6 @@ import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +35,6 @@ public class UserServiceImpl implements UserService {
         Role role = new Role();
         role.setUser(object);
         role.setSystemRole(SystemRole.ROLE_USER);
-        role.setCreated(LocalDateTime.now());
-        role.setChanged(LocalDateTime.now());
         roleRepository.save(role);
         return userRepository.save(object);
     }
@@ -68,6 +65,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void linkPaymentCard(Long userId, Long cardId) {
-
+        // TODO: 20.05.2023 принципал
     }
 }

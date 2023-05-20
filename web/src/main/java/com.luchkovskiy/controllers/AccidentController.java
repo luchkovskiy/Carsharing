@@ -127,7 +127,7 @@ public class AccidentController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<Accident> create(@Valid @Parameter(hidden = true) @ModelAttribute AccidentCreateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         Accident accident = conversionService.convert(request, Accident.class);
         Accident createdAccident = accidentService.create(accident);
         return new ResponseEntity<>(createdAccident, HttpStatus.CREATED);
@@ -178,7 +178,7 @@ public class AccidentController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<Accident> update(@Valid @Parameter(hidden = true) @ModelAttribute AccidentUpdateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         Accident accident = conversionService.convert(request, Accident.class);
         Accident updatedAccident = accidentService.update(accident);
         return new ResponseEntity<>(updatedAccident, HttpStatus.OK);

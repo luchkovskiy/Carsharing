@@ -1,6 +1,8 @@
 package com.luchkovskiy.service.implementations;
 
 import com.luchkovskiy.models.Car;
+import com.luchkovskiy.models.CarRentInfo;
+import com.luchkovskiy.repository.CarRentInfoRepository;
 import com.luchkovskiy.repository.CarRepository;
 import com.luchkovskiy.service.CarService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,8 @@ public class CarServiceImpl implements CarService {
 
     private final CarRepository carRepository;
 
+    private final CarRentInfoRepository carRentInfoRepository;
+
     @Override
     public Car read(Long id) {
         return carRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
@@ -26,7 +30,14 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Car create(Car object) {
-        return carRepository.save(object);
+        Car car = carRepository.save(object);
+        CarRentInfo carRentInfo = new CarRentInfo();
+        carRentInfo.setCar(car);
+        carRentInfo.setGasRemaining(50f);
+        carRentInfo.setCondition(5f);
+        carRentInfo.setCurrentLocation("1st Ring 11, Minsk");
+        carRentInfoRepository.save(carRentInfo);
+        return car;
     }
 
     @Override

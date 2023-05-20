@@ -121,7 +121,7 @@ public class CarRentInfoController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<CarRentInfo> create(@Valid @Parameter(hidden = true) @ModelAttribute CarRentInfoCreateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         CarRentInfo carRentInfo = conversionService.convert(request, CarRentInfo.class);
         CarRentInfo createdCarRentInfo = carRentInfoService.create(carRentInfo);
         return new ResponseEntity<>(createdCarRentInfo, HttpStatus.CREATED);
@@ -169,7 +169,7 @@ public class CarRentInfoController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<Object> update(@Valid @Parameter(hidden = true) @ModelAttribute CarRentInfoUpdateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         CarRentInfo carRentInfo = conversionService.convert(request, CarRentInfo.class);
         CarRentInfo updatedCarRentInfo = carRentInfoService.update(carRentInfo);
         return new ResponseEntity<>(updatedCarRentInfo, HttpStatus.OK);

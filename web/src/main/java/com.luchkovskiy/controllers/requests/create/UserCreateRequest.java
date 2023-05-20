@@ -8,7 +8,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -56,12 +55,6 @@ public class UserCreateRequest {
     @Min(2)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "3.5", type = "number", description = "User driving experience")
     private Float drivingExperience;
-
-    @NotNull
-    @Min(1)
-    @Max(5)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2.2", type = "number", description = "User rating")
-    private Float rating;
 
     @Min(0)
     @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "120.5", type = "number", description = "User account balance")

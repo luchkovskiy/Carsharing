@@ -9,6 +9,7 @@ import com.luchkovskiy.security.dto.AuthRequest;
 import com.luchkovskiy.security.dto.AuthResponse;
 import com.luchkovskiy.security.jwt.TokenProvider;
 import com.luchkovskiy.service.UserService;
+import com.luchkovskiy.util.ExceptionChecker;
 import com.luchkovskiy.util.SpringSecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -131,6 +132,7 @@ public class AuthenticationController {
     )
     @PatchMapping("/verify")
     public void verifyEmail(Principal principal, String code) {
+        ExceptionChecker.authCheck(principal);
         User user = userService.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
         VerificationCode verificationCode = verificationCodeRepository.findByUserId(user.getId()).orElseThrow(RuntimeException::new);
         if (verificationCode.getCode().equals(code.toUpperCase())) {

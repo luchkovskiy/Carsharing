@@ -57,12 +57,12 @@ public class Accident {
     private Integer damageLevel;
 
     @Column(name = "is_critical")
-    private Boolean critical;
+    private Boolean critical = false;
 
     @Column
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 
     @Column
-    private LocalDateTime changed;
+    private LocalDateTime changed = LocalDateTime.now();
 
 }

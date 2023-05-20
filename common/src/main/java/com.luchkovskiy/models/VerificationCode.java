@@ -45,6 +45,6 @@ public class VerificationCode {
     private String code;
 
     @Column
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 
 }

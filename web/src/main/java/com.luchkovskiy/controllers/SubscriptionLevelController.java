@@ -112,7 +112,7 @@ public class SubscriptionLevelController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<SubscriptionLevel> create(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionLevelCreateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         SubscriptionLevel subscriptionLevel = conversionService.convert(request, SubscriptionLevel.class);
         SubscriptionLevel createdSubscriptionLevel = subscriptionLevelService.create(subscriptionLevel);
         return new ResponseEntity<>(createdSubscriptionLevel, HttpStatus.CREATED);
@@ -151,7 +151,7 @@ public class SubscriptionLevelController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<SubscriptionLevel> update(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionLevelUpdateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         SubscriptionLevel subscriptionLevel = conversionService.convert(request, SubscriptionLevel.class);
         SubscriptionLevel updatedSubscriptionLevel = subscriptionLevelService.update(subscriptionLevel);
         return new ResponseEntity<>(updatedSubscriptionLevel, HttpStatus.OK);

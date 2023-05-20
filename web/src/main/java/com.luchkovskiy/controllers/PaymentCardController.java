@@ -115,7 +115,7 @@ public class PaymentCardController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
     public ResponseEntity<PaymentCard> create(@Valid @Parameter(hidden = true) @ModelAttribute PaymentCardCreateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         PaymentCard paymentCard = conversionService.convert(request, PaymentCard.class);
         PaymentCard createdPaymentCard = paymentCardService.create(paymentCard);
         return new ResponseEntity<>(createdPaymentCard, HttpStatus.CREATED);
@@ -157,7 +157,7 @@ public class PaymentCardController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
     public ResponseEntity<PaymentCard> update(@Valid @Parameter(hidden = true) @ModelAttribute PaymentCardUpdateRequest request, BindingResult bindingResult) {
-        ExceptionChecker.check(bindingResult);
+        ExceptionChecker.validCheck(bindingResult);
         PaymentCard paymentCard = conversionService.convert(request, PaymentCard.class);
         PaymentCard updatedPaymentCard = paymentCardService.update(paymentCard);
         return new ResponseEntity<>(updatedPaymentCard, HttpStatus.OK);

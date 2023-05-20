@@ -1,5 +1,6 @@
 package com.luchkovskiy.configuration;
 
+import com.google.maps.GeoApiContext;
 import com.luchkovskiy.util.EmailManager;
 import com.luchkovskiy.util.LocationManager;
 import com.luchkovskiy.util.SpringSecurityUtils;
@@ -19,14 +20,24 @@ public class ApplicationConfig {
     @Value("${emailconfig.smtpPassword}")
     private String smtpPassword;
 
+    @Value("${emailconfig.host}")
+    private String host;
+
+    @Value("${emailconfig.port}")
+    private int port;
+
+    @Value("${emailconfig.username}")
+    private String username;
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(6);
     }
 
     @Bean
-    public LocationManager locationManager() {
-        return new LocationManager();
+    public LocationManager locationManager(GeoApiContext geoApiContext) {
+        return new LocationManager(geoApiContext);
     }
 
     @Bean
@@ -37,9 +48,9 @@ public class ApplicationConfig {
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(465);
-        mailSender.setUsername("carsharingjd2@gmail.com");
+        mailSender.setHost(host);
+        mailSender.setPort(port);
+        mailSender.setUsername(username);
         mailSender.setPassword(smtpPassword);
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.smtp.starttls.enable", "true");

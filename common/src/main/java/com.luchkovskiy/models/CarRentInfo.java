@@ -45,10 +45,10 @@ public class CarRentInfo {
     private Float gasRemaining;
 
     @Column(name = "is_repairing")
-    private Boolean repairing;
+    private Boolean repairing = false;
 
     @Column(name = "is_available")
-    private Boolean available;
+    private Boolean available = true;
 
     @Column(name = "current_location")
     private String currentLocation;
@@ -57,9 +57,9 @@ public class CarRentInfo {
     private Float condition;
 
     @Column
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 
     @Column
-    private LocalDateTime changed;
+    private LocalDateTime changed = LocalDateTime.now();
 
 }

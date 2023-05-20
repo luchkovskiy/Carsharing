@@ -7,8 +7,6 @@ import com.luchkovskiy.service.CarClassService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
 @RequiredArgsConstructor
 public class CarCreateConverter extends CarBaseConverter<CarCreateRequest, Car> {
@@ -20,8 +18,6 @@ public class CarCreateConverter extends CarBaseConverter<CarCreateRequest, Car> 
 
         Car car = new Car();
 
-        car.setCreated(LocalDateTime.now());
-        car.setVisible(true);
         car.setCarClass(carClassService.read(request.getClassId()));
 
         return doConvert(car, request);

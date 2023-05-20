@@ -24,4 +24,8 @@ public class CarUpdateRequest extends CarCreateRequest {
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer", description = "Id of the car")
     private Long id;
 
+    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "boolean", description = "Is car visible in the system?")
+    private Boolean visible;
+
 }

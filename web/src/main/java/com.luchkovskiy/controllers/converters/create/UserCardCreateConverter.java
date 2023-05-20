@@ -8,8 +8,6 @@ import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
 @RequiredArgsConstructor
 public class UserCardCreateConverter extends UserCardBaseConverter<UserCardCreateRequest, UserCard> {
@@ -22,10 +20,8 @@ public class UserCardCreateConverter extends UserCardBaseConverter<UserCardCreat
     public UserCard convert(UserCardCreateRequest request) {
 
         UserCard userCard = new UserCard();
-        userCard.setCreated(LocalDateTime.now());
         userCard.setUser(userService.read(request.getUserId()));
         userCard.setPaymentCard(paymentCardService.read(request.getCardId()));
-
 
         return doConvert(userCard);
     }

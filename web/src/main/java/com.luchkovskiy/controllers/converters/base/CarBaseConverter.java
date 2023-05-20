@@ -4,8 +4,6 @@ import com.luchkovskiy.controllers.requests.create.CarCreateRequest;
 import com.luchkovskiy.models.Car;
 import org.springframework.core.convert.converter.Converter;
 
-import java.time.LocalDateTime;
-
 public abstract class CarBaseConverter<S, T> implements Converter<S, T> {
 
     public Car doConvert(Car carForUpdate, CarCreateRequest request) {
@@ -19,7 +17,6 @@ public abstract class CarBaseConverter<S, T> implements Converter<S, T> {
         carForUpdate.setSitsAmount(request.getSitsAmount());
         carForUpdate.setGasConsumption(request.getGasConsumption());
         carForUpdate.setLicensePlateNumber(request.getLicensePlateNumber());
-        carForUpdate.setChanged(LocalDateTime.now());
         return carForUpdate;
     }
 }

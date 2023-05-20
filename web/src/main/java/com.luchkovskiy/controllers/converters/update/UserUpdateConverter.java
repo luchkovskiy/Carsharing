@@ -17,10 +17,10 @@ public class UserUpdateConverter extends UserBaseConverter<UserUpdateRequest, Us
     public User convert(UserUpdateRequest request) {
 
         User user = userService.read(request.getId());
+        user.setActive(request.getActive());
+        user.setRating(request.getRating());
 
         return doConvert(user, request);
     }
 
 }
-
-// TODO: 13.05.2023 Разобраться с датами (что нужно класть в Request - строку с регуляркой или LocalDateTime @Pattern(regexp = "^\\d{4}.\\d{2}.\\d{2}$") для юзера birthday

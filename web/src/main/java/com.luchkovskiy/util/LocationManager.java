@@ -6,22 +6,30 @@ import com.google.maps.DistanceMatrixApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.DistanceMatrix;
+import com.google.maps.model.DistanceMatrixElement;
+import com.google.maps.model.DistanceMatrixRow;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.TravelMode;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.HashMap;
+import java.util.Map;
 
+@RequiredArgsConstructor
 public class LocationManager {
 
-    public DistanceMatrix getRouteTime(String firstLocation, String secondLocation, GeoApiContext context, TravelMode travelMode) {
+    private final GeoApiContext context;
+
+    public DistanceMatrix getRouteTime(String firstLocation, String secondLocation, TravelMode travelMode) {
         LatLng source = null;
         LatLng destination = null;
         try {
-            source = getLatLng(firstLocation, context);
-            destination = getLatLng(secondLocation, context);
+            source = getLatLng(firstLocation);
+            destination = getLatLng(secondLocation);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,7 +52,23 @@ public class LocationManager {
         return null;
     }
 
-    private LatLng getLatLng(String address, GeoApiContext context) throws Exception {
+    public Map<String, Float> getSessionInfo(String source, String destination) {
+        Map<String, Float> map = new HashMap<>();
+        DistanceMatrix route = getRouteTime(source, destination, TravelMode.DRIVING);
+        DistanceMatrixRow[] rows = route.rows;
+        for (DistanceMatrixRow row : rows) {
+            DistanceMatrixElement[] elements = row.elements;
+            for (DistanceMatrixElement element : elements) {
+                float distance = element.distance.inMeters;
+                map.put("distance", distance / 1000f);
+                long duration = element.duration.inSeconds;
+                map.put("duration", duration / 3600f);
+            }
+        }
+        return map;
+    }
+
+    private LatLng getLatLng(String address) throws Exception {
         GeocodingResult[] results = GeocodingApi.geocode(context, address).await();
         return results[0].geometry.location;
     }

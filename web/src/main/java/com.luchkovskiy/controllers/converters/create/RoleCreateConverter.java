@@ -7,8 +7,6 @@ import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
 @RequiredArgsConstructor
 public class RoleCreateConverter extends RoleBaseConverter<RoleCreateRequest, Role> {
@@ -20,7 +18,6 @@ public class RoleCreateConverter extends RoleBaseConverter<RoleCreateRequest, Ro
 
         Role role = new Role();
 
-        role.setCreated(LocalDateTime.now());
         role.setUser(userService.read(request.getUserId()));
 
         return doConvert(role, request);

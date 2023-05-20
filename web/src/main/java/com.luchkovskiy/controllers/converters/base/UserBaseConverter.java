@@ -4,8 +4,6 @@ import com.luchkovskiy.controllers.requests.create.UserCreateRequest;
 import com.luchkovskiy.models.User;
 import org.springframework.core.convert.converter.Converter;
 
-import java.time.LocalDateTime;
-
 public abstract class UserBaseConverter<S, T> implements Converter<S, T> {
 
     public User doConvert(User userForUpdate, UserCreateRequest request) {
@@ -13,14 +11,11 @@ public abstract class UserBaseConverter<S, T> implements Converter<S, T> {
         userForUpdate.setName(request.getName());
         userForUpdate.setSurname(request.getSurname());
         userForUpdate.setBirthdayDate(request.getBirthdayDate());
-        userForUpdate.setActive(false);
         userForUpdate.setAddress(request.getAddress());
         userForUpdate.setPassportId(request.getPassportId());
         userForUpdate.setDriverId(request.getDriverId());
         userForUpdate.setDrivingExperience(request.getDrivingExperience());
-        userForUpdate.setRating(request.getRating());
         userForUpdate.setAccountBalance(request.getAccountBalance());
-        userForUpdate.setChanged(LocalDateTime.now());
 
         return userForUpdate;
     }

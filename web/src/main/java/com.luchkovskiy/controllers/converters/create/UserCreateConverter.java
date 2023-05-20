@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
 @RequiredArgsConstructor
 public class UserCreateConverter extends UserBaseConverter<UserCreateRequest, User> {
@@ -23,7 +21,7 @@ public class UserCreateConverter extends UserBaseConverter<UserCreateRequest, Us
     public User convert(UserCreateRequest request) {
 
         User user = new User();
-        user.setCreated(LocalDateTime.now());
+        user.setRating(5f);
         AuthenticationInfo info = new AuthenticationInfo();
         info.setEmail(request.getEmail());
 

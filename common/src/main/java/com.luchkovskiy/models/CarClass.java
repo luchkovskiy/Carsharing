@@ -51,10 +51,10 @@ public class CarClass {
     private Float pricePerHour;
 
     @Column
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 
     @Column
-    private LocalDateTime changed;
+    private LocalDateTime changed = LocalDateTime.now();
 
     @OneToMany(mappedBy = "carClass", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference

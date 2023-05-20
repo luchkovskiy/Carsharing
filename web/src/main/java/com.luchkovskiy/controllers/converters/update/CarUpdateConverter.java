@@ -21,6 +21,7 @@ public class CarUpdateConverter extends CarBaseConverter<CarUpdateRequest, Car> 
 
         Car car = carService.read(request.getId());
         car.setCarClass(carClassService.read(request.getClassId()));
+        car.setVisible(request.getVisible());
 
         return doConvert(car, request);
     }

@@ -64,4 +64,9 @@ public class SessionServiceImpl implements SessionService {
         carRentInfoRepository.save(carRentInfo);
         return sessionRepository.save(session);
     }
+
+    @Override
+    public Session findByUser(User user) {
+        return sessionRepository.findByUser(user);
+    }
 }
