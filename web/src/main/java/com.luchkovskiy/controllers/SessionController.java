@@ -262,6 +262,7 @@ public class SessionController {
         ExceptionChecker.authCheck(principal);
         Session session = new Session();
         Car car = carService.read(carId);
+        carCheck(car);
         session.setCar(car);
         User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));
         ExceptionChecker.ableToPayCheck(user);
@@ -326,8 +327,12 @@ public class SessionController {
     }
 
     private void setRentInfo(String location, Session readedSession, Car readedCar, CarRentInfo carRentInfo) {
-        Float gasRemaining = carRentInfo.getGasRemaining() - readedSession.getDistancePassed() / 100 * readedCar.getGasConsumption();
-        carRentInfo.setGasRemaining(gasRemaining);
+        float gasRemaining = carRentInfo.getGasRemaining() - readedSession.getDistancePassed() / 100 * readedCar.getGasConsumption();
+        if (gasRemaining < 0) {
+            carRentInfo.setGasRemaining(0f);
+        } else {
+            carRentInfo.setGasRemaining(gasRemaining);
+        }
         carRentInfo.setAvailable(true);
         carRentInfo.setCurrentLocation(location);
         carRentInfo.setChanged(LocalDateTime.now());
@@ -349,5 +354,13 @@ public class SessionController {
                 return session;
         }
         throw new RuntimeException("Active session not found");
+    }
+
+    private void carCheck(Car car) {
+        if (!car.getVisible()) {
+            throw new RuntimeException("Car isn't ready for rent");
+        } else if(car.getCarRentInfo().getGasRemaining() <= 0) {
+            throw new RuntimeException("Too low gas in the car");
+        }
     }
 }

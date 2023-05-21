@@ -166,7 +166,6 @@ public class UserController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
-    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_ANONYMOUS"})
     public ResponseEntity<User> create(@Valid @Parameter(hidden = true) @ModelAttribute UserCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         User user = conversionService.convert(request, User.class);
@@ -267,7 +266,6 @@ public class UserController {
                        @Min(1) @NotNull Long id) {
         userService.delete(id);
     }
-    // TODO: 21.05.2023 софт делит
 
     @Operation(
             summary = "Check distance to car",
@@ -323,7 +321,7 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )}
     )
-    @PutMapping("/card")
+    @PostMapping("/card")
     public ResponseEntity<UserCard> linkPaymentCard(@Valid @Parameter(hidden = true) @ModelAttribute UserCardCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         UserCard userCard = conversionService.convert(request, UserCard.class);

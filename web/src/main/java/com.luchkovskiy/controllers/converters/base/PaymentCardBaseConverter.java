@@ -10,7 +10,6 @@ public abstract class PaymentCardBaseConverter<S, T> implements Converter<S, T> 
 
         paymentCardForUpdate.setCardNumber(request.getCardNumber());
         paymentCardForUpdate.setExpirationDate(request.getExpirationDate());
-        paymentCardForUpdate.setCvv(request.getCvv());
         paymentCardForUpdate.setCardholder(request.getCardholder());
 
         return paymentCardForUpdate;

@@ -1,6 +1,9 @@
 package com.luchkovskiy.service.implementations;
 
+import com.luchkovskiy.models.Subscription;
 import com.luchkovskiy.models.User;
+import com.luchkovskiy.models.enums.StatusType;
+import com.luchkovskiy.repository.SubscriptionRepository;
 import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.ScheduledService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,8 @@ public class ScheduledServiceImpl implements ScheduledService {
 
     private final UserRepository userRepository;
 
+    private final SubscriptionRepository subscriptionRepository;
+
     @Override
     @Scheduled(cron = "0 0 0 * * *")
     public void deleteInactiveUsers() {
@@ -28,6 +33,14 @@ public class ScheduledServiceImpl implements ScheduledService {
         }
     }
 
-    // TODO: 21.05.2023 мб что еще придумать
-
+    @Override
+    @Scheduled(cron = "0 0 * * * *")
+    public void inactiveSubscriptions() {
+        List<Subscription> subscriptions = subscriptionRepository.findAll();
+        for (Subscription subscription : subscriptions) {
+            if (subscription.getEndTime().isBefore(LocalDateTime.now())) {
+                subscription.setStatus(StatusType.FINISHED);
+            }
+        }
+    }
 }

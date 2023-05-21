@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
         if (!userRepository.existsById(id))
             throw new EntityNotFoundException("User not found!");
-        userRepository.deleteById(id);
+        userRepository.inactiveUser(id);
     }
 
     @Override
@@ -62,11 +62,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByAuthenticationInfoEmail(email);
-    }
-
-    @Override
-    public void linkPaymentCard(Long userId, Long cardId) {
-        // TODO: 20.05.2023 принципал
     }
 
     private void createBasicRole(User object) {
@@ -81,4 +76,5 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Your driving information is not valid for using the app");
         }
     }
+
 }

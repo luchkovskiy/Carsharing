@@ -62,3 +62,7 @@ caffeineconfig:
   initialCapacity: 30
   maximumSize: 200
   expireAfterAccess: 20
+
+---
+cardconfig:
+  cvvSalt: 66a19350-752e-4b20-863c-033d30b7bf23

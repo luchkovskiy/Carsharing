@@ -37,6 +37,4 @@ public class CacheConfig {
                 .recordStats();
     }
 
-    // TODO: 21.05.2023 Заполнить exception, создать свои
-
 }

@@ -15,4 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByAuthenticationInfoEmail(String email);
 
+    @Query("UPDATE User u SET u.active = false WHERE u.id = :id")
+    void inactiveUser(Long id);
+
 }

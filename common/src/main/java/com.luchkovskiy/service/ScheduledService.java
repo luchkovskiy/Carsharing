@@ -4,4 +4,6 @@ public interface ScheduledService {
 
     void deleteInactiveUsers();
 
+    void inactiveSubscriptions();
+
 }
