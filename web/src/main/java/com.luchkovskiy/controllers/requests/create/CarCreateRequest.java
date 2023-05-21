@@ -1,5 +1,6 @@
 package com.luchkovskiy.controllers.requests.create;
 
+import com.luchkovskiy.models.enums.TransmissionType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,9 +48,8 @@ public class CarCreateRequest {
     private Integer releaseYear;
 
     @NotNull
-    @Size(min = 3, max = 30)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mechanical", type = "string", description = "Gearbox type of the car")
-    private String gearboxType;
+    private TransmissionType gearboxType;
 
     @NotNull
     @Min(2)

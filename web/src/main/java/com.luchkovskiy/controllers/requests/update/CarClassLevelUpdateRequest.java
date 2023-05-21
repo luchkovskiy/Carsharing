@@ -1,6 +1,6 @@
 package com.luchkovskiy.controllers.requests.update;
 
-import com.luchkovskiy.controllers.requests.create.CarClassCreateRequest;
+import com.luchkovskiy.controllers.requests.create.CarClassLevelCreateRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Validated
 @Schema(description = "Car class information to update in database")
-public class CarClassUpdateRequest extends CarClassCreateRequest {
+public class CarClassLevelUpdateRequest extends CarClassLevelCreateRequest {
 
     @NotNull
     @Min(1)

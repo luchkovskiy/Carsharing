@@ -4,6 +4,7 @@ import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.CarCreateRequest;
 import com.luchkovskiy.controllers.requests.update.CarUpdateRequest;
 import com.luchkovskiy.models.Car;
+import com.luchkovskiy.models.enums.TransmissionType;
 import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.util.ExceptionChecker;
 import io.swagger.v3.oas.annotations.Operation;
@@ -112,7 +113,7 @@ public class CarController {
                                     description = "Year when the car was released")),
                     @Parameter(name = "gearboxType", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mechanical", type = "string",
-                                    description = "Gearbox type of the car")),
+                                    implementation = TransmissionType.class, description = "Gearbox type of the car")),
                     @Parameter(name = "sitsAmount", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "integer",
                                     description = "Amount of sits in the car")),
@@ -171,7 +172,7 @@ public class CarController {
                                     description = "Year when the car was released")),
                     @Parameter(name = "gearboxType", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Mechanical", type = "string",
-                                    description = "Gearbox type of the car")),
+                                    implementation = TransmissionType.class, description = "Gearbox type of the car")),
                     @Parameter(name = "sitsAmount", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "integer",
                                     description = "Amount of sits in the car")),

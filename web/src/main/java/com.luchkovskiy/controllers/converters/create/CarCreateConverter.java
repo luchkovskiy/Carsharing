@@ -3,7 +3,7 @@ package com.luchkovskiy.controllers.converters.create;
 import com.luchkovskiy.controllers.converters.base.CarBaseConverter;
 import com.luchkovskiy.controllers.requests.create.CarCreateRequest;
 import com.luchkovskiy.models.Car;
-import com.luchkovskiy.service.CarClassService;
+import com.luchkovskiy.service.CarClassLevelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CarCreateConverter extends CarBaseConverter<CarCreateRequest, Car> {
 
-    private final CarClassService carClassService;
+    private final CarClassLevelService carClassLevelService;
 
     @Override
     public Car convert(CarCreateRequest request) {
 
         Car car = new Car();
 
-        car.setCarClass(carClassService.read(request.getClassId()));
+        car.setCarClassLevel(carClassLevelService.read(request.getClassId()));
 
         return doConvert(car, request);
     }

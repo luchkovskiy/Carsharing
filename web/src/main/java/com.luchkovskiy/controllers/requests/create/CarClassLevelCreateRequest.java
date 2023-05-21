@@ -1,5 +1,6 @@
 package com.luchkovskiy.controllers.requests.create;
 
+import com.luchkovskiy.models.enums.CarComfortType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +18,7 @@ import javax.validation.constraints.Size;
 @Data
 @Validated
 @Schema(description = "Car class information to save in database")
-public class CarClassCreateRequest {
+public class CarClassLevelCreateRequest {
 
     @Size(min = 4, max = 25)
     @NotNull
@@ -31,9 +32,8 @@ public class CarClassCreateRequest {
     private Integer accessLevel;
 
     @NotNull
-    @Size(min = 3, max = 50)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "High", type = "string", description = "Comfort level of current class: may be high, low or normal")
-    private String comfortType;
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "HIGH", type = "string", description = "Comfort level of current class: may be basic, comfort or high")
+    private CarComfortType comfortType;
 
     @NotNull
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "16.4", type = "number", description = "Current price for the car rent")

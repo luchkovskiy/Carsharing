@@ -2,6 +2,7 @@ package com.luchkovskiy.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.luchkovskiy.models.enums.TransmissionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,8 @@ import org.apache.commons.lang3.builder.ToStringExclude;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,7 +35,7 @@ import java.util.Set;
 @Setter
 @Getter
 @EqualsAndHashCode(exclude = {
-        "sessions", "carRentInfo", "carClass"
+        "sessions", "carRentInfo", "carClassLevel"
 })
 @Entity
 @Table(name = "cars")
@@ -67,7 +70,8 @@ public class Car {
     private Integer releaseYear;
 
     @Column(name = "gearbox_type")
-    private String gearboxType;
+    @Enumerated(EnumType.STRING)
+    private TransmissionType gearboxType;
 
     @Column(name = "amount_of_sits")
     private Integer sitsAmount;
@@ -76,7 +80,7 @@ public class Car {
     @JoinColumn(name = "class_id")
     @JsonBackReference
     @ToStringExclude
-    private CarClass carClass;
+    private CarClassLevel carClassLevel;
 
     @Column(name = "gas_consumption")
     private Float gasConsumption;

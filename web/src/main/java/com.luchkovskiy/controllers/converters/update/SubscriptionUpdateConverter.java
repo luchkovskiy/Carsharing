@@ -25,7 +25,12 @@ public class SubscriptionUpdateConverter extends SubscriptionBaseConverter<Subsc
         Subscription subscription = subscriptionService.read(request.getId());
         subscription.setUser(userService.read(request.getUserId()));
         subscription.setSubscriptionLevel(subscriptionLevelService.read(request.getLevelId()));
+        subscription.setStartTime(request.getStartTime());
+        subscription.setEndTime(request.getEndTime());
+        subscription.setStatus(request.getStatus());
+        subscription.setTripsAmount(request.getTripsAmount());
         return doConvert(subscription, request);
+
     }
 
 }

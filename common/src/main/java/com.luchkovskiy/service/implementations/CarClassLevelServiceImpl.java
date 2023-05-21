@@ -1,8 +1,8 @@
 package com.luchkovskiy.service.implementations;
 
-import com.luchkovskiy.models.CarClass;
+import com.luchkovskiy.models.CarClassLevel;
 import com.luchkovskiy.repository.CarClassRepository;
-import com.luchkovskiy.service.CarClassService;
+import com.luchkovskiy.service.CarClassLevelService;
 import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,29 +12,29 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CarClassServiceImpl implements CarClassService {
+public class CarClassLevelServiceImpl implements CarClassLevelService {
 
     private final CarClassRepository carClassRepository;
 
     @Cacheable("carClasses")
     @Override
-    public CarClass read(Long id) {
+    public CarClassLevel read(Long id) {
         return carClassRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Car class not found!"));
     }
 
     @Cacheable("carClasses")
     @Override
-    public List<CarClass> readAll() {
+    public List<CarClassLevel> readAll() {
         return carClassRepository.findAll();
     }
 
     @Override
-    public CarClass create(CarClass object) {
+    public CarClassLevel create(CarClassLevel object) {
         return carClassRepository.save(object);
     }
 
     @Override
-    public CarClass update(CarClass object) {
+    public CarClassLevel update(CarClassLevel object) {
         if (!carClassRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Car class not found!");
         return carClassRepository.save(object);

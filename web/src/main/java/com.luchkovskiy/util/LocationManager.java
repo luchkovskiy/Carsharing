@@ -24,19 +24,15 @@ public class LocationManager {
 
     private final GeoApiContext context;
 
-    public DistanceMatrix getRouteTime(String firstLocation, String secondLocation, TravelMode travelMode) {
-        LatLng source = null;
-        LatLng destination = null;
+    public DistanceMatrix getRouteTime(String firstLocation, String secondLocation, TravelMode travelMode, String zoneId, String language) {
+        LatLng source;
+        LatLng destination;
         try {
             source = getLatLng(firstLocation);
             destination = getLatLng(secondLocation);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        LocalDateTime time = LocalDateTime.now();
-        ZoneId zone = ZoneId.of("Europe/Minsk");
-        ZoneOffset zoneOffSet = zone.getRules().getOffset(time);
-        try {
+            LocalDateTime time = LocalDateTime.now();
+            ZoneId zone = ZoneId.of(zoneId);
+            ZoneOffset zoneOffSet = zone.getRules().getOffset(time);
             DistanceMatrixApiRequest req = DistanceMatrixApi.newRequest(context);
             req.departureTime(time.toInstant(zoneOffSet));
             DirectionsApi.RouteRestriction tolls = DirectionsApi.RouteRestriction.TOLLS;
@@ -44,17 +40,17 @@ public class LocationManager {
                     .destinations(destination)
                     .mode(travelMode)
                     .avoid(tolls)
-                    .language("en-Us")
+                    .language(language)
                     .await();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
 
     public Map<String, Float> getSessionInfo(String source, String destination) {
         Map<String, Float> map = new HashMap<>();
-        DistanceMatrix route = getRouteTime(source, destination, TravelMode.DRIVING);
+        DistanceMatrix route = getRouteTime(source, destination, TravelMode.DRIVING, "Europe/Minsk", "en-Us");
         DistanceMatrixRow[] rows = route.rows;
         for (DistanceMatrixRow row : rows) {
             DistanceMatrixElement[] elements = row.elements;

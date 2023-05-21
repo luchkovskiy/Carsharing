@@ -2,8 +2,8 @@ package com.luchkovskiy.security.provider;
 
 import com.luchkovskiy.models.AuthenticationInfo;
 import com.luchkovskiy.models.Role;
-import com.luchkovskiy.models.SystemRole;
 import com.luchkovskiy.models.User;
+import com.luchkovskiy.models.enums.SystemRole;
 import com.luchkovskiy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.AuthorityUtils;

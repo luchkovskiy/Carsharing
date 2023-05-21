@@ -1,8 +1,8 @@
 package com.luchkovskiy.service.implementations;
 
 import com.luchkovskiy.models.Role;
-import com.luchkovskiy.models.SystemRole;
 import com.luchkovskiy.models.User;
+import com.luchkovskiy.models.enums.SystemRole;
 import com.luchkovskiy.repository.RoleRepository;
 import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.UserService;
@@ -10,6 +10,7 @@ import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User object) {
+        userDrivingInfoCheck(object);
         createBasicRole(object);
         return userRepository.save(object);
     }
@@ -41,6 +43,7 @@ public class UserServiceImpl implements UserService {
     public User update(User object) {
         if (!userRepository.existsById(object.getId()))
             throw new EntityNotFoundException("User not found!");
+        userDrivingInfoCheck(object);
         return userRepository.save(object);
     }
 
@@ -71,5 +74,11 @@ public class UserServiceImpl implements UserService {
         role.setUser(object);
         role.setSystemRole(SystemRole.ROLE_USER);
         roleRepository.save(role);
+    }
+
+    private void userDrivingInfoCheck(User user) {
+        if (user.getBirthdayDate().isAfter(LocalDateTime.now().minusYears(18)) || user.getDrivingExperience() < 2) {
+            throw new RuntimeException("Your driving information is not valid for using the app");
+        }
     }
 }

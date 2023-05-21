@@ -1,6 +1,7 @@
 package com.luchkovskiy.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.luchkovskiy.models.enums.CarComfortType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,8 @@ import org.springframework.cache.annotation.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,7 +35,7 @@ import java.util.Set;
 @Entity
 @Table(name = "c_cars_classes")
 @Cacheable("carClasses")
-public class CarClass {
+public class CarClassLevel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +48,8 @@ public class CarClass {
     private Integer accessLevel;
 
     @Column(name = "comfort_type")
-    private String comfortType;
+    @Enumerated(EnumType.STRING)
+    private CarComfortType comfortType;
 
     @Column(name = "price_per_hour")
     private Float pricePerHour;
@@ -56,7 +60,7 @@ public class CarClass {
     @Column
     private LocalDateTime changed = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "carClass", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "carClassLevel", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference
     @ToStringExclude
     private Set<Car> cars = Collections.emptySet();

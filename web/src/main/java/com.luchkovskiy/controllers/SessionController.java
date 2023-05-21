@@ -4,13 +4,11 @@ import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.SessionCreateRequest;
 import com.luchkovskiy.controllers.requests.update.SessionUpdateRequest;
 import com.luchkovskiy.models.Car;
-import com.luchkovskiy.models.CarClass;
+import com.luchkovskiy.models.CarClassLevel;
 import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.models.Session;
-import com.luchkovskiy.models.StatusType;
 import com.luchkovskiy.models.User;
-import com.luchkovskiy.service.CarClassService;
-import com.luchkovskiy.service.CarRentInfoService;
+import com.luchkovskiy.models.enums.StatusType;
 import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.SessionService;
 import com.luchkovskiy.service.UserService;
@@ -69,11 +67,8 @@ public class SessionController {
 
     private final UserService userService;
 
-    private final CarRentInfoService carRentInfoService;
-
     private final LocationManager locationManager;
 
-    private final CarClassService carClassService;
 
     @Operation(
             summary = "Spring Data Find Session By Id",
@@ -266,14 +261,17 @@ public class SessionController {
     public ResponseEntity<Session> startSession(Principal principal, Long carId) {
         ExceptionChecker.authCheck(principal);
         Session session = new Session();
-        session.setCar(carService.read(carId));
+        Car car = carService.read(carId);
+        session.setCar(car);
         User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));
+        ExceptionChecker.ableToPayCheck(user);
         ExceptionChecker.verifyCheck(user);
         activeSessionCheck(user);
         session.setUser(user);
         session.setStatus(StatusType.ACTIVE);
-        CarRentInfo carRentInfo = carRentInfoService.readByCarId(carId);
+        CarRentInfo carRentInfo = car.getCarRentInfo();
         session.setStartLocation(carRentInfo.getCurrentLocation());
+        session.setStartTime(LocalDateTime.now());
         carRentInfo.setAvailable(false);
         carRentInfo.setCurrentLocation(null);
         Session startSession = sessionService.startSession(session, carRentInfo);
@@ -310,18 +308,29 @@ public class SessionController {
         Map<String, Float> sessionInfo = locationManager.getSessionInfo(readedSession.getStartLocation(), location);
         Float sessionDistance = sessionInfo.get("distance");
         Float sessionDuration = sessionInfo.get("duration");
+        setSessionInfo(readedSession, sessionDistance);
+        Car readedCar = readedSession.getCar();
+        CarClassLevel carClassLevel = readedCar.getCarClassLevel();
+        CarRentInfo carRentInfo = readedSession.getCar().getCarRentInfo();
+        setRentInfo(location, readedSession, readedCar, carRentInfo);
+        readedSession.setTotalPrice(sessionDuration * carClassLevel.getPricePerHour());
+        Session session = sessionService.endSession(readedSession, carRentInfo);
+        return new ResponseEntity<>(session, HttpStatus.OK);
+    }
+
+    private void setSessionInfo(Session readedSession, Float sessionDistance) {
         readedSession.setDistancePassed(sessionDistance);
         readedSession.setStatus(StatusType.FINISHED);
         readedSession.setEndTime(LocalDateTime.now());
-        CarRentInfo carRentInfo = carRentInfoService.readByCarId(readedSession.getCar().getId()); // TODO: 20.05.2023 Можно сделать сложный sql запрос
-        Car readedCar = carService.read(readedSession.getCar().getId());
-        CarClass carClass = carClassService.read(readedCar.getCarClass().getId());
-        carRentInfo.setGasRemaining(carRentInfo.getGasRemaining() - readedSession.getDistancePassed() / 100 * readedCar.getGasConsumption());
+        readedSession.setChanged(LocalDateTime.now());
+    }
+
+    private void setRentInfo(String location, Session readedSession, Car readedCar, CarRentInfo carRentInfo) {
+        Float gasRemaining = carRentInfo.getGasRemaining() - readedSession.getDistancePassed() / 100 * readedCar.getGasConsumption();
+        carRentInfo.setGasRemaining(gasRemaining);
         carRentInfo.setAvailable(true);
         carRentInfo.setCurrentLocation(location);
-        readedSession.setTotalPrice(sessionDuration * carClass.getPricePerHour());
-        Session session = sessionService.endSession(readedSession, carRentInfo);
-        return new ResponseEntity<>(session, HttpStatus.OK);
+        carRentInfo.setChanged(LocalDateTime.now());
     }
 
     private void activeSessionCheck(User user) {

@@ -1,7 +1,7 @@
 package com.luchkovskiy.service.implementations;
 
 import com.luchkovskiy.models.Role;
-import com.luchkovskiy.models.SystemRole;
+import com.luchkovskiy.models.enums.SystemRole;
 import com.luchkovskiy.repository.RoleRepository;
 import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.RoleService;

@@ -4,8 +4,8 @@ package com.luchkovskiy.controllers;
 import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.SubscriptionCreateRequest;
 import com.luchkovskiy.controllers.requests.update.SubscriptionUpdateRequest;
-import com.luchkovskiy.models.StatusType;
 import com.luchkovskiy.models.Subscription;
+import com.luchkovskiy.models.enums.StatusType;
 import com.luchkovskiy.service.SubscriptionService;
 import com.luchkovskiy.util.ExceptionChecker;
 import io.swagger.v3.oas.annotations.Operation;
@@ -100,18 +100,6 @@ public class SubscriptionController {
                     @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "User's Id in database")),
-                    @Parameter(name = "startTime", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22T17:24:01", type = "date-time",
-                                    description = "The time when the subscription started")),
-                    @Parameter(name = "endTime", in = ParameterIn.QUERY,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-24T17:24:01", type = "date-time",
-                                    description = "The time when the subscription ended")),
-                    @Parameter(name = "status", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ACTIVE", type = "statusType",
-                                    implementation = StatusType.class, description = "Subscription status")),
-                    @Parameter(name = "tripsAmount", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "5", type = "integer",
-                                    description = "Amount of trips during the current subscription")),
                     @Parameter(name = "daysTotal", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2", type = "integer",
                                     description = "Amount of days the subscription was active")),

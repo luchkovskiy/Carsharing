@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 @Schema(description = "Accident information to save in database")
 public class AccidentCreateRequest {
 
+    @NotNull
     @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1", type = "integer", description = "Id of the session in which the accident happened")
     @Min(1)
     private Long sessionId;
@@ -30,21 +31,12 @@ public class AccidentCreateRequest {
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Car issue", type = "string", description = "Name of accident")
     private String name;
 
-    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "50.5", type = "number", description = "Fine that user have to pay to company")
-    @Min(1)
-    private Float fine;
-
     @NotNull
     @PastOrPresent
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2023-02-22T17:24:01", type = "date-time",
             description = "The time when the accident happened")
     private LocalDateTime time;
-
-    @NotNull
-    @Max(5)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "0.5", type = "number", description = "User rating subtraction")
-    private Float ratingSubtraction;
 
     @NotNull
     @Min(1)

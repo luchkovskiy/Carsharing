@@ -1,6 +1,6 @@
 package com.luchkovskiy.controllers.requests.create;
 
-import com.luchkovskiy.models.StatusType;
+import com.luchkovskiy.models.enums.StatusType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;

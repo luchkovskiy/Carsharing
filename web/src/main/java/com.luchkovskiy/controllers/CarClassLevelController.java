@@ -1,10 +1,11 @@
 package com.luchkovskiy.controllers;
 
 import com.luchkovskiy.controllers.exceptions.ErrorMessage;
-import com.luchkovskiy.controllers.requests.create.CarClassCreateRequest;
-import com.luchkovskiy.controllers.requests.update.CarClassUpdateRequest;
-import com.luchkovskiy.models.CarClass;
-import com.luchkovskiy.service.CarClassService;
+import com.luchkovskiy.controllers.requests.create.CarClassLevelCreateRequest;
+import com.luchkovskiy.controllers.requests.update.CarClassLevelUpdateRequest;
+import com.luchkovskiy.models.CarClassLevel;
+import com.luchkovskiy.models.enums.CarComfortType;
+import com.luchkovskiy.service.CarClassLevelService;
 import com.luchkovskiy.util.ExceptionChecker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,9 +44,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Car class Controller", description = "This controller allows basic CRUD operations for Car classes and other functionality")
-public class CarClassController {
+public class CarClassLevelController {
 
-    private final CarClassService carClassService;
+    private final CarClassLevelService carClassLevelService;
 
     private final ConversionService conversionService;
 
@@ -56,7 +57,7 @@ public class CarClassController {
                     @ApiResponse(
                             responseCode = "200 OK",
                             description = "Car class successfully loaded",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CarClass.class))
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CarClassLevel.class))
                     ),
                     @ApiResponse(
                             responseCode = "404 Not Found",
@@ -67,10 +68,10 @@ public class CarClassController {
     )
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<CarClass> read(@PathVariable("id")
-                                         @Parameter(description = "Car class ID in database", required = true, example = "1") @NotNull @Min(1) Long id) {
-        CarClass carClass = carClassService.read(id);
-        return new ResponseEntity<>(carClass, HttpStatus.OK);
+    public ResponseEntity<CarClassLevel> read(@PathVariable("id")
+                                              @Parameter(description = "Car class ID in database", required = true, example = "1") @NotNull @Min(1) Long id) {
+        CarClassLevel carClassLevel = carClassLevelService.read(id);
+        return new ResponseEntity<>(carClassLevel, HttpStatus.OK);
     }
 
     @Operation(
@@ -80,15 +81,15 @@ public class CarClassController {
                     @ApiResponse(
                             responseCode = "200 OK",
                             description = "Car classes successfully loaded",
-                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CarClass.class)))
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CarClassLevel.class)))
                     ),
             }
     )
     @GetMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Object> readAll() {
-        List<CarClass> carClasses = carClassService.readAll();
-        return new ResponseEntity<>(carClasses, HttpStatus.OK);
+        List<CarClassLevel> carClassLevels = carClassLevelService.readAll();
+        return new ResponseEntity<>(carClassLevels, HttpStatus.OK);
     }
 
     @Operation(
@@ -103,7 +104,7 @@ public class CarClassController {
                                     description = "Access level to be used by user subscription from 1 to 3")),
                     @Parameter(name = "comfortType", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "High", type = "string",
-                                    description = "Comfort level of current class: may be high, low or normal")),
+                                    implementation = CarComfortType.class, description = "Comfort level of current class: may be basic, comfort or high")),
                     @Parameter(name = "pricePerHour", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "16.4", type = "number",
                                     description = "Current price for the car rent"))
@@ -112,18 +113,18 @@ public class CarClassController {
                     @ApiResponse(
                             responseCode = "200 OK",
                             description = "Car class successfully added",
-                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CarClass.class)))
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CarClassLevel.class)))
                     ),
             }
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<CarClass> create(@Valid @Parameter(hidden = true) @ModelAttribute CarClassCreateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<CarClassLevel> create(@Valid @Parameter(hidden = true) @ModelAttribute CarClassLevelCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
-        CarClass carClass = conversionService.convert(request, CarClass.class);
-        CarClass createdCarClass = carClassService.create(carClass);
-        return new ResponseEntity<>(createdCarClass, HttpStatus.CREATED);
+        CarClassLevel carClassLevel = conversionService.convert(request, CarClassLevel.class);
+        CarClassLevel createdCarClassLevel = carClassLevelService.create(carClassLevel);
+        return new ResponseEntity<>(createdCarClassLevel, HttpStatus.CREATED);
     }
 
     @Operation(
@@ -141,7 +142,7 @@ public class CarClassController {
                                     description = "Access level to be used by user subscription from 1 to 3")),
                     @Parameter(name = "comfortType", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "High", type = "string",
-                                    description = "Comfort level of current class: may be high, low or normal")),
+                                    implementation = CarComfortType.class, description = "Comfort level of current class: may be basic, comfort or high")),
                     @Parameter(name = "pricePerHour", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "16.4", type = "number",
                                     description = "Current price for the car rent"))
@@ -150,7 +151,7 @@ public class CarClassController {
                     @ApiResponse(
                             responseCode = "200 OK",
                             description = "Car class successfully updated",
-                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CarClass.class)))
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CarClassLevel.class)))
                     ),
                     @ApiResponse(
                             responseCode = "404 Not Found",
@@ -162,11 +163,11 @@ public class CarClassController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<CarClass> update(@Valid @Parameter(hidden = true) @ModelAttribute CarClassUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<CarClassLevel> update(@Valid @Parameter(hidden = true) @ModelAttribute CarClassLevelUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
-        CarClass carClass = conversionService.convert(request, CarClass.class);
-        CarClass updatedCarClass = carClassService.update(carClass);
-        return new ResponseEntity<>(updatedCarClass, HttpStatus.OK);
+        CarClassLevel carClassLevel = conversionService.convert(request, CarClassLevel.class);
+        CarClassLevel updatedCarClassLevel = carClassLevelService.update(carClassLevel);
+        return new ResponseEntity<>(updatedCarClassLevel, HttpStatus.OK);
     }
 
     @Operation(
@@ -188,6 +189,6 @@ public class CarClassController {
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Car class ID in database", required = true, example = "1") @Min(1) @NotNull Long id) {
-        carClassService.delete(id);
+        carClassLevelService.delete(id);
     }
 }

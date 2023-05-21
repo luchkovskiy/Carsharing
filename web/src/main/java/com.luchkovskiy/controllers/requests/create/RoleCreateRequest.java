@@ -1,6 +1,6 @@
 package com.luchkovskiy.controllers.requests.create;
 
-import com.luchkovskiy.models.SystemRole;
+import com.luchkovskiy.models.enums.SystemRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;

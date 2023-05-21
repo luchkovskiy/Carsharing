@@ -1,6 +1,7 @@
 package com.luchkovskiy.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.luchkovskiy.models.enums.SystemRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

@@ -284,10 +284,13 @@ public class UserController {
         List<CarDistanceResponse> responseDistances = new ArrayList<>();
         List<CarRentInfo> cars = carRentInfoService.readAll();
         for (CarRentInfo car : cars) {
-            carsLocations.put(car.getCar().getId(), car.getCurrentLocation());
+            if (car.getAvailable()) {
+                carsLocations.put(car.getCar().getId(), car.getCurrentLocation());
+            }
         }
         for (Map.Entry<Long, String> entry : carsLocations.entrySet()) {
-            responseDistances.add(new CarDistanceResponse(carService.read(entry.getKey()), locationManager.getRouteTime(address, entry.getValue(), TravelMode.WALKING)));
+            responseDistances.add(new CarDistanceResponse(carService.read(entry.getKey()), locationManager.getRouteTime(
+                    address, entry.getValue(), TravelMode.WALKING, "Europe/Minsk", "en-Us")));
         }
         return new ResponseEntity<>(responseDistances, HttpStatus.OK);
     }
