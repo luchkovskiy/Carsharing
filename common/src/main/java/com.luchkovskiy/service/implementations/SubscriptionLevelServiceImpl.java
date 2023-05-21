@@ -3,6 +3,7 @@ package com.luchkovskiy.service.implementations;
 import com.luchkovskiy.models.SubscriptionLevel;
 import com.luchkovskiy.repository.SubscriptionLevelRepository;
 import com.luchkovskiy.service.SubscriptionLevelService;
+import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class SubscriptionLevelServiceImpl implements SubscriptionLevelService {
     @Cacheable("subscriptionLevels")
     @Override
     public SubscriptionLevel read(Long id) {
-        return subscriptionLevelRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
+        return subscriptionLevelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Subscription level not found!"));
     }
 
     @Cacheable("subscriptionLevels")
@@ -35,14 +36,14 @@ public class SubscriptionLevelServiceImpl implements SubscriptionLevelService {
     @Override
     public SubscriptionLevel update(SubscriptionLevel object) {
         if (!subscriptionLevelRepository.existsById(object.getId()))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("Subscription level not found!");
         return subscriptionLevelRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
         if (!subscriptionLevelRepository.existsById(id))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("Subscription level not found!");
         subscriptionLevelRepository.deleteById(id);
     }
 }

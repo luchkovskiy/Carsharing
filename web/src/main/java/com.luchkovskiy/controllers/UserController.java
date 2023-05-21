@@ -16,6 +16,7 @@ import com.luchkovskiy.repository.VerificationCodeRepository;
 import com.luchkovskiy.service.CarRentInfoService;
 import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.UserService;
+import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import com.luchkovskiy.util.EmailManager;
 import com.luchkovskiy.util.ExceptionChecker;
 import com.luchkovskiy.util.LocationManager;
@@ -49,6 +50,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.security.Principal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -162,7 +164,7 @@ public class UserController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_ANONYMOUS"})
     public ResponseEntity<User> create(@Valid @Parameter(hidden = true) @ModelAttribute UserCreateRequest request, BindingResult bindingResult) {
@@ -234,7 +236,7 @@ public class UserController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     public ResponseEntity<User> update(@Valid @Parameter(hidden = true) @ModelAttribute UserUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
@@ -258,7 +260,7 @@ public class UserController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public void delete(@PathVariable("id") @Parameter(description = "User ID in database", required = true, example = "1")
@@ -322,6 +324,7 @@ public class UserController {
     public ResponseEntity<UserCard> linkPaymentCard(@Valid @Parameter(hidden = true) @ModelAttribute UserCardCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         UserCard userCard = conversionService.convert(request, UserCard.class);
+        ExceptionChecker.verifyCheck(userCard.getUser());
         UserCard savedUserCard = userCardRepository.save(userCard);
         return new ResponseEntity<>(savedUserCard, HttpStatus.OK);
     }
@@ -343,7 +346,7 @@ public class UserController {
     )
     @DeleteMapping("/card")
     public void unlinkPaymentCard(Principal principal, @NotNull @Min(1) Long cardId) {
-        User user = userService.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));
         userCardRepository.unlinkPaymentCard(user.getId(), cardId);
     }
 

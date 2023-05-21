@@ -9,6 +9,7 @@ import com.luchkovskiy.security.dto.AuthRequest;
 import com.luchkovskiy.security.dto.AuthResponse;
 import com.luchkovskiy.security.jwt.TokenProvider;
 import com.luchkovskiy.service.UserService;
+import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import com.luchkovskiy.util.ExceptionChecker;
 import com.luchkovskiy.util.SpringSecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -133,8 +134,9 @@ public class AuthenticationController {
     @PatchMapping("/verify")
     public void verifyEmail(Principal principal, String code) {
         ExceptionChecker.authCheck(principal);
-        User user = userService.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
-        VerificationCode verificationCode = verificationCodeRepository.findByUserId(user.getId()).orElseThrow(RuntimeException::new);
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));
+        VerificationCode verificationCode = verificationCodeRepository.findByUserId(user.getId()).orElseThrow(
+                () -> new EntityNotFoundException("Verification code not found!"));
         if (verificationCode.getCode().equals(code.toUpperCase())) {
             user.setActive(true);
             verificationCodeRepository.delete(verificationCode);

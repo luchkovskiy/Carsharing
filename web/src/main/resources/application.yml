@@ -56,3 +56,9 @@ emailconfig:
   port: 465
   username: carsharingjd2@gmail.com
   smtpPassword: ${emailconfig.smtp_password}
+
+---
+caffeineconfig:
+  initialCapacity: 30
+  maximumSize: 200
+  expireAfterAccess: 20

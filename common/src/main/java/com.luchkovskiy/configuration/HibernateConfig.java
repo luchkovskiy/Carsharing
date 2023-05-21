@@ -19,7 +19,6 @@ public class HibernateConfig {
                 = new LocalContainerEntityManagerFactoryBean();
         em.setPackagesToScan("com.luchkovskiy");
         em.setDataSource(dataSource);
-
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         return em;

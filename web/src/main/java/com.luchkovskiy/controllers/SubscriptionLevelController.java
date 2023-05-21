@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -112,7 +113,7 @@ public class SubscriptionLevelController {
                     ),
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<SubscriptionLevel> create(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionLevelCreateRequest request, BindingResult bindingResult) {
@@ -152,7 +153,7 @@ public class SubscriptionLevelController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<SubscriptionLevel> update(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionLevelUpdateRequest request, BindingResult bindingResult) {
@@ -178,7 +179,7 @@ public class SubscriptionLevelController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Subscription level ID in database", required = true, example = "1")

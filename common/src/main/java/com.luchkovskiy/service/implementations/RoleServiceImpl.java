@@ -5,6 +5,7 @@ import com.luchkovskiy.models.SystemRole;
 import com.luchkovskiy.repository.RoleRepository;
 import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.RoleService;
+import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class RoleServiceImpl implements RoleService {
     @Cacheable("roles")
     @Override
     public Role read(Long id) {
-        return roleRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
+        return roleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Role not found!"));
     }
 
     @Cacheable("roles")
@@ -42,14 +43,14 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role update(Role object) {
         if (!roleRepository.existsById(object.getId()))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("Role not found!");
         return roleRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
         if (!roleRepository.existsById(id))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("Role not found!");
         basicRoleCheck(id);
         roleRepository.deleteById(id);
     }
@@ -68,7 +69,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     private void basicRoleCheck(Long id) {
-        if (roleRepository.findById(id).orElseThrow(RuntimeException::new).getSystemRole().equals(SystemRole.ROLE_USER)) {
+        if (roleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Role not found!")).getSystemRole().equals(SystemRole.ROLE_USER)) {
             throw new RuntimeException("Can't delete basic role!");
         }
     }

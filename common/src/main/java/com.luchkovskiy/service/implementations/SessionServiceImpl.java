@@ -7,6 +7,7 @@ import com.luchkovskiy.repository.CarRentInfoRepository;
 import com.luchkovskiy.repository.SessionRepository;
 import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.SessionService;
+import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public Session read(Long id) {
-        return sessionRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
+        return sessionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Session not found!"));
     }
 
     @Override
@@ -40,14 +41,14 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public Session update(Session object) {
         if (!sessionRepository.existsById(object.getId()))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("Session not found!");
         return sessionRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
         if (!sessionRepository.existsById(id))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("Session not found!");
         sessionRepository.deleteById(id);
     }
 
@@ -59,7 +60,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public Session endSession(Session session, CarRentInfo carRentInfo) {
-        User user = userRepository.findById(session.getUser().getId()).orElseThrow(RuntimeException::new);
+        User user = userRepository.findById(session.getUser().getId()).orElseThrow(() -> new EntityNotFoundException("User not found!"));
         user.setAccountBalance(user.getAccountBalance() - session.getTotalPrice());
         carRentInfoRepository.save(carRentInfo);
         return sessionRepository.save(session);

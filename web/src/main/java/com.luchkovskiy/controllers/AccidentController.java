@@ -1,6 +1,5 @@
 package com.luchkovskiy.controllers;
 
-import com.google.maps.GeoApiContext;
 import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.AccidentCreateRequest;
 import com.luchkovskiy.controllers.requests.update.AccidentUpdateRequest;
@@ -36,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -125,7 +125,7 @@ public class AccidentController {
                     ),
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Accident> create(@Valid @Parameter(hidden = true) @ModelAttribute AccidentCreateRequest request, BindingResult bindingResult) {
@@ -177,7 +177,7 @@ public class AccidentController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Accident> update(@Valid @Parameter(hidden = true) @ModelAttribute AccidentUpdateRequest request, BindingResult bindingResult) {
@@ -203,7 +203,7 @@ public class AccidentController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Accident ID in database", required = true, example = "1") @Min(1) @NotNull Long id) {

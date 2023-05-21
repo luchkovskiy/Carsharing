@@ -14,6 +14,7 @@ import com.luchkovskiy.service.CarRentInfoService;
 import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.SessionService;
 import com.luchkovskiy.service.UserService;
+import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import com.luchkovskiy.util.ExceptionChecker;
 import com.luchkovskiy.util.LocationManager;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,6 +47,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.security.Principal;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -149,7 +151,7 @@ public class SessionController {
                     ),
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Session> create(@Valid @Parameter(hidden = true) @ModelAttribute SessionCreateRequest request, BindingResult bindingResult) {
@@ -201,7 +203,7 @@ public class SessionController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Session> update(@Valid @Parameter(hidden = true) @ModelAttribute SessionUpdateRequest request, BindingResult bindingResult) {
@@ -226,7 +228,7 @@ public class SessionController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Session ID in database", required = true, example = "1")
@@ -265,7 +267,8 @@ public class SessionController {
         ExceptionChecker.authCheck(principal);
         Session session = new Session();
         session.setCar(carService.read(carId));
-        User user = userService.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));
+        ExceptionChecker.verifyCheck(user);
         activeSessionCheck(user);
         session.setUser(user);
         session.setStatus(StatusType.ACTIVE);
@@ -301,7 +304,8 @@ public class SessionController {
     @PostMapping("/end")
     public ResponseEntity<Session> endSession(Principal principal, String location) {
         ExceptionChecker.authCheck(principal);
-        User user = userService.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));
+        ExceptionChecker.verifyCheck(user);
         Session readedSession = getActiveSession(user);
         Map<String, Float> sessionInfo = locationManager.getSessionInfo(readedSession.getStartLocation(), location);
         Float sessionDistance = sessionInfo.get("distance");
@@ -319,7 +323,6 @@ public class SessionController {
         Session session = sessionService.endSession(readedSession, carRentInfo);
         return new ResponseEntity<>(session, HttpStatus.OK);
     }
-
 
     private void activeSessionCheck(User user) {
         Set<Session> sessions = user.getSessions();

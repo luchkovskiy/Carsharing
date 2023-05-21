@@ -6,6 +6,7 @@ import com.luchkovskiy.models.User;
 import com.luchkovskiy.repository.RoleRepository;
 import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.UserService;
+import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User read(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found!"));
     }
 
     @Override
@@ -32,24 +33,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User object) {
-        Role role = new Role();
-        role.setUser(object);
-        role.setSystemRole(SystemRole.ROLE_USER);
-        roleRepository.save(role);
+        createBasicRole(object);
         return userRepository.save(object);
     }
 
     @Override
     public User update(User object) {
         if (!userRepository.existsById(object.getId()))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("User not found!");
         return userRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
         if (!userRepository.existsById(id))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("User not found!");
         userRepository.deleteById(id);
     }
 
@@ -66,5 +64,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void linkPaymentCard(Long userId, Long cardId) {
         // TODO: 20.05.2023 принципал
+    }
+
+    private void createBasicRole(User object) {
+        Role role = new Role();
+        role.setUser(object);
+        role.setSystemRole(SystemRole.ROLE_USER);
+        roleRepository.save(role);
     }
 }

@@ -5,6 +5,7 @@ import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.repository.CarRentInfoRepository;
 import com.luchkovskiy.repository.CarRepository;
 import com.luchkovskiy.service.CarService;
+import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Car read(Long id) {
-        return carRepository.findById(id).orElseThrow(() -> new RuntimeException("Info not found!"));
+        return carRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Car not found!"));
     }
 
     @Override
@@ -43,14 +44,14 @@ public class CarServiceImpl implements CarService {
     @Override
     public Car update(Car object) {
         if (!carRepository.existsById(object.getId()))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("Car not found!");
         return carRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
         if (!carRepository.existsById(id))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("Car not found!");
         carRepository.deleteById(id);
     }
 }

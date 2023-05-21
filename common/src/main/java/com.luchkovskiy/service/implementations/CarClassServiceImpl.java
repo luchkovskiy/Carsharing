@@ -3,6 +3,7 @@ package com.luchkovskiy.service.implementations;
 import com.luchkovskiy.models.CarClass;
 import com.luchkovskiy.repository.CarClassRepository;
 import com.luchkovskiy.service.CarClassService;
+import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class CarClassServiceImpl implements CarClassService {
     @Cacheable("carClasses")
     @Override
     public CarClass read(Long id) {
-        return carClassRepository.findById(id).orElseThrow(() -> new RuntimeException("CarClass not found!"));
+        return carClassRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Car class not found!"));
     }
 
     @Cacheable("carClasses")
@@ -35,14 +36,14 @@ public class CarClassServiceImpl implements CarClassService {
     @Override
     public CarClass update(CarClass object) {
         if (!carClassRepository.existsById(object.getId()))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("Car class not found!");
         return carClassRepository.save(object);
     }
 
     @Override
     public void delete(Long id) {
         if (!carClassRepository.existsById(id))
-            throw new RuntimeException();
+            throw new EntityNotFoundException("Car class not found!");
         carClassRepository.deleteById(id);
     }
 }

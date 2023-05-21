@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -115,7 +116,7 @@ public class CarClassController {
                     ),
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<CarClass> create(@Valid @Parameter(hidden = true) @ModelAttribute CarClassCreateRequest request, BindingResult bindingResult) {
@@ -158,7 +159,7 @@ public class CarClassController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<CarClass> update(@Valid @Parameter(hidden = true) @ModelAttribute CarClassUpdateRequest request, BindingResult bindingResult) {
@@ -183,7 +184,7 @@ public class CarClassController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Car class ID in database", required = true, example = "1") @Min(1) @NotNull Long id) {
