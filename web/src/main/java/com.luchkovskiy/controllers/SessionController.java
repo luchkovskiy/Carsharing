@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -89,6 +90,7 @@ public class SessionController {
             }
     )
     @GetMapping("/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Session> read(@PathVariable("id") @Parameter(description = "Session ID in database", required = true, example = "1")
                                         @NotNull @Min(1) Long id) {
         Session session = sessionService.read(id);
@@ -107,6 +109,7 @@ public class SessionController {
             }
     )
     @GetMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Object> readAll() {
         List<Session> sessions = sessionService.readAll();
         return new ResponseEntity<>(sessions, HttpStatus.OK);
@@ -148,6 +151,7 @@ public class SessionController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Session> create(@Valid @Parameter(hidden = true) @ModelAttribute SessionCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         Session session = conversionService.convert(request, Session.class);
@@ -199,6 +203,7 @@ public class SessionController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Session> update(@Valid @Parameter(hidden = true) @ModelAttribute SessionUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         Session session = conversionService.convert(request, Session.class);
@@ -223,6 +228,7 @@ public class SessionController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
+    @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Session ID in database", required = true, example = "1")
                        @Min(1) @NotNull Long id) {
         sessionService.delete(id);

@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -64,6 +65,7 @@ public class CarClassController {
             }
     )
     @GetMapping("/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<CarClass> read(@PathVariable("id")
                                          @Parameter(description = "Car class ID in database", required = true, example = "1") @NotNull @Min(1) Long id) {
         CarClass carClass = carClassService.read(id);
@@ -82,6 +84,7 @@ public class CarClassController {
             }
     )
     @GetMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Object> readAll() {
         List<CarClass> carClasses = carClassService.readAll();
         return new ResponseEntity<>(carClasses, HttpStatus.OK);
@@ -114,6 +117,7 @@ public class CarClassController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<CarClass> create(@Valid @Parameter(hidden = true) @ModelAttribute CarClassCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         CarClass carClass = conversionService.convert(request, CarClass.class);
@@ -156,6 +160,7 @@ public class CarClassController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<CarClass> update(@Valid @Parameter(hidden = true) @ModelAttribute CarClassUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         CarClass carClass = conversionService.convert(request, CarClass.class);
@@ -180,6 +185,7 @@ public class CarClassController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
+    @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Car class ID in database", required = true, example = "1") @Min(1) @NotNull Long id) {
         carClassService.delete(id);
     }

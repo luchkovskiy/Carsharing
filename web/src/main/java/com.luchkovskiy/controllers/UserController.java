@@ -31,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -47,6 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,6 +94,7 @@ public class UserController {
             }
     )
     @GetMapping("/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<User> read(@PathVariable("id") @Parameter(description = "User ID in database", required = true, example = "1")
                                      @NotNull @Min(1) Long id) {
         User user = userService.read(id);
@@ -110,6 +113,7 @@ public class UserController {
             }
     )
     @GetMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Object> readAll() {
         List<User> users = userService.readAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
@@ -160,6 +164,7 @@ public class UserController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_ANONYMOUS"})
     public ResponseEntity<User> create(@Valid @Parameter(hidden = true) @ModelAttribute UserCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         User user = conversionService.convert(request, User.class);
@@ -255,10 +260,12 @@ public class UserController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public void delete(@PathVariable("id") @Parameter(description = "User ID in database", required = true, example = "1")
                        @Min(1) @NotNull Long id) {
         userService.delete(id);
     }
+    // TODO: 21.05.2023 софт делит
 
     @Operation(
             summary = "Check distance to car",
@@ -323,12 +330,9 @@ public class UserController {
             summary = "Unlink payment card from user account",
             description = "This method unlinks payment card from user account",
             parameters = {
-                    @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
-                                    description = "User Id")),
                     @Parameter(name = "cardId", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
-                                    description = "Payment card Id")),
+                                    description = "Payment card Id"))
             },
             responses = {
                     @ApiResponse(
@@ -338,8 +342,9 @@ public class UserController {
                     )}
     )
     @DeleteMapping("/card")
-    public void unlinkPaymentCard(@NotNull @Min(1) Long userId, @NotNull @Min(1) Long cardId) {
-        userCardRepository.unlinkPaymentCard(userId, cardId);
+    public void unlinkPaymentCard(Principal principal, @NotNull @Min(1) Long cardId) {
+        User user = userService.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
+        userCardRepository.unlinkPaymentCard(user.getId(), cardId);
     }
 
 }

@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -64,6 +65,7 @@ public class SubscriptionLevelController {
             }
     )
     @GetMapping("/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<SubscriptionLevel> read(@PathVariable("id") @Parameter(description = "Subscription level ID in database", required = true, example = "1")
                                                   @NotNull @Min(1) Long id) {
         SubscriptionLevel subscriptionLevel = subscriptionLevelService.read(id);
@@ -82,6 +84,7 @@ public class SubscriptionLevelController {
             }
     )
     @GetMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Object> readAll() {
         List<SubscriptionLevel> subscriptionLevels = subscriptionLevelService.readAll();
         return new ResponseEntity<>(subscriptionLevels, HttpStatus.OK);
@@ -111,6 +114,7 @@ public class SubscriptionLevelController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<SubscriptionLevel> create(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionLevelCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         SubscriptionLevel subscriptionLevel = conversionService.convert(request, SubscriptionLevel.class);
@@ -150,6 +154,7 @@ public class SubscriptionLevelController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<SubscriptionLevel> update(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionLevelUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         SubscriptionLevel subscriptionLevel = conversionService.convert(request, SubscriptionLevel.class);
@@ -175,6 +180,7 @@ public class SubscriptionLevelController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
+    @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Subscription level ID in database", required = true, example = "1")
                        @Min(1) @NotNull Long id) {
         subscriptionLevelService.delete(id);

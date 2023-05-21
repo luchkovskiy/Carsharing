@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -48,8 +49,6 @@ public class AccidentController {
 
     private final ConversionService conversionService;
 
-    private final GeoApiContext geoApiContext;
-
     @Operation(
             summary = "Spring Data Find Accident By Id",
             description = "This method returns an accident from the database by the given Id",
@@ -67,6 +66,7 @@ public class AccidentController {
             }
     )
     @GetMapping("/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Accident> read(@PathVariable("id") @Parameter(description = "Accident ID in database", required = true, example = "1")
                                          @NotNull @Min(1) Long id) {
         Accident accident = accidentService.read(id);
@@ -85,6 +85,7 @@ public class AccidentController {
             }
     )
     @GetMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Object> readAll() {
         List<Accident> accidents = accidentService.readAll();
         return new ResponseEntity<>(accidents, HttpStatus.OK);
@@ -126,6 +127,7 @@ public class AccidentController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Accident> create(@Valid @Parameter(hidden = true) @ModelAttribute AccidentCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         Accident accident = conversionService.convert(request, Accident.class);
@@ -177,6 +179,7 @@ public class AccidentController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Accident> update(@Valid @Parameter(hidden = true) @ModelAttribute AccidentUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         Accident accident = conversionService.convert(request, Accident.class);
@@ -202,6 +205,7 @@ public class AccidentController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
+    @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Accident ID in database", required = true, example = "1") @Min(1) @NotNull Long id) {
         accidentService.delete(id);
     }

@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -66,6 +67,7 @@ public class SubscriptionController {
             }
     )
     @GetMapping("/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Subscription> read(@PathVariable("id") @Parameter(description = "Subscription ID in database", required = true, example = "1")
                                              @NotNull @Min(1) Long id) {
         Subscription subscription = subscriptionService.read(id);
@@ -84,6 +86,7 @@ public class SubscriptionController {
             }
     )
     @GetMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Object> readAll() {
         List<Subscription> subscriptions = subscriptionService.readAll();
         return new ResponseEntity<>(subscriptions, HttpStatus.OK);
@@ -176,6 +179,7 @@ public class SubscriptionController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Subscription> update(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         Subscription subscription = conversionService.convert(request, Subscription.class);
@@ -200,6 +204,7 @@ public class SubscriptionController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
+    @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Subscription ID in database", required = true, example = "1")
                        @Min(1) @NotNull Long id) {
         subscriptionService.delete(id);

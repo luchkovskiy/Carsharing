@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -64,6 +65,7 @@ public class CarRentInfoController {
             }
     )
     @GetMapping("/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<CarRentInfo> read(@PathVariable("id") @Parameter(description = "Car rent info ID in database", required = true, example = "1")
                                             @NotNull @Min(1) Long id) {
         CarRentInfo carRentInfo = carRentInfoService.read(id);
@@ -82,6 +84,7 @@ public class CarRentInfoController {
             }
     )
     @GetMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Object> readAll() {
         List<CarRentInfo> carRentInfo = carRentInfoService.readAll();
         return new ResponseEntity<>(carRentInfo, HttpStatus.OK);
@@ -120,6 +123,7 @@ public class CarRentInfoController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<CarRentInfo> create(@Valid @Parameter(hidden = true) @ModelAttribute CarRentInfoCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         CarRentInfo carRentInfo = conversionService.convert(request, CarRentInfo.class);
@@ -168,6 +172,7 @@ public class CarRentInfoController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Object> update(@Valid @Parameter(hidden = true) @ModelAttribute CarRentInfoUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         CarRentInfo carRentInfo = conversionService.convert(request, CarRentInfo.class);
@@ -192,6 +197,7 @@ public class CarRentInfoController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
+    @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Car rent info ID in database", required = true, example = "1")
                        @Min(1) @NotNull Long id) {
         carRentInfoService.delete(id);

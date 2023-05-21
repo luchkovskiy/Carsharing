@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -64,6 +65,7 @@ public class PaymentCardController {
             }
     )
     @GetMapping("/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<PaymentCard> read(@PathVariable("id") @Parameter(description = "Payment card ID in database", required = true, example = "1")
                                             @NotNull @Min(1) Long id) {
         PaymentCard paymentCard = paymentCardService.read(id);
@@ -82,6 +84,7 @@ public class PaymentCardController {
             }
     )
     @GetMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Object> readAll() {
         List<PaymentCard> paymentCards = paymentCardService.readAll();
         return new ResponseEntity<>(paymentCards, HttpStatus.OK);
@@ -156,6 +159,7 @@ public class PaymentCardController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<PaymentCard> update(@Valid @Parameter(hidden = true) @ModelAttribute PaymentCardUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         PaymentCard paymentCard = conversionService.convert(request, PaymentCard.class);
@@ -180,8 +184,10 @@ public class PaymentCardController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
+    @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Payment card ID in database", required = true, example = "1")
                        @Min(1) @NotNull Long id) {
         paymentCardService.delete(id);
     }
+
 }

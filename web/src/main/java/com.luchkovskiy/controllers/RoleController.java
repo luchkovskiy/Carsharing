@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -72,6 +73,7 @@ public class RoleController {
             }
     )
     @GetMapping("/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Role> read(@PathVariable("id") @Parameter(description = "Role ID in database", required = true, example = "1")
                                      @NotNull @Min(1) Long id) {
         Role role = roleService.read(id);
@@ -90,6 +92,7 @@ public class RoleController {
             }
     )
     @GetMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Map<String, Object>> getAllRoles() {
         List<Role> roles = roleService.readAll();
         return new ResponseEntity<>(Collections.singletonMap("roles", roles), HttpStatus.OK);
@@ -111,6 +114,7 @@ public class RoleController {
             }
     )
     @GetMapping("/auth/{userId}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Map<String, Object>> getUsersAuthorities(@PathVariable @Parameter(description = "User id ID in database", required = true, example = "1")
                                                                    @NotNull @Min(1) Long userId) {
         User user = userService.read(userId);
@@ -144,6 +148,7 @@ public class RoleController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PostMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Role> create(@Valid @Parameter(hidden = true) @ModelAttribute RoleCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         Role role = conversionService.convert(request, Role.class);
@@ -180,6 +185,7 @@ public class RoleController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @PutMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Role> update(@Valid @Parameter(hidden = true) @ModelAttribute RoleUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
         Role role = conversionService.convert(request, Role.class);
@@ -204,6 +210,7 @@ public class RoleController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @DeleteMapping("/{id}")
+    @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Role ID in database", required = true, example = "1")
                        @Min(1) @NotNull Long id) {
         roleService.delete(id);
