@@ -7,7 +7,10 @@ import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -29,11 +32,13 @@ public class SubscriptionLevelServiceImpl implements SubscriptionLevelService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public SubscriptionLevel create(SubscriptionLevel object) {
         return subscriptionLevelRepository.save(object);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public SubscriptionLevel update(SubscriptionLevel object) {
         if (!subscriptionLevelRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Subscription level not found!");
@@ -41,9 +46,10 @@ public class SubscriptionLevelServiceImpl implements SubscriptionLevelService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public void delete(Long id) {
         if (!subscriptionLevelRepository.existsById(id))
             throw new EntityNotFoundException("Subscription level not found!");
-        subscriptionLevelRepository.deleteById(id);
+        subscriptionLevelRepository.deleteSubscriptionLevel(id);
     }
 }

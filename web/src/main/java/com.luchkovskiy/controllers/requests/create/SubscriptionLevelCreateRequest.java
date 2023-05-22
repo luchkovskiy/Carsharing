@@ -30,7 +30,7 @@ public class SubscriptionLevelCreateRequest {
     private Float pricePerDay;
 
     @NotNull
-    @Size(min = 3, max = 30)
+    @Size(min = 3, max = 50)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Standard", type = "string", description = "Subscription's level name")
     private String name;
 

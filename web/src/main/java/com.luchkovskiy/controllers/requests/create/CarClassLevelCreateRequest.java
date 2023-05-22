@@ -20,7 +20,7 @@ import javax.validation.constraints.Size;
 @Schema(description = "Car class information to save in database")
 public class CarClassLevelCreateRequest {
 
-    @Size(min = 4, max = 25)
+    @Size(min = 4, max = 50)
     @NotNull
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Business", type = "string", description = "Name of car class")
     private String name;

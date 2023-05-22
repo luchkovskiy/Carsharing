@@ -9,7 +9,10 @@ import com.luchkovskiy.service.UserService;
 import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public User create(User object) {
         userDrivingInfoCheck(object);
         createBasicRole(object);
@@ -40,6 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public User update(User object) {
         if (!userRepository.existsById(object.getId()))
             throw new EntityNotFoundException("User not found!");
@@ -48,6 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public void delete(Long id) {
         if (!userRepository.existsById(id))
             throw new EntityNotFoundException("User not found!");

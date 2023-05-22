@@ -21,12 +21,12 @@ import javax.validation.constraints.Size;
 public class CarCreateRequest {
 
     @NotNull
-    @Size(min = 2, max = 30)
+    @Size(min = 2, max = 50)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Audi", type = "string", description = "Brand of the car")
     private String brand;
 
     @NotNull
-    @Size(min = 2, max = 30)
+    @Size(min = 2, max = 25)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "RS7", type = "string", description = "Model of the car")
     private String model;
 
@@ -37,7 +37,7 @@ public class CarCreateRequest {
     private Float maxSpeed;
 
     @NotNull
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max = 25)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Blue", type = "string", description = "Color of the car")
     private String color;
 

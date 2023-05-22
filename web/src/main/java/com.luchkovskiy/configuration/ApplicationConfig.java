@@ -66,6 +66,4 @@ public class ApplicationConfig {
         return new EmailManager(javaMailSender());
     }
 
-    // TODO: 19.05.2023 Разобраться с делитами
-
 }

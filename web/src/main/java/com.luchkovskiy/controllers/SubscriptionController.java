@@ -115,7 +115,6 @@ public class SubscriptionController {
                     ),
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     public ResponseEntity<Subscription> create(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
@@ -166,7 +165,6 @@ public class SubscriptionController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Subscription> update(@Valid @Parameter(hidden = true) @ModelAttribute SubscriptionUpdateRequest request, BindingResult bindingResult) {
@@ -191,7 +189,6 @@ public class SubscriptionController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Subscription ID in database", required = true, example = "1")

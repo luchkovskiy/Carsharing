@@ -164,7 +164,6 @@ public class UserController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     public ResponseEntity<User> create(@Valid @Parameter(hidden = true) @ModelAttribute UserCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
@@ -235,7 +234,6 @@ public class UserController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     public ResponseEntity<User> update(@Valid @Parameter(hidden = true) @ModelAttribute UserUpdateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
@@ -259,7 +257,6 @@ public class UserController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public void delete(@PathVariable("id") @Parameter(description = "User ID in database", required = true, example = "1")
@@ -321,6 +318,7 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )}
     )
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping("/card")
     public ResponseEntity<UserCard> linkPaymentCard(@Valid @Parameter(hidden = true) @ModelAttribute UserCardCreateRequest request, BindingResult bindingResult) {
         ExceptionChecker.validCheck(bindingResult);
@@ -345,6 +343,7 @@ public class UserController {
                             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserCard.class)))
                     )}
     )
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/card")
     public void unlinkPaymentCard(Principal principal, @NotNull @Min(1) Long cardId) {
         User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));

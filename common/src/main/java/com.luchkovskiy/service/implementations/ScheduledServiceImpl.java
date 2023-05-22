@@ -9,7 +9,10 @@ import com.luchkovskiy.service.ScheduledService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,6 +26,7 @@ public class ScheduledServiceImpl implements ScheduledService {
     private final SubscriptionRepository subscriptionRepository;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @Scheduled(cron = "0 0 0 * * *")
     public void deleteInactiveUsers() {
         List<User> users = userRepository.findAll();
@@ -34,6 +38,7 @@ public class ScheduledServiceImpl implements ScheduledService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @Scheduled(cron = "0 0 * * * *")
     public void inactiveSubscriptions() {
         List<Subscription> subscriptions = subscriptionRepository.findAll();

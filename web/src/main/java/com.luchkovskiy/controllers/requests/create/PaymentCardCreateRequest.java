@@ -33,7 +33,7 @@ public class PaymentCardCreateRequest {
     private String cvv;
 
     @NotNull
-    @Size(min = 4, max = 100)
+    @Size(min = 4, max = 50)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "ALEKSEY LUCHKOVSKIY", type = "string", description = "Full name of the cardholder")
     private String cardholder;
 

@@ -9,7 +9,10 @@ import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -33,6 +36,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Role create(Role object) {
         if (object.getSystemRole().equals(SystemRole.ROLE_ADMIN)) {
             createModeratorRole(object);
@@ -41,6 +45,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Role update(Role object) {
         if (!roleRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Role not found!");
@@ -48,11 +53,12 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public void delete(Long id) {
         if (!roleRepository.existsById(id))
             throw new EntityNotFoundException("Role not found!");
         basicRoleCheck(id);
-        roleRepository.deleteById(id);
+        roleRepository.deleteRole(id);
     }
 
     @Override

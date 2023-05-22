@@ -122,7 +122,6 @@ public class CarRentInfoController {
                     ),
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<CarRentInfo> create(@Valid @Parameter(hidden = true) @ModelAttribute CarRentInfoCreateRequest request, BindingResult bindingResult) {
@@ -171,7 +170,6 @@ public class CarRentInfoController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Object> update(@Valid @Parameter(hidden = true) @ModelAttribute CarRentInfoUpdateRequest request, BindingResult bindingResult) {
@@ -196,7 +194,6 @@ public class CarRentInfoController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Car rent info ID in database", required = true, example = "1")

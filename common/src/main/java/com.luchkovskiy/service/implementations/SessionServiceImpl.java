@@ -13,7 +13,10 @@ import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import com.luchkovskiy.util.ExceptionChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -38,11 +41,13 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Session create(Session object) {
         return sessionRepository.save(object);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Session update(Session object) {
         if (!sessionRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Session not found!");
@@ -50,13 +55,15 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public void delete(Long id) {
         if (!sessionRepository.existsById(id))
             throw new EntityNotFoundException("Session not found!");
-        sessionRepository.deleteById(id);
+        sessionRepository.deleteSession(id);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Session startSession(Session session, CarRentInfo carRentInfo) {
         ExceptionChecker.accountBalanceCheck(session.getUser());
         carRentInfoRepository.save(carRentInfo);
@@ -64,6 +71,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Session endSession(Session session, CarRentInfo carRentInfo) {
         subscriptionCheck(session, carRentInfo);
         carRentInfoRepository.save(carRentInfo);

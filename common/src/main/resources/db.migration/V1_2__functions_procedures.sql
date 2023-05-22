@@ -1,4 +1,6 @@
-create function public.countsessionaccidents(session integer) returns integer
+-- +flyway-repeatability=always
+-- +flyway-allow-unsupported-migration-types=true
+CREATE OR REPLACE FUNCTION public.countsessionaccidents(session integer) returns integer
     language plpgsql
 as
 $$
@@ -15,7 +17,7 @@ $$;
 
 alter function public.countsessionaccidents(integer) owner to postgres;
 
-create function public.selectlongestsessionduration(person_id bigint) returns timestamp without time zone
+CREATE OR REPLACE FUNCTION public.selectlongestsessionduration(person_id bigint) returns timestamp without time zone
     language plpgsql
 as
 $$

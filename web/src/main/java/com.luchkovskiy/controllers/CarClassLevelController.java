@@ -117,7 +117,6 @@ public class CarClassLevelController {
                     ),
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<CarClassLevel> create(@Valid @Parameter(hidden = true) @ModelAttribute CarClassLevelCreateRequest request, BindingResult bindingResult) {
@@ -160,7 +159,6 @@ public class CarClassLevelController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<CarClassLevel> update(@Valid @Parameter(hidden = true) @ModelAttribute CarClassLevelUpdateRequest request, BindingResult bindingResult) {
@@ -185,7 +183,6 @@ public class CarClassLevelController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Car class ID in database", required = true, example = "1") @Min(1) @NotNull Long id) {

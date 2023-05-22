@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,6 +43,7 @@ public class CarRentInfoCreateRequest {
     private Float condition;
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Minsk, Dzerzhinskogo 18", type = "string", description = "Car's current address")
+    @Size(min = 4, max = 50)
     private String currentLocation;
 
 }

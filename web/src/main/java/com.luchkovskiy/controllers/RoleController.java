@@ -147,7 +147,6 @@ public class RoleController {
                     ),
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Role> create(@Valid @Parameter(hidden = true) @ModelAttribute RoleCreateRequest request, BindingResult bindingResult) {
@@ -184,7 +183,6 @@ public class RoleController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Role> update(@Valid @Parameter(hidden = true) @ModelAttribute RoleUpdateRequest request, BindingResult bindingResult) {
@@ -209,7 +207,6 @@ public class RoleController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Role ID in database", required = true, example = "1")

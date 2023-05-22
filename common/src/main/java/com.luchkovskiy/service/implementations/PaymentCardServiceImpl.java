@@ -6,7 +6,10 @@ import com.luchkovskiy.service.PaymentCardService;
 import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -26,11 +29,13 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public PaymentCard create(PaymentCard object) {
         return paymentCardRepository.save(object);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public PaymentCard update(PaymentCard object) {
         if (!paymentCardRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Payment card not found!");
@@ -38,9 +43,10 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public void delete(Long id) {
         if (!paymentCardRepository.existsById(id))
             throw new EntityNotFoundException("Payment card not found!");
-        paymentCardRepository.deleteById(id);
+        paymentCardRepository.deletePaymentCard(id);
     }
 }

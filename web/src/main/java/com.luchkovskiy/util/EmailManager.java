@@ -22,6 +22,9 @@ public class EmailManager {
         return code;
     }
 
+    /**
+     * This method returns a randomly generated five-digit code consisting of numbers and uppercase letters.
+     */
     private String generateCode() {
         return RandomStringUtils.random(5, true, true).toUpperCase();
     }

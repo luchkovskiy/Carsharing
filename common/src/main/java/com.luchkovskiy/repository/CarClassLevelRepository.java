@@ -1,14 +1,14 @@
 package com.luchkovskiy.repository;
 
-import com.luchkovskiy.models.PaymentCard;
+import com.luchkovskiy.models.CarClassLevel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> {
+public interface CarClassLevelRepository extends JpaRepository<CarClassLevel, Long> {
 
-    @Query("DELETE FROM PaymentCard p WHERE p.id = :id")
+    @Query("DELETE FROM CarClassLevel c WHERE c.id = :id")
     @Modifying
-    void deletePaymentCard(Long id);
+    void deleteCarClassLevel(Long id);
 
 }

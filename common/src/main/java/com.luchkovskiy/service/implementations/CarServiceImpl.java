@@ -8,7 +8,10 @@ import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -30,6 +33,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Car create(Car object) {
         Car car = carRepository.save(object);
         CarRentInfo carRentInfo = new CarRentInfo();
@@ -42,6 +46,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Car update(Car object) {
         if (!carRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Car not found!");
@@ -49,6 +54,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public void delete(Long id) {
         if (!carRepository.existsById(id))
             throw new EntityNotFoundException("Car not found!");

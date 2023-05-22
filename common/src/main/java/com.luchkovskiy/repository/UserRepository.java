@@ -3,6 +3,7 @@ package com.luchkovskiy.repository;
 import com.luchkovskiy.models.Role;
 import com.luchkovskiy.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByAuthenticationInfoEmail(String email);
 
     @Query("UPDATE User u SET u.active = false WHERE u.id = :id")
+    @Modifying
     void inactiveUser(Long id);
 
 }

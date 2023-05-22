@@ -43,7 +43,7 @@ spring:
 ---
 jwtconfig:
   secret: secret
-  expiration: 600000
+  expiration: 6000000
   passwordSalt: 5de4227d-068c-4eab-8dd7-e0fe40761847
 
 ---

@@ -119,7 +119,6 @@ public class AccidentController {
                     ),
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PostMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Accident> create(@Valid @Parameter(hidden = true) @ModelAttribute AccidentCreateRequest request, BindingResult bindingResult) {
@@ -136,7 +135,7 @@ public class AccidentController {
                     @Parameter(name = "id", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the accident")),
-                    @Parameter(name = "sessionId", in = ParameterIn.QUERY,
+                    @Parameter(name = "sessionId", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
                                     description = "Id of the session in which the accident happened")),
                     @Parameter(name = "name", in = ParameterIn.QUERY, required = true,
@@ -165,7 +164,6 @@ public class AccidentController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @PutMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Accident> update(@Valid @Parameter(hidden = true) @ModelAttribute AccidentUpdateRequest request, BindingResult bindingResult) {
@@ -191,7 +189,6 @@ public class AccidentController {
                     )
             }
     )
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
     public void delete(@PathVariable("id") @Parameter(description = "Accident ID in database", required = true, example = "1") @Min(1) @NotNull Long id) {

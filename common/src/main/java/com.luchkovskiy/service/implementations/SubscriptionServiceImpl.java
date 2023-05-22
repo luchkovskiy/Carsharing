@@ -8,7 +8,10 @@ import com.luchkovskiy.service.SubscriptionService;
 import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +32,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Subscription create(Subscription object) {
         activeSubscriptionsCheck(object);
         Float pricePerDay = object.getSubscriptionLevel().getPricePerDay();
@@ -39,6 +43,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Subscription update(Subscription object) {
         if (!subscriptionRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Subscription not found!");
@@ -46,10 +51,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public void delete(Long id) {
         if (!subscriptionRepository.existsById(id))
             throw new EntityNotFoundException("Subscription not found!");
-        subscriptionRepository.deleteById(id);
+        subscriptionRepository.deleteSubscription(id);
     }
 
     private float calculateSubscriptionPrice(Float pricePerDay, Integer daysTotal) {

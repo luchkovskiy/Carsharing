@@ -5,6 +5,7 @@ import com.luchkovskiy.models.Car;
 import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.models.User;
 import com.luchkovskiy.repository.AccidentRepository;
+import com.luchkovskiy.repository.CarRentInfoRepository;
 import com.luchkovskiy.repository.CarRepository;
 import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.AccidentService;
@@ -12,7 +13,10 @@ import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -26,6 +30,8 @@ public class AccidentServiceImpl implements AccidentService {
 
     private final CarRepository carRepository;
 
+    private final CarRentInfoRepository carRentInfoRepository;
+
     @Override
     public Accident read(Long id) {
         return accidentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Accident not found!"));
@@ -37,6 +43,7 @@ public class AccidentServiceImpl implements AccidentService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Accident create(Accident object) {
         criticalCheck(object);
         object.setFine(calculateFine(object.getDamageLevel()));
@@ -51,6 +58,7 @@ public class AccidentServiceImpl implements AccidentService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Accident update(Accident object) {
         if (!accidentRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Accident not found!");
@@ -58,10 +66,11 @@ public class AccidentServiceImpl implements AccidentService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public void delete(Long id) {
         if (!accidentRepository.existsById(id))
             throw new EntityNotFoundException("Accident not found!");
-        accidentRepository.deleteById(id);
+        accidentRepository.deleteAccident(id);
     }
 
     @Override
@@ -88,6 +97,7 @@ public class AccidentServiceImpl implements AccidentService {
             CarRentInfo carRentInfo = accident.getSession().getCar().getCarRentInfo();
             carRentInfo.setRepairing(true);
             carRentInfo.setAvailable(false);
+            carRentInfoRepository.save(carRentInfo);
         }
     }
 

@@ -1,33 +1,38 @@
+CREATE DATABASE project_db;
+\c project_db;
+
+CREATE ROLE postgres LOGIN PASSWORD 'postgres';
+
+CREATE SCHEMA IF NOT EXISTS public;
+GRANT ALL PRIVILEGES ON SCHEMA public TO postgres;
+
 create table if not exists public.users
 (
-    id                 bigint  default nextval('users_user_id_seq'::regclass) not null
+    id                 bigint default nextval('users_user_id_seq'::regclass) not null
         primary key
         constraint users_user_id_key
             unique,
-    name               varchar(100)                                           not null,
-    surname            varchar(100)                                           not null,
-    birthday_date      date                                                   not null,
-    created            timestamp(6)                                           not null,
-    changed            timestamp(6)                                           not null,
-    is_active          boolean default true                                   not null,
-    address            varchar(30),
-    passport_id        varchar(50)                                            not null,
-    driver_id          varchar(50)                                            not null,
-    driving_experience real                                                   not null,
-    rating             real    default 5                                      not null,
-    account_balance    real    default 0                                      not null,
-    email              varchar(50),
+    name               varchar(100)                                          not null,
+    surname            varchar(100)                                          not null,
+    birthday_date      timestamp(6)                                          not null,
+    created            timestamp(6)                                          not null,
+    changed            timestamp(6)                                          not null,
+    is_active          boolean                                               not null,
+    address            varchar(100),
+    passport_id        varchar(50)                                           not null
+        unique,
+    driver_id          varchar(50)                                           not null
+        unique,
+    driving_experience real                                                  not null,
+    rating             real                                                  not null,
+    account_balance    real                                                  not null,
+    email              varchar(50)
+        unique,
     user_password      varchar(200)
 );
 
 alter table public.users
     owner to postgres;
-
-create index if not exists users_name_surname_index
-    on public.users (name, surname);
-
-create index if not exists users_surname_index
-    on public.users (surname);
 
 create index if not exists users_user_id_index
     on public.users (id);
@@ -35,11 +40,17 @@ create index if not exists users_user_id_index
 create index if not exists users_created_index
     on public.users (created);
 
-create index if not exists users_name_surname_index_2
-    on public.users (name, surname);
-
 create index if not exists users_rating_index
     on public.users (rating);
+
+create index if not exists users_surname_index
+    on public.users (surname);
+
+create index if not exists users_name_surname_index
+    on public.users (name, surname);
+
+create index if not exists users_name_surname_index_2
+    on public.users (name, surname);
 
 create table if not exists public.payment_cards
 (
@@ -119,21 +130,22 @@ create table if not exists public.cars
 (
     id                   bigserial
         primary key,
-    brand                varchar(50)          not null,
-    model                varchar(25)          not null,
-    created              timestamp(6)         not null,
-    changed              timestamp(6)         not null,
+    brand                varchar(50)  not null,
+    model                varchar(25)  not null,
+    created              timestamp(6) not null,
+    changed              timestamp(6) not null,
     max_speed            real,
     color                varchar(25),
     release_year         integer,
     gearbox_type         varchar(20),
     gas_consumption      real,
     amount_of_sits       integer,
-    class_id             integer              not null
+    class_id             integer      not null
         constraint cars_c_cars_classes_id_fk
             references public.c_cars_classes,
-    license_plate_number varchar(50),
-    is_visible           boolean default true not null
+    license_plate_number varchar(50)
+        unique,
+    is_visible           boolean      not null
 );
 
 alter table public.cars
@@ -162,22 +174,22 @@ create index if not exists cars_class_id_index_2
 
 create table if not exists public.cars_rent_info
 (
-    id               bigint  default nextval('rent_data_id_seq'::regclass) not null
-        constraint rent_data_pkey
-            primary key,
-    car_id           bigint                                                not null
+    car_id           bigint       not null
         constraint rent_data_car_id_key
             unique
         constraint rent_data_cars_id_fk
             references public.cars
             on update cascade on delete cascade,
-    gas_remaining    real                                                  not null,
-    is_repairing     boolean default false                                 not null,
-    current_location varchar(50),
-    is_available     boolean default true                                  not null,
-    condition        real    default 5                                     not null,
-    created          timestamp(6)                                          not null,
-    changed          timestamp(6)                                          not null
+    gas_remaining    real         not null,
+    is_repairing     boolean      not null,
+    is_available     boolean      not null,
+    condition        real         not null,
+    created          timestamp(6) not null,
+    changed          timestamp(6) not null,
+    id               bigserial
+        primary key
+        unique,
+    current_location varchar(50)
 );
 
 alter table public.cars_rent_info
@@ -201,17 +213,19 @@ create table if not exists public.sessions
         primary key,
     user_id         bigint       not null
         constraint sessions_users_id_fk
-            references public.users,
+            references public.users
+            on update cascade on delete cascade,
     car_id          bigint       not null
         constraint sessions_cars_id_fk
             references public.cars,
     start_time      timestamp(6) not null,
     end_time        timestamp(6),
-    total_price     real         not null,
+    total_price     real,
     status          varchar(25)  not null,
     distance_passed real,
-    created         timestamp(6),
-    changed         timestamp(6)
+    created         timestamp(6) not null,
+    changed         timestamp(6) not null,
+    start_location  varchar(50)  not null
 );
 
 alter table public.sessions
@@ -237,21 +251,21 @@ create index if not exists sessions_user_id_index
 
 create table if not exists public.accidents
 (
-    id                 bigint  default nextval('violations_id_seq'::regclass) not null
+    id                 bigint default nextval('violations_id_seq'::regclass) not null
         constraint violations_pkey
             primary key,
-    session_id         bigint                                                 not null
-        constraint violations_sessions_id_fk
+    session_id         bigint                                                not null
+        constraint accidents_sessions_id_fk
             references public.sessions
             on update cascade on delete cascade,
-    name               varchar(50)                                            not null,
-    fine               real                                                   not null,
-    time               timestamp(6)                                           not null,
+    name               varchar(50)                                           not null,
+    fine               real                                                  not null,
+    time               timestamp(6)                                          not null,
     rating_subtraction real,
-    damage_level       integer,
-    is_critical        boolean default false                                  not null,
-    created            timestamp(6)                                           not null,
-    changed            timestamp(6)                                           not null
+    damage_level       integer                                               not null,
+    is_critical        boolean                                               not null,
+    created            timestamp(6)                                          not null,
+    changed            timestamp(6)                                          not null
 );
 
 alter table public.accidents
@@ -347,7 +361,7 @@ create table if not exists public.roles
     id        bigserial
         primary key,
     role_name varchar(50)  not null,
-    user_id   bigint       not null
+    user_id   bigint
         constraint roles_users_id_fk
             references public.users
             on update cascade on delete cascade,
@@ -383,4 +397,24 @@ create table if not exists public.flyway_schema_history
     success        boolean                 not null
 );
 
+alter table public.flyway_schema_history
+    owner to postgres;
+
+create index if not exists flyway_schema_history_s_idx
+    on public.flyway_schema_history (success);
+
+create table if not exists public.verification_codes
+(
+    id      bigserial
+        primary key,
+    user_id bigint       not null
+        constraint verification_codes_users_id_fk
+            references public.users
+            on update cascade on delete cascade,
+    code    varchar(20)  not null,
+    created timestamp(6) not null
+);
+
+alter table public.verification_codes
+    owner to postgres;
 

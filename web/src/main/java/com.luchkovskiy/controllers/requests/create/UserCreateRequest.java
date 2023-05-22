@@ -66,7 +66,7 @@ public class UserCreateRequest {
     private String email;
 
     @NotNull
-    @Size(min = 5, max = 25)
+    @Size(min = 5, max = 50)
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "example123", type = "password", description = "User password in the system")
     private String password;
 
