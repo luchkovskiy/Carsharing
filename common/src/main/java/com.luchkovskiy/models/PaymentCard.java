@@ -32,7 +32,7 @@ import java.util.Set;
 })
 @Entity
 @Table(name = "payment_cards")
-public class    PaymentCard {
+public class PaymentCard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

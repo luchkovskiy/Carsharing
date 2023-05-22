@@ -9,6 +9,7 @@ import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.models.Session;
 import com.luchkovskiy.models.User;
 import com.luchkovskiy.models.enums.StatusType;
+import com.luchkovskiy.repository.SessionRepository;
 import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.SessionService;
 import com.luchkovskiy.service.UserService;
@@ -28,6 +29,8 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,6 +46,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.security.Principal;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +61,8 @@ import java.util.Set;
 public class SessionController {
 
     private final SessionService sessionService;
+
+    private final SessionRepository sessionRepository;
 
     private final ConversionService conversionService;
 
@@ -86,7 +92,7 @@ public class SessionController {
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Session> findById(@PathVariable("id") @Parameter(description = "Session ID in database", required = true, example = "1")
-                                        @NotNull @Min(1) Long id) {
+                                            @NotNull @Min(1) Long id) {
         Session session = sessionService.findById(id);
         return new ResponseEntity<>(session, HttpStatus.OK);
     }
@@ -226,8 +232,37 @@ public class SessionController {
     }
 
     @Operation(
+            summary = "Count session accidents",
+            description = "This method counts amount of accidents by session ID",
+            parameters = {
+                    @Parameter(name = "sessionId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
+                                    description = "Session ID"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Accidents successfully counted",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "Session doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
+    @GetMapping("/accidents")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
+    public ResponseEntity<Integer> countSessionAccidents(Long sessionId) {
+        sessionCheck(sessionId);
+        Integer amount = sessionRepository.countSessionAccidents(sessionId);
+        return new ResponseEntity<>(amount, HttpStatus.OK);
+    }
+
+    @Operation(
             summary = "Start session",
-            description = "This method creates new session, here can null-value parameters, such as totalPrice, distance etc.",
+            description = "This method creates new session, here can be null-value parameters, such as totalPrice, distance etc.",
             parameters = {
                     @Parameter(name = "carId", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
@@ -295,6 +330,7 @@ public class SessionController {
             }
     )
     @PostMapping("/end")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public ResponseEntity<Session> endSession(Principal principal, String location) {
         ExceptionChecker.authCheck(principal);
         User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));
@@ -353,8 +389,14 @@ public class SessionController {
     private void carCheck(Car car) {
         if (!car.getVisible()) {
             throw new RuntimeException("Car isn't ready for rent");
-        } else if(car.getCarRentInfo().getGasRemaining() <= 0) {
+        } else if (car.getCarRentInfo().getGasRemaining() <= 0) {
             throw new RuntimeException("Too low gas in the car");
+        }
+    }
+
+    private void sessionCheck(Long sessionId) {
+        if (!sessionRepository.existsById(sessionId)) {
+            throw new EntityNotFoundException("Session not found!");
         }
     }
 }

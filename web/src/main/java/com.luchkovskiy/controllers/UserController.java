@@ -12,6 +12,7 @@ import com.luchkovskiy.models.User;
 import com.luchkovskiy.models.UserCard;
 import com.luchkovskiy.models.VerificationCode;
 import com.luchkovskiy.repository.UserCardRepository;
+import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.repository.VerificationCodeRepository;
 import com.luchkovskiy.service.CarRentInfoService;
 import com.luchkovskiy.service.CarService;
@@ -30,6 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -49,9 +51,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.security.Principal;
 import java.sql.SQLException;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +67,8 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+
+    private final UserRepository userRepository;
 
     private final CarRentInfoService carRentInfoService;
 
@@ -98,7 +103,7 @@ public class UserController {
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<User> findById(@PathVariable("id") @Parameter(description = "User ID in database", required = true, example = "1")
-                                     @NotNull @Min(1) Long id) {
+                                         @NotNull @Min(1) Long id) {
         User user = userService.findById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
@@ -119,6 +124,30 @@ public class UserController {
     public ResponseEntity<Object> findAll() {
         List<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+
+    @Operation(
+            summary = "Spring Data Find All Users By Page",
+            description = "This method returns an array of all users in the database in current page",
+            parameters = {
+                    @Parameter(name = "page", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
+                                    description = "Page")),
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Users successfully loaded",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))
+                    ),
+            }
+    )
+    @GetMapping("/page")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
+    public ResponseEntity<Object> findAllByPage(@NotNull @Min(0) int page) {
+        return new ResponseEntity<>(Collections.singletonMap("result",
+                userService.findAllUsersByPage(PageRequest.of(page, 3)).getContent()), HttpStatus.OK);
     }
 
     @Operation(
@@ -190,7 +219,7 @@ public class UserController {
                     @Parameter(name = "surname", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Luchkovskiy", type = "string",
                                     description = "User surname")),
-                    @Parameter(name = "birthdayDate", in = ParameterIn.QUERY, required = true,
+                    @Parameter(name = "birthdayDate", in = ParameterIn.QUERY,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "2002-01-24T15:00:00", type = "date-time",
                                     description = "User birthday date")),
                     @Parameter(name = "active", in = ParameterIn.QUERY, required = true,
@@ -244,7 +273,7 @@ public class UserController {
 
     @Operation(
             summary = "Spring Data Delete User",
-            description = "This method deletes user from database by id",
+            description = "This method marks user like inactive",
             responses = {
                     @ApiResponse(
                             responseCode = "200 OK",
@@ -291,6 +320,35 @@ public class UserController {
     }
 
     @Operation(
+            summary = "Get longest session duration",
+            description = "This method calculates and returns longest session duration",
+            parameters = {
+                    @Parameter(name = "userId", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
+                                    description = "User ID"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Successfully calculated",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404 Not Found",
+                            description = "User doest not exist in the database",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
+    @GetMapping("/session/duration")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
+    public ResponseEntity<LocalTime> getLongestSessionDuration(Long userId) {
+        userCheck(userId);
+        LocalTime localTime = userRepository.selectLongestSessionDuration(userId).toLocalDateTime().toLocalTime();
+        return new ResponseEntity<>(localTime, HttpStatus.OK);
+    }
+
+    @Operation(
             summary = "Link payment card to user account",
             description = "This method links user account with payment card and returns linking object",
             parameters = {
@@ -332,9 +390,9 @@ public class UserController {
             summary = "Unlink payment card from user account",
             description = "This method unlinks payment card from user account",
             parameters = {
-                    @Parameter(name = "cardId", in = ParameterIn.QUERY, required = true,
+                    @Parameter(name = "linkId", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1", type = "integer",
-                                    description = "Payment card Id"))
+                                    description = "Link id in the table"))
             },
             responses = {
                     @ApiResponse(
@@ -345,9 +403,13 @@ public class UserController {
     )
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     @DeleteMapping("/card")
-    public void unlinkPaymentCard(Principal principal, @NotNull @Min(1) Long cardId) {
-        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));
-        userCardRepository.unlinkPaymentCard(user.getId(), cardId);
+    public void unlinkPaymentCard(@NotNull @Min(1) Long linkId) {
+        userCardRepository.unlinkPaymentCard(linkId);
+    }
+
+    private void userCheck(Long userId) {
+        if (!userRepository.existsById(userId))
+            throw new EntityNotFoundException("User not found!");
     }
 
 }

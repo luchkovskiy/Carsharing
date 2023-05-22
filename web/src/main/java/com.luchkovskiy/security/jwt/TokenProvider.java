@@ -61,14 +61,6 @@ public class TokenProvider {
         return getClaimsFromToken(token).getSubject();
     }
 
-    public Date getCreatedDateFromToken(String token) {
-        return (Date) getClaimsFromToken(token).get(CREATE_VALUE);
-    }
-
-    public Date getExpirationDateFromToken(String token) {
-        return getClaimsFromToken(token).getExpiration();
-    }
-
     private Claims getClaimsFromToken(String token) {
         return Jwts
                 .parser()
@@ -87,15 +79,6 @@ public class TokenProvider {
         return calendar.getTime();
     }
 
-    private Boolean isTokenExpired(String token) {
-        final Date expiration = this.getExpirationDateFromToken(token);
-        return expiration.before(this.generateCurrentDate());
-    }
-
-    private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
-        return (lastPasswordReset != null && created.before(lastPasswordReset));
-    }
-
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(SUBJECT, userDetails.getUsername());
@@ -111,24 +94,6 @@ public class TokenProvider {
                 .map(s -> s.replace("ROLE_", ""))
                 .map(String::toLowerCase)
                 .collect(Collectors.toList());
-    }
-
-    public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
-        final Date created = this.getCreatedDateFromToken(token);
-        return !(this.isCreatedBeforeLastPasswordReset(created, lastPasswordReset))
-                && !(this.isTokenExpired(token));
-    }
-
-    public String refreshToken(String token) {
-        String refreshedToken;
-        try {
-            final Claims claims = this.getClaimsFromToken(token);
-            claims.put("created", this.generateCurrentDate());
-            refreshedToken = this.generateToken(claims);
-        } catch (Exception e) {
-            refreshedToken = null;
-        }
-        return refreshedToken;
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

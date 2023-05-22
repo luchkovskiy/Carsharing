@@ -14,7 +14,7 @@ public interface AccidentRepository extends JpaRepository<Accident, Long> {
             "FROM User u " +
             "JOIN u.sessions s " +
             "JOIN s.accidents a " +
-            "WHERE s.id = :sessionId")
+            "WHERE a.session.id = :sessionId")
     User getUserFromAccident(Long sessionId);
 
     @Query("SELECT c " +

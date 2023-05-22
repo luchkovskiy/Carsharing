@@ -66,7 +66,7 @@ public class CarClassLevelController {
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<CarClassLevel> findById(@PathVariable("id")
-                                              @Parameter(description = "Car class ID in database", required = true, example = "1") @NotNull @Min(1) Long id) {
+                                                  @Parameter(description = "Car class ID in database", required = true, example = "1") @NotNull @Min(1) Long id) {
         CarClassLevel carClassLevel = carClassLevelService.findById(id);
         return new ResponseEntity<>(carClassLevel, HttpStatus.OK);
     }

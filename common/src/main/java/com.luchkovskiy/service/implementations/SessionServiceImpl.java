@@ -71,7 +71,6 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Session endSession(Session session, CarRentInfo carRentInfo) {
         subscriptionCheck(session, carRentInfo);
         carRentInfoRepository.save(carRentInfo);
@@ -92,6 +91,7 @@ public class SessionServiceImpl implements SessionService {
                     subscription.setTripsAmount(subscription.getTripsAmount() + 1);
                 } else {
                     user.setAccountBalance(user.getAccountBalance() - session.getTotalPrice());
+                    userRepository.save(user);
                 }
             }
         }

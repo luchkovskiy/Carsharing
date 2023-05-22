@@ -26,6 +26,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -132,6 +133,7 @@ public class AuthenticationController {
             }
     )
     @PatchMapping("/verify")
+    @Transactional
     public void verifyEmail(Principal principal, String code) {
         ExceptionChecker.authCheck(principal);
         User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));
@@ -139,7 +141,7 @@ public class AuthenticationController {
                 () -> new EntityNotFoundException("Verification code not found!"));
         if (verificationCode.getCode().equals(code.toUpperCase())) {
             user.setActive(true);
-            verificationCodeRepository.delete(verificationCode);
+            verificationCodeRepository.deleteVerificationCode(verificationCode.getId());
             userService.update(user);
         } else
             throw new RuntimeException("Codes don't match, please try again");

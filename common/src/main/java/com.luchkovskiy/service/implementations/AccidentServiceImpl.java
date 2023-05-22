@@ -48,9 +48,9 @@ public class AccidentServiceImpl implements AccidentService {
         criticalCheck(object);
         object.setFine(calculateFine(object.getDamageLevel()));
         object.setRatingSubtraction(calculateRatingSubtraction(object.getDamageLevel()));
-        User user = getUserFromAccident(object.getSession().getId());
-        Car car = getCarFromAccident(object.getSession().getId());
-        user.setRating(user.getRating() - object.getFine());
+        User user = object.getSession().getUser();
+        Car car = object.getSession().getCar();
+        user.setRating(user.getRating() - object.getRatingSubtraction());
         user.setAccountBalance(user.getAccountBalance() - object.getFine());
         userRepository.save(user);
         carRepository.save(car);

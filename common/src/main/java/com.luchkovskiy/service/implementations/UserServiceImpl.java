@@ -8,6 +8,8 @@ import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.UserService;
 import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +70,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByAuthenticationInfoEmail(email);
+    }
+
+    @Override
+    public Page<User> findAllUsersByPage(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     private void createBasicRole(User object) {

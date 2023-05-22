@@ -65,7 +65,7 @@ public class CarRentInfoController {
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<CarRentInfo> findById(@PathVariable("id") @Parameter(description = "Car rent info ID in database", required = true, example = "1")
-                                            @NotNull @Min(1) Long id) {
+                                                @NotNull @Min(1) Long id) {
         CarRentInfo carRentInfo = carRentInfoService.findById(id);
         return new ResponseEntity<>(carRentInfo, HttpStatus.OK);
     }
@@ -145,7 +145,7 @@ public class CarRentInfoController {
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "boolean",
                                     description = "Is the car repairing right now?")),
                     @Parameter(name = "currentLocation", in = ParameterIn.QUERY, required = true,
-                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "53.978527, 30.395270", type = "string",
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Minsk, Dzerzhinskogo 18", type = "string",
                                     description = "Latitude and longitude of current car's location")),
                     @Parameter(name = "available", in = ParameterIn.QUERY, required = true,
                             schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "false", type = "boolean",

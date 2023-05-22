@@ -73,7 +73,7 @@ public class RoleController {
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Role> findById(@PathVariable("id") @Parameter(description = "Role ID in database", required = true, example = "1")
-                                     @NotNull @Min(1) Long id) {
+                                         @NotNull @Min(1) Long id) {
         Role role = roleService.findById(id);
         return new ResponseEntity<>(role, HttpStatus.OK);
     }

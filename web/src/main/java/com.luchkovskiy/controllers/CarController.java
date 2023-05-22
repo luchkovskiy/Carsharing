@@ -4,6 +4,7 @@ import com.luchkovskiy.controllers.exceptions.ErrorMessage;
 import com.luchkovskiy.controllers.requests.create.CarCreateRequest;
 import com.luchkovskiy.controllers.requests.update.CarUpdateRequest;
 import com.luchkovskiy.models.Car;
+import com.luchkovskiy.models.User;
 import com.luchkovskiy.models.enums.TransmissionType;
 import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.util.ExceptionChecker;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -66,7 +69,7 @@ public class CarController {
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Car> findById(@PathVariable("id") @Parameter(description = "Car ID in database", required = true, example = "1")
-                                    @NotNull @Min(1) Long id) {
+                                        @NotNull @Min(1) Long id) {
         Car car = carService.findById(id);
         return new ResponseEntity<>(car, HttpStatus.OK);
     }
@@ -87,6 +90,29 @@ public class CarController {
     public ResponseEntity<Object> findAll() {
         List<Car> cars = carService.findAll();
         return new ResponseEntity<>(cars, HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Spring Data Find All Cars By Page",
+            description = "This method returns an array of all cars in the database in current page",
+            parameters = {
+                    @Parameter(name = "page", in = ParameterIn.QUERY, required = true,
+                            schema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "0", type = "integer",
+                                    description = "Page")),
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200 OK",
+                            description = "Cars successfully loaded",
+                            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))
+                    ),
+            }
+    )
+    @GetMapping("/page")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
+    public ResponseEntity<Object> findAllByPage(@NotNull @Min(0) int page) {
+        return new ResponseEntity<>(Collections.singletonMap("result",
+                carService.findAllCarsByPage(PageRequest.of(page, 3)).getContent()), HttpStatus.OK);
     }
 
     @Operation(
@@ -207,7 +233,7 @@ public class CarController {
 
     @Operation(
             summary = "Spring Data Delete Car",
-            description = "This method deletes car from database by id",
+            description = "This method marks car line inactive in database",
             responses = {
                     @ApiResponse(
                             responseCode = "200 OK",

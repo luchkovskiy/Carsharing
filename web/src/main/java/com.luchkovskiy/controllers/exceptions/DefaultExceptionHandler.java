@@ -23,7 +23,7 @@ public class DefaultExceptionHandler {
 
     @ExceptionHandler(IllegalRequestException.class)
     public ResponseEntity<ErrorMessage> handleIllegalRequestException(IllegalRequestException e) {
-        String exceptionUniqueId = UUID.randomUUID().toString();
+        String exceptionUniqueId = getUUID();
 
         BindingResult bindingResult = e.getBindingResult();
         String collect = bindingResult
@@ -45,7 +45,7 @@ public class DefaultExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorMessage> handleOthersException(Exception e) {
-        String exceptionUniqueId = UUID.randomUUID().toString();
+        String exceptionUniqueId = getUUID();
         log.error(exceptionUniqueId + e.getMessage(), e);
         return new ResponseEntity<>(
                 new ErrorMessage(
@@ -58,7 +58,7 @@ public class DefaultExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorMessage> handleRuntimeException(RuntimeException e) {
-        String exceptionUniqueId = UUID.randomUUID().toString();
+        String exceptionUniqueId = getUUID();
         log.error(exceptionUniqueId + e.getMessage(), e);
         return new ResponseEntity<>(
                 new ErrorMessage(
@@ -71,7 +71,7 @@ public class DefaultExceptionHandler {
 
     @ExceptionHandler(SQLException.class)
     public ResponseEntity<ErrorMessage> handleSqlException(SQLException e) {
-        String exceptionUniqueId = UUID.randomUUID().toString();
+        String exceptionUniqueId = getUUID();
         log.error(exceptionUniqueId + e.getMessage(), e);
         return new ResponseEntity<>(
                 new ErrorMessage(
@@ -80,6 +80,10 @@ public class DefaultExceptionHandler {
                         e.getMessage()
                 ),
                 HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private String getUUID() {
+        return UUID.randomUUID().toString();
     }
 
 }

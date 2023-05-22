@@ -7,6 +7,8 @@ import com.luchkovskiy.repository.CarRepository;
 import com.luchkovskiy.service.CarService;
 import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,5 +61,10 @@ public class CarServiceImpl implements CarService {
         if (!carRepository.existsById(id))
             throw new EntityNotFoundException("Car not found!");
         carRepository.inactiveCar(id);
+    }
+
+    @Override
+    public Page<Car> findAllCarsByPage(Pageable pageable) {
+        return carRepository.findAll(pageable);
     }
 }

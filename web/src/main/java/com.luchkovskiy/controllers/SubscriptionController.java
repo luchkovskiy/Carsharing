@@ -67,7 +67,7 @@ public class SubscriptionController {
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Subscription> findById(@PathVariable("id") @Parameter(description = "Subscription ID in database", required = true, example = "1")
-                                             @NotNull @Min(1) Long id) {
+                                                 @NotNull @Min(1) Long id) {
         Subscription subscription = subscriptionService.findById(id);
         return new ResponseEntity<>(subscription, HttpStatus.OK);
     }

@@ -381,28 +381,6 @@ create index if not exists roles_role_name_index
 create index if not exists roles_user_id_index
     on public.roles (user_id);
 
-create table if not exists public.flyway_schema_history
-(
-    installed_rank integer                 not null
-        constraint flyway_schema_history_pk
-            primary key,
-    version        varchar(50),
-    description    varchar(200)            not null,
-    type           varchar(20)             not null,
-    script         varchar(1000)           not null,
-    checksum       integer,
-    installed_by   varchar(100)            not null,
-    installed_on   timestamp default now() not null,
-    execution_time integer                 not null,
-    success        boolean                 not null
-);
-
-alter table public.flyway_schema_history
-    owner to postgres;
-
-create index if not exists flyway_schema_history_s_idx
-    on public.flyway_schema_history (success);
-
 create table if not exists public.verification_codes
 (
     id      bigserial

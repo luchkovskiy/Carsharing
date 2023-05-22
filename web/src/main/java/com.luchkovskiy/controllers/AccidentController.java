@@ -65,7 +65,7 @@ public class AccidentController {
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Accident> findById(@PathVariable("id") @Parameter(description = "Accident ID in database", required = true, example = "1")
-                                         @NotNull @Min(1) Long id) {
+                                             @NotNull @Min(1) Long id) {
         Accident accident = accidentService.findById(id);
         return new ResponseEntity<>(accident, HttpStatus.OK);
     }

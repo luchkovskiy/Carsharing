@@ -21,7 +21,7 @@ public class ExceptionChecker {
 
     public static void verifyCheck(User user) {
         if (!user.getActive()) {
-            throw new RuntimeException("Please, verify your account to continue");
+            throw new RuntimeException("This account isn't active");
         }
     }
 

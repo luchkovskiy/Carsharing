@@ -47,7 +47,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AuthenticationTokenFilter authenticationTokenFilterBean(AuthenticationManager authenticationManager) throws Exception {
+    public AuthenticationTokenFilter authenticationTokenFilterBean(AuthenticationManager authenticationManager) {
         AuthenticationTokenFilter authenticationTokenFilter = new AuthenticationTokenFilter(tokenUtils, userProvider);
         authenticationTokenFilter.setAuthenticationManager(authenticationManager);
         return authenticationTokenFilter;

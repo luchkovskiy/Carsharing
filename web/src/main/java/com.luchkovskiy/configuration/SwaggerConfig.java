@@ -36,11 +36,6 @@ import org.springframework.context.annotation.Configuration;
                 in = SecuritySchemeIn.HEADER,
                 paramName = "X-Auth-Token",
                 description = "X-Auth-Token for JWT Authentication"),
-//        @SecurityScheme(name = "CORS",
-//                type = SecuritySchemeType.APIKEY,
-//                in = SecuritySchemeIn.HEADER,
-//                paramName = "Access-Control-Allow-Headers",
-//                description = "X-Requested-With,content-type")
 })
 public class SwaggerConfig {
     @Bean
