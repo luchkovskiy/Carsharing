@@ -24,8 +24,8 @@ public class UserCardUpdateConverter extends UserCardBaseConverter<UserCardUpdat
     public UserCard convert(UserCardUpdateRequest request) {
 
         UserCard userCard = userCardRepository.findById(request.getId()).orElseThrow(() -> new EntityNotFoundException("Link not found"));
-        userCard.setUser(userService.read(request.getUserId()));
-        userCard.setPaymentCard(paymentCardService.read(request.getCardId()));
+        userCard.setUser(userService.findById(request.getUserId()));
+        userCard.setPaymentCard(paymentCardService.findById(request.getCardId()));
         return doConvert(userCard);
 
     }

@@ -21,8 +21,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,7 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -69,9 +66,9 @@ public class SubscriptionController {
     )
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<Subscription> read(@PathVariable("id") @Parameter(description = "Subscription ID in database", required = true, example = "1")
+    public ResponseEntity<Subscription> findById(@PathVariable("id") @Parameter(description = "Subscription ID in database", required = true, example = "1")
                                              @NotNull @Min(1) Long id) {
-        Subscription subscription = subscriptionService.read(id);
+        Subscription subscription = subscriptionService.findById(id);
         return new ResponseEntity<>(subscription, HttpStatus.OK);
     }
 
@@ -88,8 +85,8 @@ public class SubscriptionController {
     )
     @GetMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<Object> readAll() {
-        List<Subscription> subscriptions = subscriptionService.readAll();
+    public ResponseEntity<Object> findAll() {
+        List<Subscription> subscriptions = subscriptionService.findAll();
         return new ResponseEntity<>(subscriptions, HttpStatus.OK);
     }
 

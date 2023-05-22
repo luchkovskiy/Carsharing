@@ -33,12 +33,12 @@ public class AccidentServiceImpl implements AccidentService {
     private final CarRentInfoRepository carRentInfoRepository;
 
     @Override
-    public Accident read(Long id) {
+    public Accident findById(Long id) {
         return accidentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Accident not found!"));
     }
 
     @Override
-    public List<Accident> readAll() {
+    public List<Accident> findAll() {
         return accidentRepository.findAll();
     }
 

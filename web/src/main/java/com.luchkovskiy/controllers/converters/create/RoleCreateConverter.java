@@ -18,7 +18,7 @@ public class RoleCreateConverter extends RoleBaseConverter<RoleCreateRequest, Ro
 
         Role role = new Role();
 
-        role.setUser(userService.read(request.getUserId()));
+        role.setUser(userService.findById(request.getUserId()));
 
         return doConvert(role, request);
     }

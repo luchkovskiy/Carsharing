@@ -19,8 +19,8 @@ public class CarRentInfoUpdateConverter extends CarRentInfoBaseConverter<CarRent
     @Override
     public CarRentInfo convert(CarRentInfoUpdateRequest request) {
 
-        CarRentInfo carRentInfo = carRentInfoService.read(request.getId());
-        carRentInfo.setCar(carService.read(request.getCarId()));
+        CarRentInfo carRentInfo = carRentInfoService.findById(request.getId());
+        carRentInfo.setCar(carService.findById(request.getCarId()));
 
         return doConvert(carRentInfo, request);
     }

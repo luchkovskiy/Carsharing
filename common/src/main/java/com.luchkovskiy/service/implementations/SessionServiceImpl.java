@@ -31,12 +31,12 @@ public class SessionServiceImpl implements SessionService {
     private final UserRepository userRepository;
 
     @Override
-    public Session read(Long id) {
+    public Session findById(Long id) {
         return sessionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Session not found!"));
     }
 
     @Override
-    public List<Session> readAll() {
+    public List<Session> findAll() {
         return sessionRepository.findAll();
     }
 

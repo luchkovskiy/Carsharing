@@ -16,7 +16,7 @@ public class CarClassLevelUpdateConverter extends CarClassLevelBaseConverter<Car
     @Override
     public CarClassLevel convert(CarClassLevelUpdateRequest request) {
 
-        CarClassLevel carClassLevel = carClassLevelService.read(request.getId());
+        CarClassLevel carClassLevel = carClassLevelService.findById(request.getId());
 
         return doConvert(carClassLevel, request);
     }

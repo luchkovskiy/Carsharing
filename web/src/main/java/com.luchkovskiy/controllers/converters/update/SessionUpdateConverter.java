@@ -25,10 +25,10 @@ public class SessionUpdateConverter extends SessionBaseConverter<SessionUpdateRe
     @Override
     public Session convert(SessionUpdateRequest request) {
 
-        Session session = sessionService.read(request.getId());
-        session.setUser(userService.read(request.getUserId()));
-        session.setCar(carService.read(request.getCarId()));
-        session.setStartLocation(carRentInfoService.readByCarId(request.getCarId()).getCurrentLocation());
+        Session session = sessionService.findById(request.getId());
+        session.setUser(userService.findById(request.getUserId()));
+        session.setCar(carService.findById(request.getCarId()));
+        session.setStartLocation(carRentInfoService.findByCarId(request.getCarId()).getCurrentLocation());
 
         return doConvert(session, request);
     }

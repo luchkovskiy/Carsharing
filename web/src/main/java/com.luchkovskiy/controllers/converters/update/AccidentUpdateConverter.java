@@ -20,8 +20,8 @@ public class AccidentUpdateConverter extends AccidentBaseConverter<AccidentUpdat
     @Override
     public Accident convert(AccidentUpdateRequest request) {
 
-        Accident accident = accidentService.read(request.getId());
-        accident.setSession(sessionService.read(request.getSessionId()));
+        Accident accident = accidentService.findById(request.getId());
+        accident.setSession(sessionService.findById(request.getSessionId()));
 
         return doConvert(accident, request);
     }

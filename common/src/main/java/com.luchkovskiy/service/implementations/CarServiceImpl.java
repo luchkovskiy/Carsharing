@@ -23,12 +23,12 @@ public class CarServiceImpl implements CarService {
     private final CarRentInfoRepository carRentInfoRepository;
 
     @Override
-    public Car read(Long id) {
+    public Car findById(Long id) {
         return carRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Car not found!"));
     }
 
     @Override
-    public List<Car> readAll() {
+    public List<Car> findAll() {
         return carRepository.findAll();
     }
 

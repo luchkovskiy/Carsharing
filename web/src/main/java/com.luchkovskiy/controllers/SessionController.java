@@ -28,8 +28,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,7 +43,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.security.Principal;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -88,9 +85,9 @@ public class SessionController {
     )
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<Session> read(@PathVariable("id") @Parameter(description = "Session ID in database", required = true, example = "1")
+    public ResponseEntity<Session> findById(@PathVariable("id") @Parameter(description = "Session ID in database", required = true, example = "1")
                                         @NotNull @Min(1) Long id) {
-        Session session = sessionService.read(id);
+        Session session = sessionService.findById(id);
         return new ResponseEntity<>(session, HttpStatus.OK);
     }
 
@@ -107,8 +104,8 @@ public class SessionController {
     )
     @GetMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<Object> readAll() {
-        List<Session> sessions = sessionService.readAll();
+    public ResponseEntity<Object> findAll() {
+        List<Session> sessions = sessionService.findAll();
         return new ResponseEntity<>(sessions, HttpStatus.OK);
     }
 
@@ -258,7 +255,7 @@ public class SessionController {
     public ResponseEntity<Session> startSession(Principal principal, Long carId) {
         ExceptionChecker.authCheck(principal);
         Session session = new Session();
-        Car car = carService.read(carId);
+        Car car = carService.findById(carId);
         carCheck(car);
         session.setCar(car);
         User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));

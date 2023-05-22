@@ -15,6 +15,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("cardconfig")
 public class CardConfig {
 
-    private String cvvSalt;
+    private String algorithm;
+
+    private String secret;
+
 
 }

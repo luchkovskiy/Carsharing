@@ -61,7 +61,7 @@ create table if not exists public.payment_cards
             unique,
     card_number     varchar(30)                                               not null,
     expiration_date varchar(15)                                               not null,
-    cvv             varchar(10)                                               not null,
+    cvv             varchar(50)                                               not null,
     created         timestamp(6)                                              not null,
     changed         timestamp(6)                                              not null,
     cardholder      varchar(50)

@@ -20,8 +20,8 @@ public class UserCardCreateConverter extends UserCardBaseConverter<UserCardCreat
     public UserCard convert(UserCardCreateRequest request) {
 
         UserCard userCard = new UserCard();
-        userCard.setUser(userService.read(request.getUserId()));
-        userCard.setPaymentCard(paymentCardService.read(request.getCardId()));
+        userCard.setUser(userService.findById(request.getUserId()));
+        userCard.setPaymentCard(paymentCardService.findById(request.getCardId()));
 
         return doConvert(userCard);
     }

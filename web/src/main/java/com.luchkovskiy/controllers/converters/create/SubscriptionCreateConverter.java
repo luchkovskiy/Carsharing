@@ -24,8 +24,8 @@ public class SubscriptionCreateConverter extends SubscriptionBaseConverter<Subsc
 
         Subscription subscription = new Subscription();
 
-        subscription.setUser(userService.read(request.getUserId()));
-        subscription.setSubscriptionLevel(subscriptionLevelService.read(request.getLevelId()));
+        subscription.setUser(userService.findById(request.getUserId()));
+        subscription.setSubscriptionLevel(subscriptionLevelService.findById(request.getLevelId()));
         subscription.setStartTime(LocalDateTime.now());
         subscription.setEndTime(subscription.getStartTime().plusDays(request.getDaysTotal()));
         subscription.setStatus(StatusType.ACTIVE);

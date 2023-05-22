@@ -19,8 +19,8 @@ public class CarUpdateConverter extends CarBaseConverter<CarUpdateRequest, Car> 
     @Override
     public Car convert(CarUpdateRequest request) {
 
-        Car car = carService.read(request.getId());
-        car.setCarClassLevel(carClassLevelService.read(request.getClassId()));
+        Car car = carService.findById(request.getId());
+        car.setCarClassLevel(carClassLevelService.findById(request.getClassId()));
         car.setVisible(request.getVisible());
 
         return doConvert(car, request);

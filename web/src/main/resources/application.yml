@@ -65,4 +65,5 @@ caffeineconfig:
 
 ---
 cardconfig:
-  cvvSalt: 66a19350-752e-4b20-863c-033d30b7bf23
+  algorithm: AES
+  secret: ${cardconfig.secret-key}

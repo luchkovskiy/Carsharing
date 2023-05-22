@@ -3,11 +3,16 @@ package com.luchkovskiy.util;
 import com.luchkovskiy.models.User;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import java.util.Locale;
+
 @RequiredArgsConstructor
 public class EmailManager {
+
+    private final MessageSource messageSource;
 
     private final JavaMailSender mailSender;
 
@@ -15,9 +20,9 @@ public class EmailManager {
         SimpleMailMessage message = new SimpleMailMessage();
         String code = generateCode();
         message.setTo(user.getAuthenticationInfo().getEmail());
-        message.setSubject("Welcome to Carsharing!");
-        message.setText("Thank you for registering in our application, " + user.getName() + " " + user.getSurname() +
-                ". Please confirm your email by entering the following code: " + code);
+        message.setSubject(messageSource.getMessage("registration.title", null, Locale.getDefault()));
+        message.setText(messageSource.getMessage("registration.message", new Object[]
+                {user.getName(), user.getSurname(), code}, Locale.getDefault()));
         mailSender.send(message);
         return code;
     }

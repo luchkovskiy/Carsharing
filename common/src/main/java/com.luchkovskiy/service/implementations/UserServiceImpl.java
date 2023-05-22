@@ -26,12 +26,12 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public User read(Long id) {
+    public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found!"));
     }
 
     @Override
-    public List<User> readAll() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 

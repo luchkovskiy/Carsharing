@@ -22,12 +22,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
 
     @Override
-    public Subscription read(Long id) {
+    public Subscription findById(Long id) {
         return subscriptionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Subscription not found!"));
     }
 
     @Override
-    public List<Subscription> readAll() {
+    public List<Subscription> findAll() {
         return subscriptionRepository.findAll();
     }
 

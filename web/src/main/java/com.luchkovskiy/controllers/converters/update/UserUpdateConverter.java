@@ -23,7 +23,7 @@ public class UserUpdateConverter extends UserBaseConverter<UserUpdateRequest, Us
     @Override
     public User convert(UserUpdateRequest request) {
 
-        User user = userService.read(request.getId());
+        User user = userService.findById(request.getId());
 
         AuthenticationInfo info = new AuthenticationInfo();
         info.setEmail(request.getEmail());

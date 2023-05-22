@@ -17,7 +17,7 @@ public class SubscriptionLevelUpdateConverter extends SubscriptionLevelBaseConve
     @Override
     public SubscriptionLevel convert(SubscriptionLevelUpdateRequest request) {
 
-        SubscriptionLevel subscriptionLevel = subscriptionLevelService.read(request.getId());
+        SubscriptionLevel subscriptionLevel = subscriptionLevelService.findById(request.getId());
 
         return doConvert(subscriptionLevel, request);
     }

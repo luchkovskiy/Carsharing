@@ -19,12 +19,12 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     private final PaymentCardRepository paymentCardRepository;
 
     @Override
-    public PaymentCard read(Long id) {
+    public PaymentCard findById(Long id) {
         return paymentCardRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Payment card not found!"));
     }
 
     @Override
-    public List<PaymentCard> readAll() {
+    public List<PaymentCard> findAll() {
         return paymentCardRepository.findAll();
     }
 

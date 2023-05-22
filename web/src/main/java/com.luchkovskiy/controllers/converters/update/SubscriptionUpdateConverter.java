@@ -22,9 +22,9 @@ public class SubscriptionUpdateConverter extends SubscriptionBaseConverter<Subsc
     @Override
     public Subscription convert(SubscriptionUpdateRequest request) {
 
-        Subscription subscription = subscriptionService.read(request.getId());
-        subscription.setUser(userService.read(request.getUserId()));
-        subscription.setSubscriptionLevel(subscriptionLevelService.read(request.getLevelId()));
+        Subscription subscription = subscriptionService.findById(request.getId());
+        subscription.setUser(userService.findById(request.getUserId()));
+        subscription.setSubscriptionLevel(subscriptionLevelService.findById(request.getLevelId()));
         subscription.setStartTime(request.getStartTime());
         subscription.setEndTime(request.getEndTime());
         subscription.setStatus(request.getStatus());

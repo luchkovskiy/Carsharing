@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CarRentInfoRepository extends JpaRepository<CarRentInfo, Long> {
 
-    CarRentInfo readCarRentInfoByCarId(Long carId);
+    CarRentInfo findCarRentInfoByCarId(Long carId);
 
     @Query("DELETE FROM CarRentInfo c WHERE c.id = :id")
     @Modifying

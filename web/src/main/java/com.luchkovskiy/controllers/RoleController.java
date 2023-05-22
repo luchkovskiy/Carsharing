@@ -22,8 +22,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -75,9 +72,9 @@ public class RoleController {
     )
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<Role> read(@PathVariable("id") @Parameter(description = "Role ID in database", required = true, example = "1")
+    public ResponseEntity<Role> findById(@PathVariable("id") @Parameter(description = "Role ID in database", required = true, example = "1")
                                      @NotNull @Min(1) Long id) {
-        Role role = roleService.read(id);
+        Role role = roleService.findById(id);
         return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
@@ -95,7 +92,7 @@ public class RoleController {
     @GetMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Map<String, Object>> getAllRoles() {
-        List<Role> roles = roleService.readAll();
+        List<Role> roles = roleService.findAll();
         return new ResponseEntity<>(Collections.singletonMap("roles", roles), HttpStatus.OK);
     }
 
@@ -118,7 +115,7 @@ public class RoleController {
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<Map<String, Object>> getUsersAuthorities(@PathVariable @Parameter(description = "User id ID in database", required = true, example = "1")
                                                                    @NotNull @Min(1) Long userId) {
-        User user = userService.read(userId);
+        User user = userService.findById(userId);
         List<Role> roles = roleService.getUserAuthorities(userId);
 
         Map<String, Object> result = new LinkedHashMap<>();

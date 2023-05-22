@@ -97,9 +97,9 @@ public class UserController {
     )
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<User> read(@PathVariable("id") @Parameter(description = "User ID in database", required = true, example = "1")
+    public ResponseEntity<User> findById(@PathVariable("id") @Parameter(description = "User ID in database", required = true, example = "1")
                                      @NotNull @Min(1) Long id) {
-        User user = userService.read(id);
+        User user = userService.findById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -116,8 +116,8 @@ public class UserController {
     )
     @GetMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<Object> readAll() {
-        List<User> users = userService.readAll();
+    public ResponseEntity<Object> findAll() {
+        List<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
@@ -277,14 +277,14 @@ public class UserController {
     public ResponseEntity<List<CarDistanceResponse>> getCarsDistance(String address) {
         Map<Long, String> carsLocations = new HashMap<>();
         List<CarDistanceResponse> responseDistances = new ArrayList<>();
-        List<CarRentInfo> cars = carRentInfoService.readAll();
+        List<CarRentInfo> cars = carRentInfoService.findAll();
         for (CarRentInfo car : cars) {
             if (car.getAvailable()) {
                 carsLocations.put(car.getCar().getId(), car.getCurrentLocation());
             }
         }
         for (Map.Entry<Long, String> entry : carsLocations.entrySet()) {
-            responseDistances.add(new CarDistanceResponse(carService.read(entry.getKey()), locationManager.getRouteTime(
+            responseDistances.add(new CarDistanceResponse(carService.findById(entry.getKey()), locationManager.getRouteTime(
                     address, entry.getValue(), TravelMode.WALKING, "Europe/Minsk", "en-Us")));
         }
         return new ResponseEntity<>(responseDistances, HttpStatus.OK);

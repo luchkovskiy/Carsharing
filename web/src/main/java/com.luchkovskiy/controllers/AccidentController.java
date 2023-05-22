@@ -19,8 +19,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -67,9 +64,9 @@ public class AccidentController {
     )
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<Accident> read(@PathVariable("id") @Parameter(description = "Accident ID in database", required = true, example = "1")
+    public ResponseEntity<Accident> findById(@PathVariable("id") @Parameter(description = "Accident ID in database", required = true, example = "1")
                                          @NotNull @Min(1) Long id) {
-        Accident accident = accidentService.read(id);
+        Accident accident = accidentService.findById(id);
         return new ResponseEntity<>(accident, HttpStatus.OK);
     }
 
@@ -86,8 +83,8 @@ public class AccidentController {
     )
     @GetMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<Object> readAll() {
-        List<Accident> accidents = accidentService.readAll();
+    public ResponseEntity<Object> findAll() {
+        List<Accident> accidents = accidentService.findAll();
         return new ResponseEntity<>(accidents, HttpStatus.OK);
     }
 

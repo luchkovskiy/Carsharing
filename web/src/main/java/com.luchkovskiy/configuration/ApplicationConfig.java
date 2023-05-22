@@ -7,6 +7,7 @@ import com.luchkovskiy.util.SpringSecurityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -63,7 +64,15 @@ public class ApplicationConfig {
 
     @Bean
     public EmailManager emailManager() {
-        return new EmailManager(javaMailSender());
+        return new EmailManager(messageSource(), javaMailSender());
+    }
+
+    @Bean
+    public ResourceBundleMessageSource messageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename("messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
     }
 
 }

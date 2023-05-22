@@ -5,6 +5,7 @@ import com.luchkovskiy.controllers.requests.create.PaymentCardCreateRequest;
 import com.luchkovskiy.controllers.requests.update.PaymentCardUpdateRequest;
 import com.luchkovskiy.models.PaymentCard;
 import com.luchkovskiy.service.PaymentCardService;
+import com.luchkovskiy.util.EncryptionUtils;
 import com.luchkovskiy.util.ExceptionChecker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,8 +20,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -48,6 +46,8 @@ public class PaymentCardController {
     private final PaymentCardService paymentCardService;
 
     private final ConversionService conversionService;
+
+    private final EncryptionUtils encryptionUtils;
 
     @Operation(
             summary = "Spring Data Find Payment Card By Id",
@@ -67,9 +67,14 @@ public class PaymentCardController {
     )
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<PaymentCard> read(@PathVariable("id") @Parameter(description = "Payment card ID in database", required = true, example = "1")
-                                            @NotNull @Min(1) Long id) {
-        PaymentCard paymentCard = paymentCardService.read(id);
+    public ResponseEntity<PaymentCard> findById(@PathVariable("id") @Parameter(description = "Payment card ID in database", required = true, example = "1")
+                                                @NotNull @Min(1) Long id) {
+        PaymentCard paymentCard = paymentCardService.findById(id);
+        try {
+            paymentCard.setCvv(encryptionUtils.decrypt(paymentCard.getCvv()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<>(paymentCard, HttpStatus.OK);
     }
 
@@ -86,8 +91,8 @@ public class PaymentCardController {
     )
     @GetMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<Object> readAll() {
-        List<PaymentCard> paymentCards = paymentCardService.readAll();
+    public ResponseEntity<Object> findAll() {
+        List<PaymentCard> paymentCards = paymentCardService.findAll();
         return new ResponseEntity<>(paymentCards, HttpStatus.OK);
     }
 

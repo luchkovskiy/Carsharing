@@ -17,7 +17,7 @@ public class AccidentCreateConverter extends AccidentBaseConverter<AccidentCreat
     public Accident convert(AccidentCreateRequest request) {
 
         Accident accident = new Accident();
-        accident.setSession(sessionService.read(request.getSessionId()));
+        accident.setSession(sessionService.findById(request.getSessionId()));
 
         return doConvert(accident, request);
     }

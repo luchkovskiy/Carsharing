@@ -21,13 +21,13 @@ public class SubscriptionLevelServiceImpl implements SubscriptionLevelService {
 
     @Cacheable("subscriptionLevels")
     @Override
-    public SubscriptionLevel read(Long id) {
+    public SubscriptionLevel findById(Long id) {
         return subscriptionLevelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Subscription level not found!"));
     }
 
     @Cacheable("subscriptionLevels")
     @Override
-    public List<SubscriptionLevel> readAll() {
+    public List<SubscriptionLevel> findAll() {
         return subscriptionLevelRepository.findAll();
     }
 

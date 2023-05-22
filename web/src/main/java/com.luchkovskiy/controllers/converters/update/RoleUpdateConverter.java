@@ -19,8 +19,8 @@ public class RoleUpdateConverter extends RoleBaseConverter<RoleUpdateRequest, Ro
     @Override
     public Role convert(RoleUpdateRequest request) {
 
-        Role role = roleService.read(request.getId());
-        role.setUser(userService.read(request.getUserId()));
+        Role role = roleService.findById(request.getId());
+        role.setUser(userService.findById(request.getUserId()));
 
         return doConvert(role, request);
     }

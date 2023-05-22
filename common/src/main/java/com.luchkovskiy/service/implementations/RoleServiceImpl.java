@@ -25,13 +25,13 @@ public class RoleServiceImpl implements RoleService {
 
     @Cacheable("roles")
     @Override
-    public Role read(Long id) {
+    public Role findById(Long id) {
         return roleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Role not found!"));
     }
 
     @Cacheable("roles")
     @Override
-    public List<Role> readAll() {
+    public List<Role> findAll() {
         return roleRepository.findAll();
     }
 

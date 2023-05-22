@@ -19,19 +19,19 @@ public class CarRentInfoServiceImpl implements CarRentInfoService {
     private final CarRentInfoRepository carRentInfoRepository;
 
     @Override
-    public CarRentInfo read(Long id) {
+    public CarRentInfo findById(Long id) {
         return carRentInfoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Car info not found!"));
     }
 
     @Override
-    public List<CarRentInfo> readAll() {
+    public List<CarRentInfo> findAll() {
         return carRentInfoRepository.findAll();
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public CarRentInfo create(CarRentInfo object) {
-        if (carRentInfoRepository.readCarRentInfoByCarId(object.getCar().getId()) != null) {
+        if (carRentInfoRepository.findCarRentInfoByCarId(object.getCar().getId()) != null) {
             throw new RuntimeException("You can't create a second info for the same car");
         } else {
             return carRentInfoRepository.save(object);
@@ -55,10 +55,10 @@ public class CarRentInfoServiceImpl implements CarRentInfoService {
     }
 
     @Override
-    public CarRentInfo readByCarId(Long carId) {
+    public CarRentInfo findByCarId(Long carId) {
         CarRentInfo carRentInfo;
         try {
-            carRentInfo = carRentInfoRepository.readCarRentInfoByCarId(carId);
+            carRentInfo = carRentInfoRepository.findCarRentInfoByCarId(carId);
         } catch (Exception e) {
             throw new EntityNotFoundException("Car info not found!");
         }

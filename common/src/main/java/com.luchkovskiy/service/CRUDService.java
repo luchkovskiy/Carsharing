@@ -3,9 +3,9 @@ package com.luchkovskiy.service;
 import java.util.List;
 
 public interface CRUDService<K, T> {
-    T read(K id);
+    T findById(K id);
 
-    List<T> readAll();
+    List<T> findAll();
 
     T create(T object);
 

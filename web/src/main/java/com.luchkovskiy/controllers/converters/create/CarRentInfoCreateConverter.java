@@ -18,7 +18,7 @@ public class CarRentInfoCreateConverter extends CarRentInfoBaseConverter<CarRent
 
         CarRentInfo carRentInfo = new CarRentInfo();
 
-        carRentInfo.setCar(carService.read(request.getCarId()));
+        carRentInfo.setCar(carService.findById(request.getCarId()));
 
         return doConvert(carRentInfo, request);
     }

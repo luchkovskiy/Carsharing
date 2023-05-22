@@ -18,7 +18,7 @@ public class CarCreateConverter extends CarBaseConverter<CarCreateRequest, Car> 
 
         Car car = new Car();
 
-        car.setCarClassLevel(carClassLevelService.read(request.getClassId()));
+        car.setCarClassLevel(carClassLevelService.findById(request.getClassId()));
 
         return doConvert(car, request);
     }

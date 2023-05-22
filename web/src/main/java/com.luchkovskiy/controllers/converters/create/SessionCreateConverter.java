@@ -24,9 +24,9 @@ public class SessionCreateConverter extends SessionBaseConverter<SessionCreateRe
 
         Session session = new Session();
 
-        session.setUser(userService.read(request.getUserId()));
-        session.setCar(carService.read(request.getCarId()));
-        session.setStartLocation(carRentInfoService.readByCarId(request.getCarId()).getCurrentLocation());
+        session.setUser(userService.findById(request.getUserId()));
+        session.setCar(carService.findById(request.getCarId()));
+        session.setStartLocation(carRentInfoService.findByCarId(request.getCarId()).getCurrentLocation());
 
         return doConvert(session, request);
     }

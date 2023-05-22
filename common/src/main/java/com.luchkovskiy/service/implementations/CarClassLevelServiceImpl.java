@@ -21,13 +21,13 @@ public class CarClassLevelServiceImpl implements CarClassLevelService {
 
     @Cacheable("carClasses")
     @Override
-    public CarClassLevel read(Long id) {
+    public CarClassLevel findById(Long id) {
         return carClassLevelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Car class not found!"));
     }
 
     @Cacheable("carClasses")
     @Override
-    public List<CarClassLevel> readAll() {
+    public List<CarClassLevel> findAll() {
         return carClassLevelRepository.findAll();
     }
 
