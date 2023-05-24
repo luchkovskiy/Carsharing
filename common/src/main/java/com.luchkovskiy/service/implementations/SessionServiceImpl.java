@@ -6,6 +6,7 @@ import com.luchkovskiy.models.Subscription;
 import com.luchkovskiy.models.User;
 import com.luchkovskiy.models.enums.StatusType;
 import com.luchkovskiy.repository.CarRentInfoRepository;
+import com.luchkovskiy.repository.CarRepository;
 import com.luchkovskiy.repository.SessionRepository;
 import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.SessionService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
@@ -26,9 +28,13 @@ public class SessionServiceImpl implements SessionService {
 
     private final SessionRepository sessionRepository;
 
+    private final CarRepository carRepository;
+
     private final CarRentInfoRepository carRentInfoRepository;
 
     private final UserRepository userRepository;
+
+    private final EntityManager entityManager;
 
     @Override
     public Session findById(Long id) {
@@ -43,14 +49,17 @@ public class SessionServiceImpl implements SessionService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Session create(Session object) {
+        validCheck(object);
         return sessionRepository.save(object);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Session update(Session object) {
+        entityManager.clear();
         if (!sessionRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Session not found!");
+        validCheck(object);
         return sessionRepository.save(object);
     }
 
@@ -94,6 +103,30 @@ public class SessionServiceImpl implements SessionService {
                     userRepository.save(user);
                 }
             }
+        }
+    }
+
+    private void validCheck(Session session) {
+        userCheck(session);
+        carCheck(session);
+        timeCheck(session);
+    }
+
+    private void userCheck(Session session) {
+        if (!userRepository.existsById(session.getUser().getId())) {
+            throw new EntityNotFoundException("User not found");
+        }
+    }
+
+    private void carCheck(Session session) {
+        if (!carRepository.existsById(session.getCar().getId())) {
+            throw new EntityNotFoundException("Car not found");
+        }
+    }
+
+    private void timeCheck(Session session) {
+        if (session.getStartTime().isAfter(session.getEndTime())) {
+            throw new RuntimeException("Start time can't be later than end time");
         }
     }
 

@@ -2,6 +2,7 @@ package com.luchkovskiy.service.implementations;
 
 import com.luchkovskiy.models.Car;
 import com.luchkovskiy.models.CarRentInfo;
+import com.luchkovskiy.repository.CarClassLevelRepository;
 import com.luchkovskiy.repository.CarRentInfoRepository;
 import com.luchkovskiy.repository.CarRepository;
 import com.luchkovskiy.service.CarService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -23,6 +25,10 @@ public class CarServiceImpl implements CarService {
     private final CarRepository carRepository;
 
     private final CarRentInfoRepository carRentInfoRepository;
+
+    private final CarClassLevelRepository carClassLevelRepository;
+
+    private final EntityManager entityManager;
 
     @Override
     public Car findById(Long id) {
@@ -37,6 +43,7 @@ public class CarServiceImpl implements CarService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Car create(Car object) {
+        validCheck(object);
         Car car = carRepository.save(object);
         CarRentInfo carRentInfo = new CarRentInfo();
         carRentInfo.setCar(car);
@@ -50,8 +57,10 @@ public class CarServiceImpl implements CarService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Car update(Car object) {
+        entityManager.clear();
         if (!carRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Car not found!");
+        validCheck(object);
         return carRepository.save(object);
     }
 
@@ -66,5 +75,22 @@ public class CarServiceImpl implements CarService {
     @Override
     public Page<Car> findAllCarsByPage(Pageable pageable) {
         return carRepository.findAll(pageable);
+    }
+
+    private void validCheck(Car car) {
+        classLevelCheck(car);
+        licensePlateNumberCheck(car);
+    }
+
+    private void licensePlateNumberCheck(Car car) {
+        if (carRepository.existsByLicensePlateNumber(car.getLicensePlateNumber())) {
+            throw new RuntimeException("This license plate number already exists in database");
+        }
+    }
+
+    private void classLevelCheck(Car car) {
+        if (!carClassLevelRepository.existsById(car.getCarClassLevel().getId())) {
+            throw new EntityNotFoundException("Car class level not found");
+        }
     }
 }

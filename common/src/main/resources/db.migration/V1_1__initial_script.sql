@@ -59,7 +59,7 @@ create table if not exists public.payment_cards
             primary key
         constraint c_payment_data_id_key
             unique,
-    card_number     varchar(30)                                               not null,
+    card_number     varchar(30)                                               not null unique,
     expiration_date varchar(15)                                               not null,
     cvv             varchar(50)                                               not null,
     created         timestamp(6)                                              not null,

@@ -110,7 +110,7 @@ INSERT INTO public.payment_cards (id, card_number, expiration_date, cvv, created
 VALUES (2, '4321432143214321', '03/24', 'fi4m1LNsqm3bduULBIxhjA==', '2023-05-22 23:14:09.461094',
         '2023-05-22 23:14:09.461094', 'MIKHAIL DVORETSKIY');
 INSERT INTO public.payment_cards (id, card_number, expiration_date, cvv, created, changed, cardholder)
-VALUES (3, '4321432143214321', '05/26', 'yQdh2YdpDp+S8Sd4mUPMqA==', '2023-05-22 23:14:59.665093',
+VALUES (3, '4321432143224321', '05/26', 'yQdh2YdpDp+S8Sd4mUPMqA==', '2023-05-22 23:14:59.665093',
         '2023-05-22 23:14:59.665093', 'KARINA SOBAKINA');
 INSERT INTO public.payment_cards (id, card_number, expiration_date, cvv, created, changed, cardholder)
 VALUES (4, '4321432145514321', '02/24', 'Hukfkz7FzSseukkgJxYHZg==', '2023-05-22 23:16:30.411479',

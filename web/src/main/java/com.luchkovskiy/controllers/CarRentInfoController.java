@@ -57,7 +57,7 @@ public class CarRentInfoController {
                     ),
                     @ApiResponse(
                             responseCode = "404 Not Found",
-                            description = "Car rent info doest not exist in the database",
+                            description = "Car rent info doest not exist",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             }

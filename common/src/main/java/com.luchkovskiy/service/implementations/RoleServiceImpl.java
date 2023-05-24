@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
 
     private final UserRepository userRepository;
+
+    private final EntityManager entityManager;
 
     @Cacheable("roles")
     @Override
@@ -38,6 +41,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Role create(Role object) {
+        combinationCheck(object);
         if (object.getSystemRole().equals(SystemRole.ROLE_ADMIN)) {
             createModeratorRole(object);
         }
@@ -47,8 +51,10 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Role update(Role object) {
+        entityManager.clear();
         if (!roleRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Role not found!");
+        combinationCheck(object);
         return roleRepository.save(object);
     }
 
@@ -77,6 +83,15 @@ public class RoleServiceImpl implements RoleService {
     private void basicRoleCheck(Long id) {
         if (roleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Role not found!")).getSystemRole().equals(SystemRole.ROLE_USER)) {
             throw new RuntimeException("Can't delete basic role!");
+        }
+    }
+
+    private void combinationCheck(Role role) {
+        List<Role> userRoles = getUserAuthorities(role.getUser().getId());
+        for (Role userRole : userRoles) {
+            if (userRole.getSystemRole().equals(role.getSystemRole())) {
+                throw new RuntimeException("Role is already exist");
+            }
         }
     }
 }

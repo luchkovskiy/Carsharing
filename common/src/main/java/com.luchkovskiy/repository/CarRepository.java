@@ -11,8 +11,6 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     @Modifying
     void inactiveCar(Long id);
 
-    @Query("DELETE FROM Car c WHERE c.id = :id")
-    @Modifying
-    void deleteCar(Long id);
+    boolean existsByLicensePlateNumber(String licensePlateNumber);
 
 }

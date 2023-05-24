@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +27,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
+
+    private final EntityManager entityManager;
 
     @Override
     public User findById(Long id) {
@@ -40,7 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public User create(User object) {
-        userDrivingInfoCheck(object);
+        validCheck(object);
         createBasicRole(object);
         return userRepository.save(object);
     }
@@ -48,9 +51,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public User update(User object) {
+        entityManager.clear();
         if (!userRepository.existsById(object.getId()))
             throw new EntityNotFoundException("User not found!");
-        userDrivingInfoCheck(object);
+        validCheck(object);
         return userRepository.save(object);
     }
 
@@ -84,9 +88,34 @@ public class UserServiceImpl implements UserService {
         roleRepository.save(role);
     }
 
+    private void validCheck(User user) {
+        userDrivingInfoCheck(user);
+        passportCheck(user);
+        driverIdCheck(user);
+        emailCheck(user);
+    }
+
     private void userDrivingInfoCheck(User user) {
         if (user.getBirthdayDate().isAfter(LocalDateTime.now().minusYears(18)) || user.getDrivingExperience() < 2) {
             throw new RuntimeException("Your driving information is not valid for using the app");
+        }
+    }
+
+    private void passportCheck(User user) {
+        if (userRepository.existsByPassportId(user.getPassportId())) {
+            throw new RuntimeException("This passport Id is already exist");
+        }
+    }
+
+    private void driverIdCheck(User user) {
+        if (userRepository.existsByDriverId(user.getDriverId())) {
+            throw new RuntimeException("This driver Id is already exist");
+        }
+    }
+
+    private void emailCheck(User user) {
+        if (userRepository.existsByAuthenticationInfoEmail(user.getAuthenticationInfo().getEmail())) {
+            throw new RuntimeException("Account with entered email is already exist");
         }
     }
 

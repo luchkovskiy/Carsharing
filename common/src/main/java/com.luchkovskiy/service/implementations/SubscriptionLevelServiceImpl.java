@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -18,6 +19,8 @@ import java.util.List;
 public class SubscriptionLevelServiceImpl implements SubscriptionLevelService {
 
     private final SubscriptionLevelRepository subscriptionLevelRepository;
+
+    private final EntityManager entityManager;
 
     @Cacheable("subscriptionLevels")
     @Override
@@ -40,6 +43,7 @@ public class SubscriptionLevelServiceImpl implements SubscriptionLevelService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public SubscriptionLevel update(SubscriptionLevel object) {
+        entityManager.clear();
         if (!subscriptionLevelRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Subscription level not found!");
         return subscriptionLevelRepository.save(object);
@@ -50,6 +54,14 @@ public class SubscriptionLevelServiceImpl implements SubscriptionLevelService {
     public void delete(Long id) {
         if (!subscriptionLevelRepository.existsById(id))
             throw new EntityNotFoundException("Subscription level not found!");
+        subscriptionsCheck(subscriptionLevelRepository.findById(id).get());
         subscriptionLevelRepository.deleteSubscriptionLevel(id);
     }
+
+    private void subscriptionsCheck(SubscriptionLevel subscriptionLevel) {
+        if (!subscriptionLevel.getSubscriptions().isEmpty()) {
+            throw new RuntimeException("Can't remove level because some subscriptions are bound to it");
+        }
+    }
+
 }

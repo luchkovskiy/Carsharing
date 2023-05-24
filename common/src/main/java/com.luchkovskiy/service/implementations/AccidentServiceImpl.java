@@ -7,6 +7,7 @@ import com.luchkovskiy.models.User;
 import com.luchkovskiy.repository.AccidentRepository;
 import com.luchkovskiy.repository.CarRentInfoRepository;
 import com.luchkovskiy.repository.CarRepository;
+import com.luchkovskiy.repository.SessionRepository;
 import com.luchkovskiy.repository.UserRepository;
 import com.luchkovskiy.service.AccidentService;
 import com.luchkovskiy.service.exceptions.EntityNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -32,6 +34,10 @@ public class AccidentServiceImpl implements AccidentService {
 
     private final CarRentInfoRepository carRentInfoRepository;
 
+    private final SessionRepository sessionRepository;
+
+    private final EntityManager entityManager;
+
     @Override
     public Accident findById(Long id) {
         return accidentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Accident not found!"));
@@ -45,7 +51,7 @@ public class AccidentServiceImpl implements AccidentService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Accident create(Accident object) {
-        criticalCheck(object);
+        validCheck(object);
         object.setFine(calculateFine(object.getDamageLevel()));
         object.setRatingSubtraction(calculateRatingSubtraction(object.getDamageLevel()));
         User user = object.getSession().getUser();
@@ -60,8 +66,10 @@ public class AccidentServiceImpl implements AccidentService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public Accident update(Accident object) {
+        entityManager.clear();
         if (!accidentRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Accident not found!");
+        validCheck(object);
         return accidentRepository.save(object);
     }
 
@@ -91,6 +99,20 @@ public class AccidentServiceImpl implements AccidentService {
         return damage * 0.5f;
     }
 
+
+    private void validCheck(Accident accident) {
+        sessionCheck(accident);
+        criticalCheck(accident);
+        timeCheck(accident);
+        userCheck(accident);
+    }
+
+    private void sessionCheck(Accident accident) {
+        if (!sessionRepository.existsById(accident.getSession().getId())) {
+            throw new EntityNotFoundException("Session not found");
+        }
+    }
+
     private void criticalCheck(Accident accident) {
         if (accident.getCritical()) {
             accident.setDamageLevel(5);
@@ -101,4 +123,17 @@ public class AccidentServiceImpl implements AccidentService {
         }
     }
 
+    private void timeCheck(Accident accident) {
+        if (accident.getTime().isBefore(accident.getSession().getStartTime()) || accident.getTime().isAfter(accident.getSession().getEndTime())) {
+            throw new RuntimeException("The time of the accident must be within the session");
+        }
+    }
+
+    private void userCheck(Accident accident) {
+        User user = accident.getSession().getUser();
+        if (user.getRating() < 2.5) {
+            user.setActive(false);
+            userRepository.save(user);
+        }
+    }
 }

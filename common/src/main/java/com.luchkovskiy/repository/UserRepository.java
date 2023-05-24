@@ -26,5 +26,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Procedure
     Timestamp selectLongestSessionDuration(@Param("person_id") Long userId);
 
+    boolean existsByPassportId(String passportId);
+
+    boolean existsByDriverId(String driverId);
+
+    boolean existsByAuthenticationInfoEmail(String email);
 
 }

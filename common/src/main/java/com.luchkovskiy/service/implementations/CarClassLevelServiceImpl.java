@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -18,6 +19,8 @@ import java.util.List;
 public class CarClassLevelServiceImpl implements CarClassLevelService {
 
     private final CarClassLevelRepository carClassLevelRepository;
+
+    private final EntityManager entityManager;
 
     @Cacheable("carClasses")
     @Override
@@ -40,6 +43,7 @@ public class CarClassLevelServiceImpl implements CarClassLevelService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public CarClassLevel update(CarClassLevel object) {
+        entityManager.clear();
         if (!carClassLevelRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Car class not found!");
         return carClassLevelRepository.save(object);
@@ -50,6 +54,14 @@ public class CarClassLevelServiceImpl implements CarClassLevelService {
     public void delete(Long id) {
         if (!carClassLevelRepository.existsById(id))
             throw new EntityNotFoundException("Car class not found!");
+        carsCheck(carClassLevelRepository.findById(id).get());
         carClassLevelRepository.deleteCarClassLevel(id);
     }
+
+    private void carsCheck(CarClassLevel carClassLevel) {
+        if (!carClassLevel.getCars().isEmpty()) {
+            throw new RuntimeException("Can't remove class because some cars are bound to it");
+        }
+    }
+
 }

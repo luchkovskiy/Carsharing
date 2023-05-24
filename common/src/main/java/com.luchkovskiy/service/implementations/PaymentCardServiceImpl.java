@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -17,6 +18,8 @@ import java.util.List;
 public class PaymentCardServiceImpl implements PaymentCardService {
 
     private final PaymentCardRepository paymentCardRepository;
+
+    private final EntityManager entityManager;
 
     @Override
     public PaymentCard findById(Long id) {
@@ -31,14 +34,17 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public PaymentCard create(PaymentCard object) {
+        cardNumberCheck(object);
         return paymentCardRepository.save(object);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public PaymentCard update(PaymentCard object) {
+        entityManager.clear();
         if (!paymentCardRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Payment card not found!");
+        cardNumberCheck(object);
         return paymentCardRepository.save(object);
     }
 
@@ -48,5 +54,11 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         if (!paymentCardRepository.existsById(id))
             throw new EntityNotFoundException("Payment card not found!");
         paymentCardRepository.deletePaymentCard(id);
+    }
+
+    private void cardNumberCheck(PaymentCard paymentCard) {
+        if (paymentCardRepository.existsByCardNumber(paymentCard.getCardNumber())) {
+            throw new RuntimeException("This card number is already exist in database");
+        }
     }
 }

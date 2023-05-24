@@ -11,4 +11,6 @@ public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> 
     @Modifying
     void deletePaymentCard(Long id);
 
+    boolean existsByCardNumber(String cardNumber);
+
 }

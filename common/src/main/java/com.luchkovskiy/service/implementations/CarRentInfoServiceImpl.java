@@ -2,6 +2,7 @@ package com.luchkovskiy.service.implementations;
 
 import com.luchkovskiy.models.CarRentInfo;
 import com.luchkovskiy.repository.CarRentInfoRepository;
+import com.luchkovskiy.repository.CarRepository;
 import com.luchkovskiy.service.CarRentInfoService;
 import com.luchkovskiy.service.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -17,6 +19,10 @@ import java.util.List;
 public class CarRentInfoServiceImpl implements CarRentInfoService {
 
     private final CarRentInfoRepository carRentInfoRepository;
+
+    private final CarRepository carRepository;
+
+    private final EntityManager entityManager;
 
     @Override
     public CarRentInfo findById(Long id) {
@@ -31,6 +37,7 @@ public class CarRentInfoServiceImpl implements CarRentInfoService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public CarRentInfo create(CarRentInfo object) {
+        validCheck(object);
         if (carRentInfoRepository.findCarRentInfoByCarId(object.getCar().getId()) != null) {
             throw new RuntimeException("You can't create a second info for the same car");
         } else {
@@ -41,6 +48,8 @@ public class CarRentInfoServiceImpl implements CarRentInfoService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public CarRentInfo update(CarRentInfo object) {
+        entityManager.clear();
+        validCheck(object);
         if (!carRentInfoRepository.existsById(object.getId()))
             throw new EntityNotFoundException("Car info not found!");
         return carRentInfoRepository.save(object);
@@ -64,4 +73,22 @@ public class CarRentInfoServiceImpl implements CarRentInfoService {
         }
         return carRentInfo;
     }
+
+    private void validCheck(CarRentInfo object) {
+        carCheck(object);
+        availableCheck(object);
+    }
+
+    private void carCheck(CarRentInfo carRentInfo) {
+        if (!carRepository.existsById(carRentInfo.getCar().getId())) {
+            throw new EntityNotFoundException("Car not found");
+        }
+    }
+
+    private void availableCheck(CarRentInfo carRentInfo) {
+        if (carRentInfo.getAvailable() && carRentInfo.getRepairing()) {
+            throw new RuntimeException("Car can't repairing and be available at the same time");
+        }
+    }
+
 }
