@@ -26,6 +26,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.sql.SQLException;
 
 @RestController
 @RequiredArgsConstructor
@@ -133,7 +135,7 @@ public class AuthenticationController {
             }
     )
     @PatchMapping("/verify")
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = SQLException.class)
     public void verifyEmail(Principal principal, String code) {
         ExceptionChecker.authCheck(principal);
         User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new EntityNotFoundException("User not found!"));

@@ -57,6 +57,9 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     private void cardNumberCheck(PaymentCard paymentCard) {
+        if (paymentCard.getId() != null && paymentCardRepository.findById(paymentCard.getId()).get().getCardNumber().
+                equals(paymentCard.getCardNumber()))
+            return;
         if (paymentCardRepository.existsByCardNumber(paymentCard.getCardNumber())) {
             throw new RuntimeException("This card number is already exist in database");
         }

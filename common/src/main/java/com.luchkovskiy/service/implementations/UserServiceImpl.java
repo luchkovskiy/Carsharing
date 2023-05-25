@@ -102,18 +102,25 @@ public class UserServiceImpl implements UserService {
     }
 
     private void passportCheck(User user) {
+        if (user.getId() != null && userRepository.findById(user.getId()).get().getPassportId().equals(user.getPassportId()))
+            return;
         if (userRepository.existsByPassportId(user.getPassportId())) {
             throw new RuntimeException("This passport Id is already exist");
         }
     }
 
     private void driverIdCheck(User user) {
+        if (user.getId() != null && userRepository.findById(user.getId()).get().getDriverId().equals(user.getDriverId()))
+            return;
         if (userRepository.existsByDriverId(user.getDriverId())) {
             throw new RuntimeException("This driver Id is already exist");
         }
     }
 
     private void emailCheck(User user) {
+        if (user.getId() != null && userRepository.findById(user.getId()).get().getAuthenticationInfo().getEmail().
+                equals(user.getAuthenticationInfo().getEmail()))
+            return;
         if (userRepository.existsByAuthenticationInfoEmail(user.getAuthenticationInfo().getEmail())) {
             throw new RuntimeException("Account with entered email is already exist");
         }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.security.SecuritySchemes;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,9 @@ import org.springframework.context.annotation.Configuration;
                         url = "https://opensource.org/licenses/mit-license.php"
                 )
         ),
+        servers = {
+                @Server (url = "/", description = "Default server url")
+        },
         security = {
                 @SecurityRequirement(name = "authToken")
         }

@@ -83,8 +83,11 @@ public class CarServiceImpl implements CarService {
     }
 
     private void licensePlateNumberCheck(Car car) {
+        if (car.getId() != null && carRepository.findById(car.getId()).get().getLicensePlateNumber().
+                equals(car.getLicensePlateNumber()))
+            return;
         if (carRepository.existsByLicensePlateNumber(car.getLicensePlateNumber())) {
-            throw new RuntimeException("This license plate number already exists in database");
+            throw new RuntimeException("This license plate number already exists");
         }
     }
 
